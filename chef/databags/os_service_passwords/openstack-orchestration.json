@@ -1,0 +1,4 @@
+{
+	"id": "openstack-orchestration",
+	"openstack-orchestration": "$SERVICE_PASSWORD"
+}

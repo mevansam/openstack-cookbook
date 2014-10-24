@@ -1,0 +1,15 @@
+{
+	"name": "os-ha-identity",
+	"description": "Highly available Keystone role",
+	"json_class": "Chef::Role",
+	"default_attributes": { },
+	"override_attributes": { },
+	"chef_type": "role",
+	"run_list": [
+		"recipe[sysutils::default]",
+		"recipe[network::default]",
+		"recipe[openstack-services::ha-os-common]",
+		"role[os-identity]"
+	],
+	"env_run_lists": { }
+}

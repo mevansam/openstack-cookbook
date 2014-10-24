@@ -1,0 +1,13 @@
+{
+    "name": "os-ha-proxy",
+    "description": "Highly available load balancing proxy role",
+    "chef_type": "role",
+    "default_attributes": { },
+    "override_attributes": { },
+    "json_class": "Chef::Role",
+	"run_list" : [ 
+		"recipe[sysutils::default]",
+        "recipe[network::default]",
+        "recipe[sysutils::cluster]"
+	]
+}

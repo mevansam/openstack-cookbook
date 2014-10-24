@@ -1,0 +1,4 @@
+{
+	"id": "neutron",
+	"neutron": "$MYSQL_PASSWORD"
+}

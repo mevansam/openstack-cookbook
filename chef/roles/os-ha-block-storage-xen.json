@@ -1,0 +1,29 @@
+{
+	"name": "os-ha-block-storage-xen",
+	"description": "Highly available Cinder role",
+	"json_class": "Chef::Role",
+	"default_attributes": { },
+	"override_attributes": { 
+		"env": {
+			"packages": {
+				"debian": [ "python-pip" ],
+				"pip": [ "xenapi" ]
+			}			
+		},
+		"openstack": {
+			"block-storage": {
+				"volume": { 
+					"driver": "cinder.volume.drivers.xenapi.sm.XenAPINFSDriver"
+				}
+			}
+		}
+	},
+	"chef_type": "role",
+	"run_list": [
+		"recipe[sysutils::default]",
+		"recipe[network::default]",
+		"recipe[openstack-services::ha-os-common]",
+		"role[os-block-storage]"
+	],
+	"env_run_lists": { }
+}

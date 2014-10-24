@@ -1,0 +1,6 @@
+{
+	"id": "rabbit",
+	"erlang_cookie" : "$RABBITMQ_COOKIE",
+    "default_user" : "$AMPQ_USER",
+    "default_password" : "$AMPQ_PASSWORD"
+}

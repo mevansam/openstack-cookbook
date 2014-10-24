@@ -1,0 +1,11 @@
+.DS_Store
+.rnd
+.git
+.chef
+.localca
+.certs
+./
+tmp/
+target
+*.swp
+

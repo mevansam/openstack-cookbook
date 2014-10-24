@@ -1,0 +1,78 @@
+{
+	"name": "os-ha-compute-xen",
+	"description": "Highly available compute role to orchestrate a xen hypervisor",
+	"json_class": "Chef::Role",
+	"default_attributes": { },
+	"override_attributes": { 
+		"env": {
+			"network_interfaces": [
+				{
+					"device": "eth1"
+				},
+				{
+					"device": "eth2"
+				}
+			],
+			"packages": {
+				"debian": [ "python-pip" ],
+				"pip": [ "xenapi" ]
+			},
+			"users": [ 
+	        	[ "root", "/root", null, false ],
+	        	[ "nova", "/var/lib/neutron", null, true ],
+	        	[ "neutron", "/var/lib/neutron", null, true ]
+	        ]
+		},
+		"openstack": {
+			"compute": {
+				"debug": "False",
+				"verbose": "False",
+				"driver": "xenapi.XenAPIDriver",
+				"config": {
+					"flat_injected": "False"
+				},
+				"libvirt": {
+					"configure": false,
+					"virt_type": "xen"
+				},
+				"network": {
+					"service_type": "neutron",
+					"neutron": {
+						"xxxfirewall_driver": "nova.virt.xenapi.firewall.Dom0IptablesFirewallDriver",
+						"firewall_driver": "",
+						"public_network_name": "",
+						"dns_server": ""
+					}
+				},
+				"xenapi": {
+					"vif_driver": "nova.virt.xenapi.vif.XenAPIOpenVswitchDriver"
+				}
+			},
+			"network": {
+				"debug": "False",
+				"verbose": "False",
+				"service_plugins": [ 
+					"neutron.services.l3_router.l3_router_plugin.L3RouterPlugin"
+				],
+	            "l3": {
+					"clustered": true,
+					"cluster_role": "os-ha-compute-xen",
+	                "external_network_bridge": ""
+	            },
+	            "dhcp": {
+	            	"log-facility": "/var/log/neutron/dnsmasq.log",
+	            	"upstream_dns_servers": [ ]
+	            }
+			}
+		}
+	},
+	"chef_type": "role",
+	"run_list": [
+		"recipe[sysutils::default]",
+		"recipe[network::default]",
+		"recipe[openstack-services::ha-os-common]",
+		"role[os-compute-worker]",
+		"recipe[openstack-services::ha-os-network-agents]"
+	],
+	"env_run_lists": { }
+}

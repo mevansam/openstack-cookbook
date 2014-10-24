@@ -1,0 +1,4 @@
+{
+	"id": "rbd",
+	"rbd": "$SERVICE_PASSWORD"
+}

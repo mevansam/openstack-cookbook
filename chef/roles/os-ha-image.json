@@ -1,0 +1,37 @@
+{
+    "name": "os-ha-image",
+    "description": "Highly available Glance role",
+    "json_class": "Chef::Role",
+    "default_attributes": { },
+    "override_attributes": { 
+        "env": {
+            "data_disk": "/dev/xvdb",
+            "data_path": "/var/lib/glance/images"
+        },
+    	"openstack": {
+        	"endpoints": {
+	            "image-registry-bind": {
+	                "host": "127.0.0.1"
+	            },
+	            "image-registry": {
+	                "host": "127.0.0.1"
+	            }
+	        },
+	        "image": {
+	        	"upload_images": [ ],
+                "supported_formats": {
+                    "container": "ami,ari,aki,bare,ovf,tgz",
+                    "disk": "ami,ari,aki,vhd,raw,iso"
+                }
+	        }
+        }
+    },
+    "chef_type": "role",
+    "run_list": [
+        "recipe[sysutils::default]",
+        "recipe[network::default]",
+        "recipe[openstack-services::ha-os-common]",
+        "role[os-image]"
+    ],
+    "env_run_lists": { }
+}

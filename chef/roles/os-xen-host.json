@@ -1,0 +1,27 @@
+{
+	"name": "os-xen-host",
+	"description": "Openstack xen host hypervisor role",
+	"json_class": "Chef::Role",
+	"default_attributes": { },
+	"override_attributes": { 
+		"env": {
+			"users": [ 
+	        	[ "root", "/root", null, false ]
+	        ]
+	    },
+	    "openstack": {
+	    	"xen": {
+	    		"cluster_role": "os-xen-host",
+	    		"storage": {
+	    			"shared_iso_name": "Shared ISOs/Templates"
+	    		}
+	    	}
+	    }
+	},
+	"chef_type": "role",
+	"run_list": [
+		"recipe[sysutils::default]",
+		"recipe[openstack-services::xen-host]"
+	],
+	"env_run_lists": { }
+}
