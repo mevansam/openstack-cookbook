@@ -40,3 +40,6 @@
 [submodule "chef/cookbooks/openstack-dashboard"]
 	path = chef/cookbooks/openstack-dashboard
 	url = https://github.com/mevansam/chef-cookbook-openstack-dashboard
+[submodule "chef/cookbooks/openstack-services"]
+	path = chef/cookbooks/openstack-services
+	url = https://github.com/mevansam/chef-cookbook-openstack-services.git

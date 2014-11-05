@@ -8,6 +8,17 @@ TODO: ...
 
 ## Usage
 
+http://rvm.io/
+rvm list known
+rvm install ruby-2.1.3
+rvm use ruby-2.1.3
+
+sudo gem install chef
+sudo gem install knife-xenserver
+sudo gem install knife-kvm
+sudo gem install rbvmomi
+sudo gem install knife-esx
+
 TODO: ...
 
 ## Design
@@ -40,4 +51,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Author:: Mevan Samaratunga (mevansam@gmail.com)
+Author: Mevan Samaratunga (mevansam@gmail.com)
