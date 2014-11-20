@@ -125,6 +125,13 @@ override_attributes(
                 }
             }
         },
+        "image": {
+            "upload_images": [ ],
+            "supported_formats": {
+                "container": "ami,ari,aki,bare,ovf,tgz",
+                "disk": "ami,ari,aki,vhd,raw,iso"
+            }
+        },
         "block-storage" => {
             "xenapi" => {
                 "connection_url" => "$XENAPI_CONNECTION_URL",
