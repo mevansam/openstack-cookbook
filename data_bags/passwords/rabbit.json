@@ -1,0 +1,6 @@
+{
+	"id": "rabbit",
+	"erlang_cookie" : "#{env['messaging']['cookie']}",
+    "default_user" : "#{env['messaging']['user']}",
+    "default_password" : "#{env['messaging']['password']}"
+}

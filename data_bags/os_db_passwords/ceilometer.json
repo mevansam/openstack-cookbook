@@ -1,0 +1,4 @@
+{
+	"id": "ceilometer",
+	"ceilometer": "#{env['openstack']['passwords']['database_password']}"
+}

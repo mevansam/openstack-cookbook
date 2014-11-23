@@ -1,4 +1,0 @@
-{
-	"id": "glance",
-	"glance": "$MYSQL_PASSWORD"
-}

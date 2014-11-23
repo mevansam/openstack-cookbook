@@ -1,0 +1,33 @@
+---
+name: kvm_vbox
+
+vagrant_creds: &vagrant_creds
+  identity_file: ~/.vagrant/insecure_key
+  ssh_user: vagrant
+  sudo: true
+
+stack:
+
+- node: compute-services
+  knife:
+    options: *vagrant_creds
+    create: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][create_1nic_medium]
+    delete: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][delete]
+
+- node: compute-host
+  depends_on:
+  - compute-services
+  knife:
+    options: *vagrant_creds
+    create: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][create_2nic_large]
+    delete: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][delete]
+
+- node: openstack-proxy
+  depends_on:
+  - compute-services
+  knife:
+    options: *vagrant_creds
+    create: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][create_1nic_small]
+    delete: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][delete]
+  run_list:
+  - role[os-ha-proxy]

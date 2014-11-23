@@ -1,0 +1,7 @@
+{
+	"id": "root",
+	"cert_data": "#{env['root']['private_key']}",
+	"authorized_keys": [ 
+		"#{env['root']['public_key']}"
+	]
+}

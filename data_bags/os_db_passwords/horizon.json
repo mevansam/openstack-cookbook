@@ -1,0 +1,4 @@
+{
+	"id": "horizon",
+	"horizon": "#{env['openstack']['passwords']['database_password']}"
+}

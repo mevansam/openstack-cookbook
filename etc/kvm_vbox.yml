@@ -1,0 +1,103 @@
+---
+
+domain: mevansam.org
+
+# A root keys
+root:
+  password: ej343fa8f4038e4f
+  private_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEogIBAAKCAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzI
+    w+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoP
+    kcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2
+    hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NO
+    Td0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcW
+    yLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQIBIwKCAQEA4iqWPJXtzZA68mKd
+    ELs4jJsdyky+ewdZeNds5tjcnHU5zUYE25K+ffJED9qUWICcLZDc81TGWjHyAqD1
+    Bw7XpgUwFgeUJwUlzQurAv+/ySnxiwuaGJfhFM1CaQHzfXphgVml+fZUvnJUTvzf
+    TK2Lg6EdbUE9TarUlBf/xPfuEhMSlIE5keb/Zz3/LUlRg8yDqz5w+QWVJ4utnKnK
+    iqwZN0mwpwU7YSyJhlT4YV1F3n4YjLswM5wJs2oqm0jssQu/BT0tyEXNDYBLEF4A
+    sClaWuSJ2kjq7KhrrYXzagqhnSei9ODYFShJu8UWVec3Ihb5ZXlzO6vdNQ1J9Xsf
+    4m+2ywKBgQD6qFxx/Rv9CNN96l/4rb14HKirC2o/orApiHmHDsURs5rUKDx0f9iP
+    cXN7S1uePXuJRK/5hsubaOCx3Owd2u9gD6Oq0CsMkE4CUSiJcYrMANtx54cGH7Rk
+    EjFZxK8xAv1ldELEyxrFqkbE4BKd8QOt414qjvTGyAK+OLD3M2QdCQKBgQDtx8pN
+    CAxR7yhHbIWT1AH66+XWN8bXq7l3RO/ukeaci98JfkbkxURZhtxV/HHuvUhnPLdX
+    3TwygPBYZFNo4pzVEhzWoTtnEtrFueKxyc3+LjZpuo+mBlQ6ORtfgkr9gBVphXZG
+    YEzkCD3lVdl8L4cw9BVpKrJCs1c5taGjDgdInQKBgHm/fVvv96bJxc9x1tffXAcj
+    3OVdUN0UgXNCSaf/3A/phbeBQe9xS+3mpc4r6qvx+iy69mNBeNZ0xOitIjpjBo2+
+    dBEjSBwLk5q5tJqHmy/jKMJL4n9ROlx93XS+njxgibTvU6Fp9w+NOFD/HvxB3Tcz
+    6+jJF85D5BNAG3DBMKBjAoGBAOAxZvgsKN+JuENXsST7F89Tck2iTcQIT8g5rwWC
+    P9Vt74yboe2kDT531w8+egz7nAmRBKNM751U/95P9t88EDacDI/Z2OwnuFQHCPDF
+    llYOUI+SpLJ6/vURRbHSnnn8a/XG+nzedGH5JGqEJNQsz+xT2axM0/W/CRknmGaJ
+    kda/AoGANWrLCz708y7VYgAtW2Uf1DPOIYMdvo6fxIB5i9ZfISgcJ/bbCUkFrhoH
+    +vq/5CIWxCPp0f85R4qxxQ5ihxJ0YDQT9Jpx4TMss4PSavPaBH3RXow5Ohe+bYoQ
+    NE5OgEXk2wVfZczCZpigBKbKZHNYcelXtTt/nP3rsCuGcM4h53s=
+    -----END RSA PRIVATE KEY-----
+  public_key: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ==
+
+database:
+  backup_password: 0p3n5tack
+  replication_password: 0p3n5tack
+  port: 3306
+
+messaging:
+  user: openstack
+  password: 0p3n5tack
+  cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
+  ampq_port: 5671
+  ampq_mgmt_port: 15671
+  services_path: os_services
+  compute_path: os_compute_kvm
+
+clusters:
+  openstack_proxy:
+    mcast_address: 239.255.42.1
+    mcast_port: 5405
+  openstack_network:
+    mcast_address: 239.255.42.2
+    mcast_port: 5405
+
+openstack:
+  region: kvm_vbox
+
+  passwords:
+    admin_password: 0p3n5tack
+    service_password: 0p3n5tack
+    service_token: 0c4a1365e0bbb7e2e02543a2b932cfed
+    metadata_token: ad1fb85ef72a61e91c23418b4bf908ce
+    # Password to use for openstack database users
+    database_password: 0p3n5tack
+
+  # OpenStack endpoints
+  endpoints:
+    proxy: 192.168.60.2
+
+    # If the following are not provided then
+    # all end-points default to the proxy
+#    database_server: 192.168.60.2
+#    messaging_server: 192.168.60.2
+#    identity_service: 192.168.60.2
+#    image_api_server: 192.168.60.2
+#    block_storage_api_server: 192.168.60.2
+#    compute_api_server: 192.168.60.2
+#    network_api_server: 192.168.60.2
+#    metadata_server: 192.168.60.2
+
+  # OpenStack Neutron settings
+  network:
+    ml2:
+      type_drivers: vlan,vxlan
+      tunnel_types: vxlan
+      mechanism_drivers: openvswitch
+    ovs:
+      physical_network_tag: physnet
+      vlan_ranges: 1:4094
+      # Applied only if using VXLAN tunnels
+      vni_ranges: 1:10000
+      vxlan_group: 239.1.1.1
+      # Applied only if using GRE tunnels
+      tunnel_id_ranges: 1:10000
+      # OVS specific configuration
+      external_bridge: br-eth1
+      external_interface: eth1
+

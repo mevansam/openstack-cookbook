@@ -1,0 +1,4 @@
+{
+	"id": "openstack-orchestration",
+	"openstack-orchestration": "#{env['openstack']['passwords']['service_password']}"
+}

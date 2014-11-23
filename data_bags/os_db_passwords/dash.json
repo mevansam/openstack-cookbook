@@ -1,0 +1,4 @@
+{
+	"id": "dash",
+	"dash": "#{env['openstack']['passwords']['database_password']}"
+}

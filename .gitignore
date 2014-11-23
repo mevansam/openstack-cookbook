@@ -4,6 +4,8 @@
 .chef
 .localca
 .certs
+.project
+.idea/
 ./
 tmp/
 target

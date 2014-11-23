@@ -1,0 +1,4 @@
+{
+	"id": "nova",
+	"nova": "#{env['openstack']['passwords']['database_password']}"
+}

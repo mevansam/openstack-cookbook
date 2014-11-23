@@ -1,0 +1,4 @@
+{
+	"id": "openstack-compute",
+	"openstack-compute": "#{env['openstack']['passwords']['service_password']}"
+}

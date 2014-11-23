@@ -1,4 +1,0 @@
-{
-	"id": "ceilometer",
-	"ceilometer": "$MYSQL_PASSWORD"
-}

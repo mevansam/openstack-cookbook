@@ -1,4 +1,0 @@
-{
-	"id": "system",
-    "debian-sys-maint" : "$MYSQL_PASSWORD"
-}

@@ -1,6 +1,0 @@
-{
-	"id": "mysql",
-	"root" : "$ADMIN_PASSWORD",
-	"backup" : "$MYSQL_PASSWORD",
-	"replication" : "$MYSQL_PASSWORD"
-}

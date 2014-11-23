@@ -1,0 +1,6 @@
+{
+	"id": "mysql",
+	"root" : "#{env['root']['password']}",
+	"backup" : "#{env['database']['password']}",
+	"replication" : "#{env['database']['password']}"
+}

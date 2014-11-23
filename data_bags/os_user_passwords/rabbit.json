@@ -1,0 +1,4 @@
+{
+	"id": "#{env['messaging']['user']}",
+	"#{env['messaging']['user']}": "#{env['messaging']['password']}"
+}
