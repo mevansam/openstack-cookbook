@@ -1,14 +1,18 @@
 source "https://supermarket.getchef.com"
 
-cookbook 'ohai',            '2.0.1'
-cookbook 'apt',             '2.4.0'
-cookbook 'yum',             '3.2.2'
-cookbook 'sudo',            '2.6.0'
-cookbook 'yum-epel',        '0.4.0'
-cookbook 'build-essential', '1.4.2'
-cookbook 'selinux',         '0.8.0'
-cookbook 'xfs',             '1.1.0'
-cookbook 'keepalived',      '~> 1.2.0'
+cookbook 'ohai',             '2.0.1'
+cookbook 'ntp',              '1.6.5'
+cookbook 'apt',              '2.4.0'
+cookbook 'yum',              '3.2.2'
+cookbook 'sudo',             '2.6.0'
+cookbook 'yum-epel',         '0.4.0'
+cookbook 'build-essential',  '1.4.2'
+cookbook 'selinux',          '0.8.0'
+cookbook 'xfs',              '1.1.0'
+cookbook 'hostsfile',        '~> 2.4.5'
+cookbook 'keepalived',       '~> 1.2.0'
+cookbook 'haproxy',          '~> 1.6.6'
+cookbook 'gem_installation', '~> 2.0.1'
 
 cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
 cookbook 'rabbitmq', git: 'https://github.com/kennonkwok/rabbitmq.git'
@@ -53,11 +57,13 @@ cookbook 'openstack-dashboard',
     branch: 'stable/icehouse'
 
 cookbook 'sysutils',
-    git: 'https://github.com/mevansam/chef-cookbook-sysutils.git'
+    path: '../chef/sysutils'
+#    git: 'https://github.com/mevansam/chef-cookbook-sysutils.git'
 cookbook 'compute',
     git: 'https://github.com/mevansam/chef-cookbook-compute.git'
 cookbook 'network',
-    git: 'https://github.com/mevansam/chef-cookbook-network.git'
+    path: '../chef/network'
+#    git: 'https://github.com/mevansam/chef-cookbook-network.git'
 cookbook 'storage',
     git: 'https://github.com/mevansam/chef-cookbook-storage.git'
 cookbook 'openstack-services',

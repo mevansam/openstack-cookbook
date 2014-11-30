@@ -1,10 +1,10 @@
 {
-    "name": "os-ha-identity",
-    "description": "Highly available Keystone role",
+    "name": "os-ha-block-storage-kvm-lvm",
+    "description": "Highly available Cinder role for KVM using LVM",
     "json_class": "Chef::Role",
     "default_attributes": { 
     },
-    "override_attributes": { 
+    "override_attributes": {
     },
     "chef_type": "role",
     "run_list": [
@@ -12,7 +12,7 @@
         "recipe[sysutils::default]",
         "recipe[network::default]",
         "recipe[openstack-services::ha-os-common]",
-        "role[os-identity]"
+        "role[os-block-storage]"
     ],
     "env_run_lists": { }
 }

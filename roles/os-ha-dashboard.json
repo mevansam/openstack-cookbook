@@ -1,27 +1,29 @@
 {
-	"name": "os-ha-dashboard",
-	"description": "Highly available Horizon dashboard role",
-	"json_class": "Chef::Role",
-	"default_attributes": { },
-	"override_attributes": { 
-		"env": {
-			"users": [ 
-	        	[ "www-data", "/var/lib/www", null, false ]
-	        ]
-	    },
-	    "openstack": {
-	    	"dashboard": {
-	    		"use_ssl": true
-	    	}
-	    }
+    "name": "os-ha-dashboard",
+    "description": "Highly available Horizon dashboard role",
+    "json_class": "Chef::Role",
+    "default_attributes": { 
+        "env": {
+            "users": [ 
+                [ "www-data", "/var/lib/www", null, false ]
+            ]
+        },
+        "openstack": {
+            "dashboard": {
+                "use_ssl": true
+            }
+        }
     },
-	"chef_type": "role",
-	"run_list": [
-		"recipe[sysutils::default]",
-		"recipe[network::default]",
-		"recipe[openstack-services::ha-os-common]",
+    "override_attributes": { 
+    },
+    "chef_type": "role",
+    "run_list": [
+        "recipe[ntp::default]",
+        "recipe[sysutils::default]",
+        "recipe[network::default]",
+        "recipe[openstack-services::ha-os-common]",
         "recipe[openstack-services::dashboard-certs]",
         "role[os-dashboard]"
-	],
-	"env_run_lists": { }
+    ],
+    "env_run_lists": { }
 }

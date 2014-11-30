@@ -1,6 +1,6 @@
 ---
 
-domain: mevansam.org
+domain: pcf-services.com
 
 # A root keys
 root:
@@ -35,6 +35,13 @@ root:
     -----END RSA PRIVATE KEY-----
   public_key: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ==
 
+ntp:
+  servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+  - 2.pool.ntp.org
+  - 3.pool.ntp.org
+
 database:
   backup_password: 0p3n5tack
   replication_password: 0p3n5tack
@@ -49,14 +56,6 @@ messaging:
   services_path: os_services
   compute_path: os_compute_kvm
 
-clusters:
-  openstack_proxy:
-    mcast_address: 239.255.42.1
-    mcast_port: 5405
-  openstack_network:
-    mcast_address: 239.255.42.2
-    mcast_port: 5405
-
 openstack:
   region: kvm_vbox
 
@@ -70,18 +69,18 @@ openstack:
 
   # OpenStack endpoints
   endpoints:
-    proxy: 192.168.60.2
+    proxy: os-msam.pcf-services.com
 
     # If the following are not provided then
     # all end-points default to the proxy
-#    database_server: 192.168.60.2
-#    messaging_server: 192.168.60.2
-#    identity_service: 192.168.60.2
-#    image_api_server: 192.168.60.2
-#    block_storage_api_server: 192.168.60.2
-#    compute_api_server: 192.168.60.2
-#    network_api_server: 192.168.60.2
-#    metadata_server: 192.168.60.2
+    database_server: 192.168.60.129
+    messaging_server: 192.168.60.129
+    identity_service: 192.168.60.129
+    image_api_server: 192.168.60.129
+    block_storage_api_server: 192.168.60.129
+    compute_api_server: 192.168.60.129
+    network_api_server: 192.168.60.129
+    metadata_server: 192.168.60.129
 
   # OpenStack Neutron settings
   network:
@@ -98,6 +97,5 @@ openstack:
       # Applied only if using GRE tunnels
       tunnel_id_ranges: 1:10000
       # OVS specific configuration
-      external_bridge: br-eth1
-      external_interface: eth1
-
+      external_bridge: br-eth2
+      external_interface: eth2

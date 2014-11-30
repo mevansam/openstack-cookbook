@@ -1,0 +1,42 @@
+{
+    "name": "os-ha-network-kvm",
+    "description": "Highly available Neutron network node role to orchestrate OVS",
+    "json_class": "Chef::Role",
+    "default_attributes": {
+        "env": {
+            "users": [
+                [ "root", "/root", null, false ],
+                [ "neutron", "/var/lib/neutron", null, true ]
+            ]
+        },
+        "openstack": {
+            "network": {
+                "debug": "False",
+                "verbose": "False",
+                "service_plugins": [
+                    "neutron.services.l3_router.l3_router_plugin.L3RouterPlugin"
+                ],
+                "l3": {
+                    "clustered": true,
+                    "cluster_role": "os-ha-compute-xen",
+                    "external_network_bridge": ""
+                },
+                "dhcp": {
+                    "log-facility": "/var/log/neutron/dnsmasq.log",
+                    "upstream_dns_servers": [ ]
+                }
+            }
+        }
+    },
+    "override_attributes": {
+    },
+    "chef_type": "role",
+    "run_list": [
+        "recipe[ntp::default]",
+        "recipe[sysutils::default]",
+        "recipe[network::default]",
+        "recipe[openstack-services::ha-os-common]",
+        "recipe[openstack-services::ha-os-network-agents]"
+    ],
+    "env_run_lists": { }
+}

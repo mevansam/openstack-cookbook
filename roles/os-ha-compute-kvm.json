@@ -1,0 +1,42 @@
+{
+    "name": "os-ha-compute-kvm",
+    "description": "Highly available Compute role to orchestrate a KVM hypervisor",
+    "json_class": "Chef::Role",
+    "default_attributes": { 
+        "env": {
+            "users": [
+                [ "root", "/root", null, false ],
+                [ "nova", "/var/lib/neutron", null, true ],
+                [ "neutron", "/var/lib/neutron", null, true ]
+            ]
+        },
+        "openstack": {
+            "compute": {
+                "debug": "False",
+                "verbose": "False",
+                "config": {
+                    "flat_injected": "False"
+                },
+                "network": {
+                    "service_type": "neutron",
+                    "neutron": {
+                        "firewall_driver": "nova.virt.firewall.NoopFirewallDriver",
+                        "public_network_name": "",
+                        "dns_server": ""
+                    }
+                }
+            }
+        }
+    },
+    "override_attributes": {
+    },
+    "chef_type": "role",
+    "run_list": [
+        "recipe[ntp::default]",
+        "recipe[sysutils::default]",
+        "recipe[network::default]",
+        "recipe[openstack-services::ha-os-common]",
+        "role[os-compute-worker]"
+    ],
+    "env_run_lists": { }
+}

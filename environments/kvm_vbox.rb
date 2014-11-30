@@ -7,7 +7,6 @@ env = YAML.load_file(File.expand_path('../../etc/kvm_vbox.yml', __FILE__))
 
 # Extract only the 2nd level domain name of the openstack_proxy value
 openstack_proxy = env['openstack']['endpoints']['proxy']
-openstack_proxy_name = openstack_proxy[/([-_0-9a-zA-Z]+)\./, 1]
 
 # Determine IP of metadata server
 metadata_ip = env['openstack']['endpoints']['metadata_server'] || openstack_proxy
@@ -19,6 +18,9 @@ openstack_network = env['openstack']['network']
 ## Build the Chef environment
 
 override_attributes(
+    'ntp' => {
+        'servers' => env['ntp']['servers']
+    },
     'env' => {
         'http_proxy' => env['http_proxy'],
         'https_proxy' => env['https_proxy'],
@@ -30,7 +32,6 @@ override_attributes(
         # Disables Ubuntu firewall on all Ubunty hosts
         'firewall' => false
     },
-    'clusters' => env['clusters'],
     'percona' => {
         'server' => {
             'port' => env['database']['port'],
@@ -40,12 +41,12 @@ override_attributes(
         },
         'mysql' => {
             # Certificate data bag item containing mysql certs
-            'certificate_databag_item' => openstack_proxy_name
+            'certificate_databag_item' => openstack_proxy
         },
     },
     'rabbitmq' => {
         # Certificate data bag item containing rabbitmq certs
-        'certificate_databag_item' => openstack_proxy_name,
+        'certificate_databag_item' => openstack_proxy,
         'ssl_port' => env['messaging']['ampq_port'],
         'web_console_ssl_port' => env['messaging']['ampq_mgmt_port'],
         'virtualhosts' => [
@@ -172,7 +173,7 @@ override_attributes(
             }
         },
         'dashboard' => {
-            'certificate_databag_item' => openstack_proxy_name
+            'certificate_databag_item' => openstack_proxy
         }
     }
 )

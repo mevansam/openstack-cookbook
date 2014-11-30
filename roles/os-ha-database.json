@@ -2,11 +2,8 @@
     "name": "os-ha-database",
     "description": "Highly available database server role for all OpenStack services",
     "json_class": "Chef::Role",
-    "default_attributes": { },
-    "override_attributes": { 
+    "default_attributes": { 
         "env": {
-            "data_disk": "/dev/xvdb",
-            "data_path": "/apps/data",
             "packages": {
                 "debian": [ "percona-xtradb-cluster-galera-2.x" ]
             }
@@ -15,13 +12,11 @@
             "cluster_role": "os-ha-database",
             "main_config_file": "/etc/mysql/my.cnf",
             "server": {
-                "bind_to": "eth0",
+                "bind_address": "0.0.0.0",
                 "key_buffer": "2048M",
                 "max_allowed_packet": "2048M",
                 "thread_stack": "256K",
                 "thread_cache_size": "512",
-                "sort_buffer_size": "8M",
-                "join_buffer_size": "1M",
                 "query_cache_size": "128M",
                 "query_cache_limit": "2048M",
                 "innodb_buffer_pool_size": "2048M"
@@ -44,9 +39,12 @@
             }
         }
     },
+    "override_attributes": {
+    },
     "chef_type": "role",
-	"run_list" : [ 
-		"recipe[sysutils::default]",
+    "run_list" : [
+        "recipe[ntp::default]",
+        "recipe[sysutils::default]",
         "recipe[network::default]",
         "recipe[openstack-services::ha-database]"
     ]

@@ -1,23 +1,10 @@
 {
-    "name": "os-ha-compute-xen",
-    "description": "Highly available Compute role to orchestrate a XEN hypervisor",
+    "name": "os-ha-controller-kvm",
+    "description": "Highly available Compute Controller role for KVM",
     "json_class": "Chef::Role",
     "default_attributes": { 
         "env": {
-            "network_interfaces": [
-                {
-                    "device": "eth1"
-                },
-                {
-                    "device": "eth2"
-                }
-            ],
-            "packages": {
-                "debian": [ "python-pip" ],
-                "pip": [ "xenapi" ]
-            },
-            "users": [ 
-                [ "root", "/root", null, false ],
+            "users": [
                 [ "nova", "/var/lib/neutron", null, true ],
                 [ "neutron", "/var/lib/neutron", null, true ]
             ]
@@ -26,36 +13,26 @@
             "compute": {
                 "debug": "False",
                 "verbose": "False",
-                "driver": "xenapi.XenAPIDriver",
                 "config": {
                     "flat_injected": "False"
-                },
-                "libvirt": {
-                    "configure": false,
-                    "virt_type": "xen"
                 },
                 "network": {
                     "service_type": "neutron",
                     "neutron": {
-                        "xxxfirewall_driver": "nova.virt.xenapi.firewall.Dom0IptablesFirewallDriver",
-                        "firewall_driver": "",
+                        "firewall_driver": "nova.virt.firewall.NoopFirewallDriver",
                         "public_network_name": "",
                         "dns_server": ""
                     }
-                },
-                "xenapi": {
-                    "vif_driver": "nova.virt.xenapi.vif.XenAPIOpenVswitchDriver"
                 }
             },
             "network": {
                 "debug": "False",
                 "verbose": "False",
-                "service_plugins": [ 
+                "service_plugins": [
                     "neutron.services.l3_router.l3_router_plugin.L3RouterPlugin"
                 ],
                 "l3": {
                     "clustered": true,
-                    "cluster_role": "os-ha-compute-xen",
                     "external_network_bridge": ""
                 },
                 "dhcp": {
@@ -65,15 +42,23 @@
             }
         }
     },
-    "override_attributes": { 
+    "override_attributes": {
     },
     "chef_type": "role",
     "run_list": [
+        "recipe[ntp::default]",
         "recipe[sysutils::default]",
         "recipe[network::default]",
         "recipe[openstack-services::ha-os-common]",
-        "role[os-compute-worker]",
-        "recipe[openstack-services::ha-os-network-agents]"
+        "role[os-compute-api]",
+        "role[os-compute-cert]",
+        "role[os-compute-scheduler]",
+        "role[os-compute-conductor]",
+        "role[os-compute-vncproxy]",
+        "role[os-network-server]",
+        "recipe[openstack-network::server]",
+        "recipe[openstack-network::identity_registration]",
+        "recipe[openstack-services::ha-os-controller]"
     ],
     "env_run_lists": { }
 }

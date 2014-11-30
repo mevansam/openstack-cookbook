@@ -2,8 +2,7 @@
     "name": "os-ha-messaging",
     "description": "Highly available messaging server role",
     "json_class": "Chef::Role",
-    "default_attributes": { },
-    "override_attributes": { 
+    "default_attributes": { 
         "rabbitmq": {
             "cluster_role": "os-ha-messaging",
             "version": "3.3.5",
@@ -14,10 +13,13 @@
             "enabled_users": [ ]
         }
     },
+    "override_attributes": { 
+    },
     "chef_type": "role",
-	"run_list" : [ 
-		"recipe[sysutils::default]",
+    "run_list" : [
+        "recipe[ntp::default]",
+        "recipe[sysutils::default]",
         "recipe[network::default]",
         "recipe[openstack-services::ha-messaging]"
-	]
+    ]
 }

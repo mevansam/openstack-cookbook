@@ -3,11 +3,14 @@ DEPENDENCIES
   build-essential (= 1.4.2)
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
-    revision: 71815cfdf35821ba9c1fb050d20c468376abee34
+    revision: 4d794e43b528cb125359cabcbe67beaadf59514e
+  gem_installation (~> 2.0.1)
+  haproxy (~> 1.6.6)
+  hostsfile (~> 2.4.5)
   keepalived (~> 1.2.0)
   network
-    git: https://github.com/mevansam/chef-cookbook-network.git
-    revision: eea55d91e1b53dd493484e2cda2a262a3cb2bb50
+    path: ../chef/network
+  ntp (= 1.6.5)
   ohai (= 2.0.1)
   openstack-block-storage
     git: https://github.com/mevansam/chef-cookbook-openstack-block-storage
@@ -64,18 +67,17 @@ DEPENDENCIES
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
     git: https://github.com/kennonkwok/rabbitmq.git
-    revision: 602f886eaf3def3d81a40dcb1a1d11be06ffeb03
+    revision: ccf42a387368f1e34e825854c6b2b445f16a2b60
   selinux (= 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
     revision: d3298ae4ec4a6d8cc2ca166f0688a92753ced338
   storage
     git: https://github.com/mevansam/chef-cookbook-storage.git
-    revision: 61634d3aeba8a100a0f3dd99cc8019d02ad9f59c
+    revision: 7057c632683bcc6a86b7a6a99f8d4c8fd04a807a
   sudo (= 2.6.0)
   sysutils
-    git: https://github.com/mevansam/chef-cookbook-sysutils.git
-    revision: 1d02dc46e09cc55592ff0265a21b7d064a7ab89a
+    path: ../chef/sysutils
   xfs (= 1.1.0)
   yum (= 3.2.2)
   yum-epel (= 0.4.0)
@@ -93,6 +95,7 @@ GRAPH
   compute (0.1.0)
     network (= 0.1.0)
     sysutils (= 1.0.0)
+  cpu (0.2.0)
   database (2.3.0)
     aws (>= 0.0.0)
     mysql (>= 5.0.0)
@@ -106,6 +109,9 @@ GRAPH
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
     yum-erlang_solutions (>= 0.0.0)
+  gem_installation (2.0.1)
+    apt (>= 0.0.0)
+    build-essential (>= 0.0.0)
   git (4.0.2)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
@@ -113,6 +119,10 @@ GRAPH
     windows (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
+  haproxy (1.6.6)
+    build-essential (>= 0.0.0)
+    cpu (>= 0.2.0)
+  hostsfile (2.4.5)
   iptables (0.14.0)
   keepalived (1.2.0)
   logrotate (1.7.0)
@@ -127,9 +137,12 @@ GRAPH
     build-essential (>= 0.0.0)
     mysql (>= 0.0.0)
   network (0.1.0)
+    gem_installation (~> 2.0.1)
+    hostsfile (~> 2.4.5)
     sysutils (>= 0.0.0)
   network_interfaces (1.0.0)
     modules (>= 0.1.2)
+  ntp (1.6.5)
   ohai (2.0.1)
   openssl (2.0.0)
     chef-sugar (>= 0.0.0)
@@ -205,7 +218,7 @@ GRAPH
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.3.0)
+  rabbitmq (3.4.0)
     erlang (>= 0.9.0)
   runit (1.5.10)
     build-essential (>= 0.0.0)
@@ -220,6 +233,7 @@ GRAPH
   sudo (2.6.0)
   sysutils (1.0.0)
     apt (= 2.4.0)
+    hostsfile (~> 2.4.5)
     modules (>= 0.1.2)
     network_interfaces (= 1.0.0)
     sudo (= 2.6.0)
