@@ -2,9 +2,107 @@
     "name": "os-ha-proxy",
     "description": "Highly available load balancing proxy role",
     "chef_type": "role",
-    "default_attributes": { 
+    "default_attributes": {
+        "haproxy": {
+            "install_method": "source",
+            "source": {
+                "version": "1.5.9",
+                "url": "http://www.haproxy.org/download/1.5/src/haproxy-1.5.9.tar.gz",
+                "checksum": "5f51aa8e20a8a3a11be16bd5f5ef382a5e95526803a89182fe1c15a428564722",
+                "use_pcre": true,
+                "use_openssl": true,
+                "use_zlib": true
+            },
+            "enable_default_http": false,
+            "enable_stats_socket": true,
+            "log": [
+                {
+                    "address": "127.0.0.1",
+                    "length": 1024,
+                    "facility": "local0",
+                    "level": "info"
+                }
+            ],
+            "global_parameters": {
+                "pidfile": "/var/run/haproxy.pid",
+                "chroot": "/var/lib/haproxy",
+                "ssl-server-verify": "none",
+                "ulimit-n": "65536",
+                "maxconn": "10240",
+                "tune.bufsize": "32768",
+                "tune.ssl.default-dh-param": 2048
+            },
+            "default_parameters": {
+                "mode": "http",
+                "balance": "roundrobin",
+                "retries": 3
+            },
+            "default_options": [
+                "httplog",
+                "dontlognull",
+                "redispatch"
+            ],
+            "defaults_timeouts": {
+                "connect": "5s",
+                "client": "120s",
+                "server": "120s"
+            },
+            "admin": {
+                "address_bind": "0.0.0.0",
+                "port": 22002
+            },
+            "profiles": {
+                "mysql": {
+                    "mode": "tcp",
+                    "balance": "roundrobin",
+                    "params": [
+                        "option tcplog",
+                        "option tcpka",
+                        "option mysql-check user haproxy"
+                    ],
+                    "bind_options": [
+                        "accept-proxy"
+                    ],
+                    "member_options": {
+                        "0": "check weight 1",
+                        "*": "backup check weight 1"
+                    }
+                },
+                "ssl": {
+                    "mode": "tcp",
+                    "balance": "roundrobin",
+                    "params": [
+                        "option tcplog",
+                        "option tcpka",
+                        "option tcp-check",
+                        "stick-table type ip size 200k expire 30m",
+                        "stick on src"
+                    ],
+                    "bind_options": [
+                        "accept-proxy"
+                    ],
+                    "member_options": {
+                        "*": "check check-ssl inter 5s rise 2 fall 3"
+                    }
+                },
+                "http": {
+                    "mode": "http",
+                    "balance": "roundrobin",
+                    "params": [
+                        "option forwardfor",
+                        "option httpchk"
+                    ],
+                    "member_options": {
+                        "*": "check inter 5s"
+                    }
+                }
+            }
+        }
     },
-    "override_attributes": { 
+    "override_attributes": {
+        "haproxy": {
+            "conf_dir": "/etc/haproxy"
+        }
     },
     "json_class": "Chef::Role",
     "run_list" : [

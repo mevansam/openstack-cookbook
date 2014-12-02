@@ -69,18 +69,12 @@ openstack:
 
   # OpenStack endpoints
   endpoints:
-    proxy: os-msam.pcf-services.com
 
-    # If the following are not provided then
-    # all end-points default to the proxy
-    database_server: 192.168.60.129
-    messaging_server: 192.168.60.129
-    identity_service: 192.168.60.129
-    image_api_server: 192.168.60.129
-    block_storage_api_server: 192.168.60.129
-    compute_api_server: 192.168.60.129
-    network_api_server: 192.168.60.129
-    metadata_server: 192.168.60.129
+    openstack_haproxy_name: os-msam.pcf-services.com
+
+    # This needs to be an IP. If using a proxy
+    # loadbalancer then this will be its IP
+    nova_metadata_ip: 192.168.60.129
 
   # OpenStack Neutron settings
   network:
@@ -99,3 +93,84 @@ openstack:
       # OVS specific configuration
       external_bridge: br-eth2
       external_interface: eth2
+
+# Load balancing proxy
+proxy:
+
+  vip_address: 192.168.60.129
+  vip_cidr_netmask: 24
+  vip_nic: eth2
+
+  # Initially all backend pools will
+  # point to this IP. This creates
+  # a default path for any services
+  # that require another service
+  # that will eventually be served
+  # from HAProxy.
+  #
+  # IPs of all service VMs will
+  # start from this address.
+  #backend_default_ip: 192.168.60.100
+  backend_default_ip: 98.139.180.14
+
+  # Each pool name should matche a corresponding OpenStack
+  # endpoint service as defined in the openstack-common. The
+  # os-ha-proxy cookbook looks up the corresponding service
+  # ports from the openstack configuration unless it is
+  # explicitly specified as for the horizon pools.
+  server_pools:
+    db:
+      profile: mysql
+      cluster_role: os-ha-database
+    mq:
+      profile: ssl
+      cluster_role: os-ha-messaging
+    mq_admin:
+      port: 15671
+      profile: ssl
+      cluster_role: os-ha-messaging
+    identity-api:
+      profile: http
+      bind_ssl: default
+      cluster_role: os-ha-identity
+    identity-admin:
+      profile: http
+      bind_ssl: default
+      cluster_role: os-ha-identity
+    image-api:
+      profile: http
+      bind_ssl: default
+      cluster_role: os-ha-image
+    block-storage-api:
+      profile: http
+      bind_ssl: default
+      cluster_role: os-ha-block-storage
+    compute-api:
+      profile: http
+      bind_ssl: default
+      cluster_role: os-ha-controller
+    compute-ec2-api:
+      profile: http
+      bind_ssl: default
+      cluster_role: os-ha-controller
+    compute-novnc:
+      profile: http
+      cluster_role: os-ha-controller
+    metadata:
+      profile: http
+      port: 8775
+      cluster_role: os-ha-controller
+    horizon_web:
+      port: 80
+      profile: http
+      cluster_role: os-ha-dashboard
+    horizon_web_ssl:
+      port: 443
+      profile: ssl
+      cluster_role: os-ha-dashboard
+
+vagrant:
+  # x.x.x.x/25 subnets to attach
+  # to service and compute VMs
+  management_network: 192.168.60.0
+  data_network: 192.168.61.0

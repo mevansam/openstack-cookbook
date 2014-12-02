@@ -5,14 +5,7 @@ env = YAML.load_file(File.expand_path('../../etc/kvm_vbox.yml', __FILE__))
 
 ## Pre-process environment variables
 
-# Extract only the 2nd level domain name of the openstack_proxy value
-openstack_proxy = env['openstack']['endpoints']['proxy']
-
-# Determine IP of metadata server
-metadata_ip = env['openstack']['endpoints']['metadata_server'] || openstack_proxy
-metadata_ip = `ping -c 1 #{env['openstack']['endpoints']['metadata_server']}`[/64 bytes from (\d+\.\d+\.\d+\.\d+)/, 1] \
-    if !(metadata_ip=~/\d+\.\d+\.\d+\.\d+/)
-
+openstack_proxy = env['openstack']['endpoints']['openstack_haproxy_name']
 openstack_network = env['openstack']['network']
 
 ## Build the Chef environment
@@ -26,11 +19,18 @@ override_attributes(
         'https_proxy' => env['https_proxy'],
         'domain' => env['domain'],
 
-        # HA Proxy load balancer for all OpenStack services
-        'openstack_proxy' => openstack_proxy,
-
         # Disables Ubuntu firewall on all Ubunty hosts
         'firewall' => false
+    },
+    'haproxy' => {
+        'certificate_databag_items' => {
+            'default' => openstack_proxy
+        },
+        'virtual_ip_address' => env['proxy']['vip_address'],
+        'virtual_ip_cidr_netmask' => env['proxy']['vip_cidr_netmask'] || 24,
+        'virtual_ip_nic' => env['proxy']['vip_nic'],
+        'server_pools' => env['proxy']['server_pools'],
+        'backend_default_ip' => env['proxy']['backend_default_ip']
     },
     'percona' => {
         'server' => {
@@ -72,12 +72,17 @@ override_attributes(
         }
     },
     'openstack' => {
+
+        # Highly-Available Proxy load balancer
+        # endpoint for all OpenStack services
+        'openstack_ha_proxy' => openstack_proxy,
+
         'region' => env['openstack']['region'],
         'apt' => {
             'live_updates_enabled' => false
         },
         'endpoints' => {
-            'host' => env['openstack']['endpoints']['identity_service'] || openstack_proxy,
+            'host' => openstack_proxy,
             'bind-host' => '0.0.0.0',
             'db' => {
                 'host' => env['openstack']['endpoints']['database_server'] || openstack_proxy,
@@ -86,18 +91,6 @@ override_attributes(
             'mq' => {
                 'host' => env['openstack']['endpoints']['messaging_server'] || openstack_proxy,
                 'port' => env['messaging']['ampq_port']
-            },
-            'image-api' => {
-                'host' => env['openstack']['endpoints']['image_api_server'] || openstack_proxy,
-            },
-            'block-storage-api' => {
-                'host' => env['openstack']['endpoints']['block_storage_api_server'] || openstack_proxy,
-            },
-            'compute-api' => {
-                'host' => env['openstack']['endpoints']['compute_api_server'] || openstack_proxy,
-            },
-            'network-api' => {
-                'host' => env['openstack']['endpoints']['network_api_server'] || openstack_proxy,
             }
         },
         'mq' => {
@@ -169,7 +162,7 @@ override_attributes(
                 ]
             },
             'metadata' => {
-                'nova_metadata_ip' => metadata_ip
+                'nova_metadata_ip' => env['openstack']['endpoints']['nova_metadata_ip']
             }
         },
         'dashboard' => {

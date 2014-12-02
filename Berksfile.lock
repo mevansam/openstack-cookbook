@@ -67,7 +67,7 @@ DEPENDENCIES
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
     git: https://github.com/kennonkwok/rabbitmq.git
-    revision: ccf42a387368f1e34e825854c6b2b445f16a2b60
+    revision: 5f22fdc06a72287d46ec031a733d775ae109aa25
   selinux (= 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
@@ -139,6 +139,7 @@ GRAPH
   network (0.1.0)
     gem_installation (~> 2.0.1)
     hostsfile (~> 2.4.5)
+    network_interfaces (~> 1.0.0)
     sysutils (>= 0.0.0)
   network_interfaces (1.0.0)
     modules (>= 0.1.2)
@@ -195,10 +196,12 @@ GRAPH
     openstack-identity (~> 9.0)
   openstack-services (0.1.0)
     compute (= 0.1.0)
+    haproxy (~> 1.6.6)
+    hostsfile (~> 2.4.5)
     network (= 0.1.0)
     openstack-common (>= 0.0.0)
     openstack-compute (>= 0.0.0)
-    percona (>= 0.15.5)
+    percona (~> 0.15.5)
     rabbitmq (>= 3.2.3)
     storage (= 0.1.0)
     sysutils (= 1.0.0)
@@ -235,7 +238,6 @@ GRAPH
     apt (= 2.4.0)
     hostsfile (~> 2.4.5)
     modules (>= 0.1.2)
-    network_interfaces (= 1.0.0)
     sudo (= 2.6.0)
     yum (= 3.2.2)
   windows (1.34.8)

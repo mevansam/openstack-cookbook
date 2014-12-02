@@ -4,90 +4,74 @@ name: kvm_vbox
 stack:
 
 - node: openstack-proxy
-  depends_on:
-  - compute-services
   attributes:
     pacemaker_cluster_name: openstack-proxy
     pacemaker_mcast_address: 239.255.42.1
     pacemaker_mcast_port: 5405
-  knife:
-    options:
-      identity_file: ~/.vagrant/insecure_key
-      ssh_user: vagrant
-      sudo: true
-#      ip-address: 192.168.60.128
-    create: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][create_1nic_768M]
-    delete: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][delete]
-  run_list:
-  - recipe[ohai]
-  - role[os-ha-proxy]
+  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_768M]
+  run_on_event:
+    configure: /opt/chef/embedded/bin/gem update --system
 
 # This node executes clustering recipes on
 # the targeted clustered node's instances once
 # they have been created and configured. This
-# node does not create any VMs.
+# node does not create any VMs but it will
+# replace the run list of the target VMs with
+# the one given.
 - node: openstack-proxy-cluster
   sync: first
+  attributes:
+    haproxy:
+      is_clustered: true
   targets:
   - openstack-proxy
   run_list:
   - recipe[ohai]
-  - recipe[sysutils::cluster]
+  - role[os-ha-proxy]
 
-- node: compute-services
-  attributes:
-    # Override optimized settings in os-ha-database
-    # so mysql will run in a much smaller environment
-    percona:
-      server:
-        key_buffer: 16M,
-        max_allowed_packet: 64M,
-        thread_stack: 192K,
-        thread_cache_size: 16,
-        query_cache_size: 64M,
-        query_cache_limit: 2M,
-        innodb_buffer_pool_size: 128M
-    openstack:
-      block-storage:
-        volume:
-          create_volume_group: true
-          create_volume_group_type: block_devices
-          block_devices: /dev/sdb
-  knife:
-    options:
-      identity_file: ~/.vagrant/insecure_key
-      ssh_user: vagrant
-      sudo: true
-      ip_address: 192.168.60.129
-    create: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][create_1nic_4G]
-    delete: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][delete]
-  run_list:
-  - recipe[ohai]
-  - role[os-ha-database]
-  - role[os-ha-messaging]
-  - role[os-ha-dashboard]
-  - role[os-ha-identity]
-  - role[os-ha-image]
-  - role[os-ha-block-storage-kvm-lvm]
-  - role[os-ha-controller-kvm]
-  - recipe[openstack-services::monkey-patch]
-
-- node: compute-host
-  depends_on:
-  - compute-services
-  attributes:
-    env:
-      network_interfaces:
-      - device: eth2
-  knife:
-    options:
-      identity_file: ~/.vagrant/insecure_key
-      ssh_user: vagrant
-      sudo: true
-    create: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][create_2nic_2G]
-    delete: <<+[./common/knife_plugins.yml][vagrant_ubuntu_1404][delete]
-  run_list:
-  - recipe[ohai]
+#- node: compute-services
+#  depends_on:
+#  - openstack-proxy
+#  attributes:
+#    # Override optimized settings in os-ha-database
+#    # so mysql will run in a much smaller environment
+#    percona:
+#      server:
+#        key_buffer: 16M,
+#        max_allowed_packet: 64M,
+#        thread_stack: 192K,
+#        thread_cache_size: 16,
+#        query_cache_size: 64M,
+#        query_cache_limit: 2M,
+#        innodb_buffer_pool_size: 128M
+#    openstack:
+#      block-storage:
+#        volume:
+#          create_volume_group: true
+#          create_volume_group_type: block_devices
+#          block_devices: /dev/sdb
+#  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_1nic_4G]
+#  run_list:
+#  - recipe[ohai]
+#  - role[os-ha-database]
+#  - role[os-ha-messaging]
+#  - role[os-ha-dashboard]
+#  - role[os-ha-identity]
+#  - role[os-ha-image]
+#  - role[os-ha-block-storage-kvm-lvm]
+#  - role[os-ha-controller-kvm]
+#  - recipe[openstack-services::monkey-patch]
+#
+#- node: compute-host
+#  depends_on:
+#  - compute-services
+#  attributes:
+#    env:
+#      network_interfaces:
+#      - device: eth2
+#  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_2G]
+#  run_list:
+#  - recipe[ohai]
 #  - role[os-ha-compute-kvm]
 #  - role[os-ha-network-kvm]
 #  - recipe[openstack-services::monkey-patch]

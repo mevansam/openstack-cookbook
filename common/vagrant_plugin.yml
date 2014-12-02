@@ -1,50 +1,56 @@
 ---
 # Knife plugins for VM creation and bootstrapping
 
-# OpenStack Vagrant VMs use subnet 192.168.60.0/24 for
-# management traffic and subnet 192.168.61.0/24 for data
 vagrant_ubuntu_1404:
-  create_1nic_768M:
-    class: Chef::Knife::VagrantServerCreate
-    synchronized: true
-    name_key: chef_node_name
+
+  create_2nic_768M:
+    plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
       provider: virtualbox
       box: chef/ubuntu-14.04
       box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
       memsize: 768
-      subnet: 192.168.60.0/25
+      subnet: "#{env['vagrant']['management_network']}/25"
       port_forward: {}
       share_folders: []
       use_cachier: false
       distro: chef-full
       host_key_verify: false
+      identity_file: ~/.vagrant/insecure_key
+      ssh_user: vagrant
       ssh_port: 22
+      sudo: true
       inline_config: |
+        config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['management_network']}"
         config.ohai.enable = true
         config.ohai.primary_nic = "eth1"
         config.vm.provision "shell", inline: "mkdir -p /etc/chef"
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
+
   create_1nic_4G:
-    class: Chef::Knife::VagrantServerCreate
-    synchronized: true
-    name_key: chef_node_name
+    plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
       provider: virtualbox
       box: chef/ubuntu-14.04
       box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
       memsize: 4096
-      subnet: 192.168.60.0/25
+      subnet: "#{env['vagrant']['management_network']}/25"
+      # The '+' at the end of the IP indicates that the last octet
+      # is incremented by the created node instance's index value.
+      ip_address: "#{env['proxy']['backend_default_ip']}+"
       port_forward: {}
       share_folders: []
       use_cachier: false
       distro: chef-full
       host_key_verify: false
+      identity_file: ~/.vagrant/insecure_key
+      ssh_user: vagrant
       ssh_port: 22
+      sudo: true
       vb_customize: >
         'createhd', '--filename', './cinder_volume.vdi', '--size', 20 * 1024::
         "storagectl", :id, "--name", "SATA Controller", "--add", "sata"::
@@ -56,33 +62,30 @@ vagrant_ubuntu_1404:
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
+
   create_2nic_2G:
-    class: Chef::Knife::VagrantServerCreate
-    synchronized: true
-    name_key: chef_node_name
+    plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
       provider: virtualbox
       box: chef/ubuntu-14.04
       box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
       memsize: 2048
-      subnet: 192.168.60.0/25
+      subnet: "#{env['vagrant']['management_network']}/25"
       port_forward: {}
       share_folders: []
       use_cachier: false
       distro: chef-full
       host_key_verify: false
+      identity_file: ~/.vagrant/insecure_key
+      ssh_user: vagrant
       ssh_port: 22
+      sudo: true
       inline_config: |
-        config.vm.network "private_network", :auto_config => false, ip: "192.168.61.0"
+        config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['management_network']}"
         config.ohai.enable = true
         config.ohai.primary_nic = "eth1"
         config.vm.provision "shell", inline: "mkdir -p /etc/chef"
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
-  delete:
-    class: Chef::Knife::VagrantServerDelete
-    options:
-      vagrant_dir: ~/.vagrant
-      "yes": true
