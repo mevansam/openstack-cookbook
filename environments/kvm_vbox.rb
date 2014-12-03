@@ -22,16 +22,6 @@ override_attributes(
         # Disables Ubuntu firewall on all Ubunty hosts
         'firewall' => false
     },
-    'haproxy' => {
-        'certificate_databag_items' => {
-            'default' => openstack_proxy
-        },
-        'virtual_ip_address' => env['proxy']['vip_address'],
-        'virtual_ip_cidr_netmask' => env['proxy']['vip_cidr_netmask'] || 24,
-        'virtual_ip_nic' => env['proxy']['vip_nic'],
-        'server_pools' => env['proxy']['server_pools'],
-        'backend_default_ip' => env['proxy']['backend_default_ip']
-    },
     'percona' => {
         'server' => {
             'port' => env['database']['port'],
@@ -167,6 +157,89 @@ override_attributes(
         },
         'dashboard' => {
             'certificate_databag_item' => openstack_proxy
+        }
+    },
+    'haproxy' => {
+        'certificate_databag_items' => {
+            'default' => openstack_proxy
+        },
+        'virtual_ip_address' => env['proxy']['vip_address'],
+        'virtual_ip_cidr_netmask' => env['proxy']['vip_cidr_netmask'] || 24,
+        'virtual_ip_nic' => env['proxy']['vip_nic'],
+        'backend_default_ip' => env['proxy']['backend_default_ip'],
+
+        # Each pool name should match a corresponding OpenStack
+        # endpoint service as defined in the openstack-common. The
+        # os-ha-proxy cookbook looks up the corresponding service
+        # ports from the openstack configuration unless it is
+        # explicitly specified as for the horizon pools.
+        'server_pools' => {
+            'db' => {
+                'profile' => 'mysql',
+                'cluster_role' => 'os-ha-database'
+            },
+            'mq' => {
+                'profile' => 'rabbitmq',
+                'cluster_role' => 'os-ha-messaging'
+            },
+            'mq_admin' => {
+                'port' => 15671,
+                'profile' => 'ssl',
+                'cluster_role' => 'os-ha-messaging'
+            },
+            'identity-api' => {
+                'profile' => 'http',
+                'bind_ssl' => 'default',
+                'cluster_role' => 'os-ha-identity'
+            },
+            'identity-admin' => {
+                'profile' => 'http',
+                'bind_ssl' => 'default',
+                'cluster_role' => 'os-ha-identity'
+            },
+            'image-api' => {
+                'profile' => 'http',
+                'bind_ssl' => 'default',
+                'cluster_role' => 'os-ha-image'
+            },
+            'block-storage-api' => {
+                'profile' => 'http',
+                'bind_ssl' => 'default',
+                'cluster_role' => 'os-ha-block-storage-kvm-lvm'
+            },
+            'compute-api' => {
+                'profile' => 'http',
+                'bind_ssl' => 'default',
+                'cluster_role' => 'os-ha-controller-kvm'
+            },
+            'compute-ec2-api' => {
+                'profile' => 'http',
+                'bind_ssl' => 'default',
+                'cluster_role' => 'os-ha-controller-kvm'
+            },
+            'compute-novnc' => {
+                'profile' => 'tcp',
+                'cluster_role' => 'os-ha-controller-kvm'
+            },
+            'network-api' => {
+                'profile' => 'tcp',
+                'cluster_role' => 'os-ha-controller-kvm'
+            },
+            'metadata' => {
+                'profile' => 'http',
+                'port' => 8775,
+                'cluster_role' => 'os-ha-controller-kvm'
+            },
+            'horizon_web' => {
+                'port' => 80,
+                'profile' => 'http',
+                'cluster_role' => 'os-ha-controller-kvm'
+            },
+            'horizon_web_ssl' => {
+                'port' => 443,
+                'profile' => 'ssl',
+                'cluster_role' => 'os-ha-controller-kvm'
+            }
         }
     }
 )

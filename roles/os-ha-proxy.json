@@ -58,7 +58,9 @@
                     "params": [
                         "option tcplog",
                         "option tcpka",
-                        "option mysql-check user haproxy"
+                        "option mysql-check user haproxy",
+                        "timeout client 3h",
+                        "timeout server 3h"
                     ],
                     "bind_options": [
                         "accept-proxy"
@@ -66,6 +68,42 @@
                     "member_options": {
                         "0": "check weight 1",
                         "*": "backup check weight 1"
+                    }
+                },
+                "rabbitmq": {
+                    "mode": "tcp",
+                    "balance": "roundrobin",
+                    "params": [
+                        "option tcplog",
+                        "option tcpka",
+                        "option tcp-check",
+                        "timeout client 3h",
+                        "timeout server 3h",
+                        "stick-table type ip size 200k expire 30m",
+                        "stick on src"
+                    ],
+                    "bind_options": [
+                        "accept-proxy"
+                    ],
+                    "member_options": {
+                        "*": "check check-ssl inter 5s rise 2 fall 3"
+                    }
+                },
+                "tcp": {
+                    "mode": "tcp",
+                    "balance": "roundrobin",
+                    "params": [
+                        "option tcplog",
+                        "option tcpka",
+                        "option tcp-check",
+                        "stick-table type ip size 200k expire 30m",
+                        "stick on src"
+                    ],
+                    "bind_options": [
+                        "accept-proxy"
+                    ],
+                    "member_options": {
+                        "*": "check inter 5s"
                     }
                 },
                 "ssl": {

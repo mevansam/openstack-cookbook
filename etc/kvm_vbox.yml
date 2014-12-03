@@ -110,64 +110,7 @@ proxy:
   #
   # IPs of all service VMs will
   # start from this address.
-  #backend_default_ip: 192.168.60.100
-  backend_default_ip: 98.139.180.14
-
-  # Each pool name should matche a corresponding OpenStack
-  # endpoint service as defined in the openstack-common. The
-  # os-ha-proxy cookbook looks up the corresponding service
-  # ports from the openstack configuration unless it is
-  # explicitly specified as for the horizon pools.
-  server_pools:
-    db:
-      profile: mysql
-      cluster_role: os-ha-database
-    mq:
-      profile: ssl
-      cluster_role: os-ha-messaging
-    mq_admin:
-      port: 15671
-      profile: ssl
-      cluster_role: os-ha-messaging
-    identity-api:
-      profile: http
-      bind_ssl: default
-      cluster_role: os-ha-identity
-    identity-admin:
-      profile: http
-      bind_ssl: default
-      cluster_role: os-ha-identity
-    image-api:
-      profile: http
-      bind_ssl: default
-      cluster_role: os-ha-image
-    block-storage-api:
-      profile: http
-      bind_ssl: default
-      cluster_role: os-ha-block-storage
-    compute-api:
-      profile: http
-      bind_ssl: default
-      cluster_role: os-ha-controller
-    compute-ec2-api:
-      profile: http
-      bind_ssl: default
-      cluster_role: os-ha-controller
-    compute-novnc:
-      profile: http
-      cluster_role: os-ha-controller
-    metadata:
-      profile: http
-      port: 8775
-      cluster_role: os-ha-controller
-    horizon_web:
-      port: 80
-      profile: http
-      cluster_role: os-ha-dashboard
-    horizon_web_ssl:
-      port: 443
-      profile: ssl
-      cluster_role: os-ha-dashboard
+  backend_default_ip: 192.168.60.100
 
 vagrant:
   # x.x.x.x/25 subnets to attach

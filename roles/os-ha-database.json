@@ -10,6 +10,7 @@
         },
         "percona": {
             "cluster_role": "os-ha-database",
+            "haproxy_cluster_role": "os-ha-proxy",
             "main_config_file": "/etc/mysql/my.cnf",
             "server": {
                 "bind_address": "0.0.0.0",
