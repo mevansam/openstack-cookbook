@@ -81,8 +81,10 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
+      vb_customize: >
+        'modifyvm', :id, "--nicpromisc3", "allow-all"
       inline_config: |
-        config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['management_network']}"
+        config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"
         config.ohai.enable = true
         config.ohai.primary_nic = "eth1"
         config.vm.provision "shell", inline: "mkdir -p /etc/chef"
