@@ -21,9 +21,6 @@ cookbook 'statsd',   git: 'https://github.com/att-cloud/cookbook-statsd'
 cookbook 'openstack-common',
     git: 'https://github.com/stackforge/cookbook-openstack-common',
     branch: 'stable/icehouse'
-cookbook 'openstack-identity',
-    git: 'https://github.com/stackforge/cookbook-openstack-identity',
-    branch: 'stable/icehouse'
 cookbook 'openstack-object-storage',
     git: 'https://github.com/stackforge/cookbook-openstack-object-storage',
     branch: 'stable/icehouse'
@@ -40,21 +37,30 @@ cookbook 'openstack-telemetry',
     git: 'https://github.com/stackforge/cookbook-openstack-telemetry',
     branch: 'stable/icehouse'
 
+cookbook 'openstack-identity',
+    path: '../chef/openstack-identity'
+#    git: 'https://github.com/mevansam/chef-cookbook-openstack-identity.git',
+#    branch: 'stable/icehouse'
 cookbook 'openstack-image',
-    git: 'https://github.com/mevansam/chef-cookbook-openstack-image.git',
-    branch: 'stable/icehouse'
+    path: '../chef/openstack-image'
+#    git: 'https://github.com/mevansam/chef-cookbook-openstack-image.git',
+#    branch: 'stable/icehouse'
 cookbook 'openstack-block-storage',
-    git: 'https://github.com/mevansam/chef-cookbook-openstack-block-storage',
-    branch: 'stable/icehouse'
+    path: '../chef/openstack-block-storage'
+#    git: 'https://github.com/mevansam/chef-cookbook-openstack-block-storage',
+#    branch: 'stable/icehouse'
 cookbook 'openstack-compute',
-    git: 'https://github.com/mevansam/chef-cookbook-openstack-compute.git',
-    branch: 'stable/icehouse'
+    path: '../chef/openstack-compute'
+#    git: 'https://github.com/mevansam/chef-cookbook-openstack-compute.git',
+#    branch: 'stable/icehouse'
 cookbook 'openstack-network',
-    git: 'https://github.com/mevansam/chef-cookbook-openstack-network.git',
-    branch: 'stable/icehouse'
+    path: '../chef/openstack-network'
+#    git: 'https://github.com/mevansam/chef-cookbook-openstack-network.git',
+#    branch: 'stable/icehouse'
 cookbook 'openstack-dashboard',
-    git: 'https://github.com/mevansam/chef-cookbook-openstack-dashboard',
-    branch: 'stable/icehouse'
+    path: '../chef/openstack-dashboard'
+#    git: 'https://github.com/mevansam/chef-cookbook-openstack-dashboard',
+#    branch: 'stable/icehouse'
 
 cookbook 'sysutils',
     path: '../chef/sysutils'

@@ -13,33 +13,21 @@ DEPENDENCIES
   ntp (= 1.6.5)
   ohai (= 2.0.1)
   openstack-block-storage
-    git: https://github.com/mevansam/chef-cookbook-openstack-block-storage
-    revision: d17f24a874221741143ef868b0d588aaebb0b531
-    branch: stable/icehouse
+    path: ../chef/openstack-block-storage
   openstack-common
     git: https://github.com/stackforge/cookbook-openstack-common
     revision: ad0f56149d8805537446e68275e27a11094e280f
     branch: stable/icehouse
   openstack-compute
-    git: https://github.com/mevansam/chef-cookbook-openstack-compute.git
-    revision: 9f4741ff24621f7acd75ec7a6e3ef1eb776563a3
-    branch: stable/icehouse
+    path: ../chef/openstack-compute
   openstack-dashboard
-    git: https://github.com/mevansam/chef-cookbook-openstack-dashboard
-    revision: 22a99346a7ed5945f5c85208b5253d29de5de4b3
-    branch: stable/icehouse
+    path: ../chef/openstack-dashboard
   openstack-identity
-    git: https://github.com/stackforge/cookbook-openstack-identity
-    revision: 1ce974dc2542369cae72cf605dc0b12f52a714ca
-    branch: stable/icehouse
+    path: ../chef/openstack-identity
   openstack-image
-    git: https://github.com/mevansam/chef-cookbook-openstack-image.git
-    revision: 4c215d1f5f00a3fc1db9429d791835dd4de917a5
-    branch: stable/icehouse
+    path: ../chef/openstack-image
   openstack-network
-    git: https://github.com/mevansam/chef-cookbook-openstack-network.git
-    revision: 446adba35fa1a2fb92988e162b6c830ac711d377
-    branch: stable/icehouse
+    path: ../chef/openstack-network
   openstack-object-storage
     git: https://github.com/stackforge/cookbook-openstack-object-storage
     revision: bb9c607292a80dbd18364be838c2f293302c2abd
@@ -67,7 +55,7 @@ DEPENDENCIES
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
     git: https://github.com/kennonkwok/rabbitmq.git
-    revision: 5f22fdc06a72287d46ec031a733d775ae109aa25
+    revision: f9db2cce80129f57bc18c3f6a438edc5147db6f7
   selinux (= 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
@@ -83,10 +71,9 @@ DEPENDENCIES
   yum-epel (= 0.4.0)
 
 GRAPH
-  apache2 (2.0.0)
+  apache2 (3.0.0)
     iptables (>= 0.0.0)
     logrotate (>= 0.0.0)
-    pacman (>= 0.0.0)
   apt (2.4.0)
   aws (2.5.0)
   build-essential (1.4.2)
@@ -209,19 +196,18 @@ GRAPH
     openstack-common (~> 9.5)
     openstack-compute (~> 9.0)
     openstack-identity (~> 9.0)
-  pacman (1.1.1)
   percona (0.15.5)
     apt (>= 1.9.0)
     openssl (>= 0.0.0)
     yum (~> 3.0)
-  postgresql (3.4.12)
+  postgresql (3.4.14)
     apt (>= 1.9.0)
     build-essential (>= 0.0.0)
     openssl (>= 0.0.0)
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.4.0)
+  rabbitmq (3.5.0)
     erlang (>= 0.9.0)
   runit (1.5.10)
     build-essential (>= 0.0.0)

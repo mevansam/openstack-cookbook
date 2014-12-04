@@ -61,9 +61,9 @@ stack:
   - role[os-ha-controller-kvm]
   - recipe[openstack-services::monkey-patch]
 
-# Reloads the haproxy configuration
-# with the correct names and back-ips
-# of the controllers.
+# Reloads the haproxy configuration with
+# the correct names and backend-ips of
+# the controllers.
 - node: proxy-reload
   depends_on:
   - compute-services
@@ -77,9 +77,20 @@ stack:
   depends_on:
   - compute-services
   attributes:
+    # Cluster every 2 instances. i.e. instance 0 and 1
+    # will be put into a cluster named 'network-node-0'
+    # and 2 and 3 into a cluster named 'network-node-1'
+    # and so on.
+    pacemaker_cluster_name: <<!'network-node-'+(#{index}/2).to_s
+    pacemaker_mcast_address: 239.255.42.2
+    pacemaker_mcast_port: 5405
     env:
       network_interfaces:
       - device: eth2
+    openstack:
+      network:
+        l3:
+          is_clustered: false
   knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_2G]
   run_list:
   - recipe[ohai]

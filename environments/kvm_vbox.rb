@@ -81,6 +81,42 @@ override_attributes(
             'mq' => {
                 'host' => env['openstack']['endpoints']['messaging_server'] || openstack_proxy,
                 'port' => env['messaging']['ampq_port']
+            },
+            'identity-api' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'identity-admin' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'image-api' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'block-storage-api' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'compute-api' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'compute-ec2-api' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'compute-ec2-admin' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'compute-novnc' => {
+                'scheme' => 'https',
+                'insecure' => true
+            },
+            'network-api' => {
+                'scheme' => 'https',
+                'insecure' => true
             }
         },
         'mq' => {
@@ -122,15 +158,22 @@ override_attributes(
                 }
             }
         },
+        'identity' => {
+            'registration' => {
+                'insecure' => true
+            }
+        },
         'network' => {
             'ml2' => {
                 'type_drivers' =>
                     openstack_network['ml2']['type_drivers'],
                 'tenant_network_types' =>
-                    openstack_network['ml2']['type_drivers'],
+                    openstack_network['ml2']['tenant_network_types'],
                 'tenant_network_tunnel_types' =>
                     openstack_network['ml2']['tunnel_types'],
-                'mechanism_drivers' => openstack_network['ml2']['mechanism_drivers'],
+                'mechanism_drivers' =>
+                    openstack_network['ml2']['mechanism_drivers'],
+                'flat_networks' => '*',
                 'network_vlan_ranges' =>
                     "#{openstack_network['ovs']['physical_network_tag']}:#{openstack_network['ovs']['vlan_ranges']}",
                 'vni_ranges' =>
@@ -156,7 +199,8 @@ override_attributes(
             }
         },
         'dashboard' => {
-            'certificate_databag_item' => openstack_proxy
+            'certificate_databag_item' => openstack_proxy,
+            'ssl_no_verify' => true
         }
     },
     'haproxy' => {
@@ -218,11 +262,13 @@ override_attributes(
                 'cluster_role' => 'os-ha-controller-kvm'
             },
             'compute-novnc' => {
-                'profile' => 'tcp',
+                'profile' => 'http',
+                'bind_ssl' => 'default',
                 'cluster_role' => 'os-ha-controller-kvm'
             },
             'network-api' => {
-                'profile' => 'tcp',
+                'profile' => 'http',
+                'bind_ssl' => 'default',
                 'cluster_role' => 'os-ha-controller-kvm'
             },
             'metadata' => {

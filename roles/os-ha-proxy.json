@@ -59,8 +59,8 @@
                         "option tcplog",
                         "option tcpka",
                         "option mysql-check user haproxy",
-                        "timeout client 3h",
-                        "timeout server 3h"
+                        "timeout client 12h",
+                        "timeout server 12h"
                     ],
                     "bind_options": [
                         "accept-proxy"
@@ -77,8 +77,8 @@
                         "option tcplog",
                         "option tcpka",
                         "option tcp-check",
-                        "timeout client 3h",
-                        "timeout server 3h",
+                        "timeout client 12h",
+                        "timeout server 12h",
                         "stick-table type ip size 200k expire 30m",
                         "stick on src"
                     ],

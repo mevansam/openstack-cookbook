@@ -25,6 +25,20 @@
                         "dns_server": ""
                     }
                 }
+            },
+            "network": {
+                "debug": "False",
+                "verbose": "False",
+                "service_plugins": [
+                    "neutron.services.l3_router.l3_router_plugin.L3RouterPlugin"
+                ],
+                "l3": {
+                    "external_network_bridge": ""
+                },
+                "dhcp": {
+                    "log-facility": "/var/log/neutron/dnsmasq.log",
+                    "upstream_dns_servers": [ ]
+                }
             }
         }
     },

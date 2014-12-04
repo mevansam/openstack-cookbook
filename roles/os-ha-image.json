@@ -11,13 +11,15 @@
                 "image-registry": {
                     "host": "127.0.0.1"
                 }
-            },
+            }
+        }
+    },
+    "override_attributes": {
+        "openstack": {
             "image": {
                 "upload_images": [ ]
             }
         }
-    },
-    "override_attributes": { 
     },
     "chef_type": "role",
     "run_list": [

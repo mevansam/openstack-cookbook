@@ -54,7 +54,6 @@
                     "neutron.services.l3_router.l3_router_plugin.L3RouterPlugin"
                 ],
                 "l3": {
-                    "clustered": true,
                     "cluster_role": "os-ha-compute-xen",
                     "external_network_bridge": ""
                 },

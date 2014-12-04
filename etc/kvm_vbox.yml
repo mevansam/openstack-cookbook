@@ -79,7 +79,8 @@ openstack:
   # OpenStack Neutron settings
   network:
     ml2:
-      type_drivers: vlan,vxlan
+      type_drivers: flat,vlan,vxlan
+      tenant_network_types: vlan,vxlan
       tunnel_types: vxlan
       mechanism_drivers: openvswitch
     ovs:
