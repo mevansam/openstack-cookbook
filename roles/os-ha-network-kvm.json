@@ -10,7 +10,7 @@
             ]
         },
         "openstack": {
-            "compute": {,
+            "compute": {
                 "metadata_listen": "127.0.0.1"
             },
             "network": {
