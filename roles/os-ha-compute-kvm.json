@@ -24,7 +24,8 @@
                         "public_network_name": "",
                         "dns_server": ""
                     }
-                }
+                },
+                "metadata_listen": "127.0.0.1"
             },
             "network": {
                 "debug": "False",

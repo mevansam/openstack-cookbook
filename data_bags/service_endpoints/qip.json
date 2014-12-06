@@ -1,0 +1,9 @@
+{
+	"id": "qip",
+	"server": "#{env['services']['qip'] ? env['services']['qip']['server'] : ''}",
+	"user": "#{env['services']['qip'] ? env['services']['qip']['user'] : ''}",
+	"key": "#{env['services']['qip'] ? env['services']['qip']['key'] : ''}",
+	"dbuser": "#{env['services']['qip'] ? env['services']['qip']['dbuser'] : ''}",
+	"dbpassword": "#{env['services']['qip'] ? env['services']['qip']['dbpassword'] : ''}",
+	"cli_init": "/ipdb/qip/etc/shrc"
+}

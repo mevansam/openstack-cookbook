@@ -1,7 +1,9 @@
-name 'kvm_vbox'
-description 'Click2Compute OpenStack KVM environment.'
+env_name = File.basename( __FILE__, ".rb")
 
-env = YAML.load_file(File.expand_path('../../etc/kvm_vbox.yml', __FILE__))
+name env_name
+description "HA OpenStack Environment."
+
+env = YAML.load_file(File.expand_path("../../etc/#{env_name}.yml", __FILE__))
 
 ## Pre-process environment variables
 
@@ -11,9 +13,7 @@ openstack_network = env['openstack']['network']
 ## Build the Chef environment
 
 override_attributes(
-    'ntp' => {
-        'servers' => env['ntp']['servers']
-    },
+    'ntp' => env['ntp'],
     'env' => {
         'http_proxy' => env['http_proxy'],
         'https_proxy' => env['https_proxy'],
@@ -193,9 +193,6 @@ override_attributes(
                 'bridge_mapping_interface' => [
                     "#{openstack_network['ovs']['external_bridge']}:#{openstack_network['ovs']['external_interface']}"
                 ]
-            },
-            'metadata' => {
-                'nova_metadata_ip' => env['openstack']['endpoints']['nova_metadata_ip']
             }
         },
         'dashboard' => {
@@ -269,11 +266,6 @@ override_attributes(
             'network-api' => {
                 'profile' => 'http',
                 'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-controller-kvm'
-            },
-            'metadata' => {
-                'profile' => 'http',
-                'port' => 8775,
                 'cluster_role' => 'os-ha-controller-kvm'
             },
             'horizon_web' => {

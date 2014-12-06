@@ -1,5 +1,7 @@
 ---
-name: kvm_vbox
+name: vbox_qemu
+
+vagrant_provider: virtualbox
 
 stack:
 
@@ -44,6 +46,9 @@ stack:
         query_cache_limit: 2M,
         innodb_buffer_pool_size: 128M
     openstack:
+      compute:
+        libvirt:
+          virt_type: qemu
       block-storage:
         volume:
           create_volume_group: true
@@ -60,6 +65,8 @@ stack:
   - role[os-ha-block-storage-kvm-lvm]
   - role[os-ha-controller-kvm]
   - recipe[openstack-services::monkey-patch]
+  run_on_event:
+    configure: <<+[./common/patches.yml][patch_neutron_nova_ssl_notification]
 
 # Reloads the haproxy configuration with
 # the correct names and backend-ips of
@@ -88,6 +95,9 @@ stack:
       network_interfaces:
       - device: eth2
     openstack:
+      compute:
+        libvirt:
+          virt_type: qemu
       network:
         l3:
           is_clustered: false

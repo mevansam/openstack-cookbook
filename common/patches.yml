@@ -1,0 +1,8 @@
+---
+# Patch scripts to fix issues in openstack
+
+patch_neutron_nova_ssl_notification: >
+  is_patched=$(cat /usr/lib/python2.7/dist-packages/neutron/notifiers/nova.py | grep 'auth_url=cfg.CONF.nova_admin_auth_url,insecure=True,');
+  [ -n "$is_patched" ] ||
+      sed -i.bak "s/auth_url=cfg.CONF.nova_admin_auth_url,/auth_url=cfg.CONF.nova_admin_auth_url,insecure=True,/" /usr/lib/python2.7/dist-packages/neutron/notifiers/nova.py;
+  service neutron-server restart

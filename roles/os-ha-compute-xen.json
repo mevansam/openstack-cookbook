@@ -45,7 +45,8 @@
                 },
                 "xenapi": {
                     "vif_driver": "nova.virt.xenapi.vif.XenAPIOpenVswitchDriver"
-                }
+                },
+                "metadata_listen": "127.0.0.1"
             },
             "network": {
                 "debug": "False",

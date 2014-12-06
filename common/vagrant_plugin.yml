@@ -7,7 +7,7 @@ vagrant_ubuntu_1404:
     plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
-      provider: virtualbox
+      provider: "#{my['vagrant_provider']}"
       box: chef/ubuntu-14.04
       box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
       memsize: 768
@@ -34,7 +34,7 @@ vagrant_ubuntu_1404:
     plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
-      provider: virtualbox
+      provider: "#{my['vagrant_provider']}"
       box: chef/ubuntu-14.04
       box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
       memsize: 4096
@@ -51,10 +51,17 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
+      # VBox: Create additional hard disk for Cinder volumes
       vb_customize: >
         'createhd', '--filename', './cinder_volume.vdi', '--size', 20 * 1024::
         "storagectl", :id, "--name", "SATA Controller", "--add", "sata"::
         'storageattach', :id, '--storagectl', "SATA Controller", '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './cinder_volume.vdi'
+      # VMWare: Create additional hard disk for Cinder volumes
+      vmx_parameters: >
+        ehci.present=FALSE::
+        scsi0:1.present=TRUE::
+        scsi0:1.fileName=cinder_volume.vmdk::
+        scsi0:1.fileSize=20GB
       inline_config: |
         config.ohai.enable = true
         config.ohai.primary_nic = "eth1"
@@ -67,7 +74,7 @@ vagrant_ubuntu_1404:
     plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
-      provider: virtualbox
+      provider: "#{my['vagrant_provider']}"
       box: chef/ubuntu-14.04
       box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
       memsize: 2048
@@ -81,6 +88,7 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
+      # VBox: enable promiscuous mode on nic on data network
       vb_customize: >
         'modifyvm', :id, "--nicpromisc3", "allow-all"
       inline_config: |
