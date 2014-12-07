@@ -81,4 +81,4 @@ limitations under the License.
 
 Author | Email | Company
 -------|-------|--------
-Mevan Samaratunga | mevansam@gmail.com<br/> msamaratunga@pivotal.io | Pivotal
+Mevan Samaratunga | msamaratunga@pivotal.io | Pivotal
