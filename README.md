@@ -33,6 +33,7 @@ use based on your current directory using [direnv](http://direnv.net/).
 [knife-vagrant2](https://github.com/makern/knife-vagrant2) plugin for knife and the
 [vagrant-ohai](https://github.com/avishai-ish-shalom/vagrant-ohai) plugin for vagrant. However, instead of the
 original the following patched/updated plugins need to be installed as follows.
+
 	```
 	$ cd openstack-ha-cookbook
 	$ gem install --no-document vagrant-plugins/knife-vagrant2-0.0.5.gem
