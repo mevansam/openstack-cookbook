@@ -1,12 +1,15 @@
 # OpenStack High-Availability Cookbook
 
-TODO: ...
+This cookbook is an automation framework that can be used to setup enterprise grade highly available OpenStack
+environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in a template
+which can be shared within the community. It captures these various OpenStack topologies in templates, which can be
+executed in a repeatable manner.
 
 ## Supported Platforms
 
 TODO: ...
 
-## Usage
+## Installation
 
 http://rvm.io/
 rvm list known
@@ -19,7 +22,32 @@ sudo gem install knife-kvm
 sudo gem install rbvmomi
 sudo gem install knife-esx
 
+### OpenStack KVM on Vagrant Template
+
+![Image of OpenStack KVM setup on Vagrant]
+(docs/images/vagrant_kvm.png)
+
+### OpenStack KVM on VMWare Template
+
 TODO: ...
+
+### OpenStack HA KVM Template
+
+TODO: ...
+
+### OpenStack HA VMWare ESX Template
+
+TODO: ...
+
+### OpenStack HA XenServer Template
+
+TODO: ...
+
+### OpenStack HA HyperV Template
+
+TODO: ...
+
+### OpenStack HA Multi-Hypervisor Template
 
 ## Design
 
@@ -51,4 +79,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Author: Mevan Samaratunga (mevansam@gmail.com)
+Author | Email | Company
+------------------------- | ------------------------- | -------------------------
+Mevan Samaratunga | mevansam@gmail.com msamaratunga@pivotal.io | Pivotal
