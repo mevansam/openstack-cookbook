@@ -6,15 +6,15 @@ domain: mydomain.org
 root:
   password: ej343fa8f4038e4f
 
-services:
-  # This is used to give your local IPs DNS names
-  # that are resolved via the AWS route53 service.
-  # If AWS_KEY/AWS_SECRET are set as empty environment
-  # variables or entered as empty strings then names
-  # will not be routable to your local ips.
-  aws:
-    aws_key: "<<AWS_KEY$AWS Access Key ID: "
-    aws_secret: "<<AWS_SECRET*AWS Secret Access Key: "
+# services:
+#   # This is used to give your local IPs DNS names
+#   # that are resolved via the AWS route53 service.
+#   # If AWS_KEY/AWS_SECRET are set as empty environment
+#   # variables or entered as empty strings then names
+#   # will not be routable to your local ips.
+#   aws:
+#     aws_key: "<<AWS_KEY$AWS Access Key ID: "
+#     aws_secret: "<<AWS_SECRET*AWS Secret Access Key: "
 
 ntp:
   sync_clock: true
@@ -38,6 +38,25 @@ messaging:
   services_path: os_services
   compute_path: os_compute_kvm
 
+# Load balancing proxy
+proxy:
+
+  vip_address: &vip_address 192.168.60.200
+  vip_cidr_netmask: 24
+  vip_nic: eth2
+
+  # Initially all backend pools will
+  # point to this IP. This creates
+  # a default path for any services
+  # that require another service
+  # that will eventually be served
+  # from HAProxy.
+  #
+  # IPs of all service VMs will
+  # statically allocated from this
+  # address.
+  backend_default_ip: 192.168.60.128
+
 openstack:
   region: kvm_vbox
 
@@ -52,7 +71,7 @@ openstack:
   # OpenStack endpoints
   endpoints:
 
-    openstack_ha_proxy: 192.168.60.254
+    openstack_ha_proxy: *vip_address
 
   # OpenStack Neutron settings
   network:
@@ -73,26 +92,13 @@ openstack:
       external_bridge: br-eth2
       external_interface: eth2
 
-# Load balancing proxy
-proxy:
-
-  vip_address: 192.168.60.254
-  vip_cidr_netmask: 24
-  vip_nic: eth2
-
-  # Initially all backend pools will
-  # point to this IP. This creates
-  # a default path for any services
-  # that require another service
-  # that will eventually be served
-  # from HAProxy.
-  #
-  # IPs of all service VMs will
-  # start from this address.
-  backend_default_ip: 192.168.60.100
-
 vagrant:
-  # x.x.x.x/25 subnets to attach
-  # to service and compute VMs
+  # x.x.x.x/25 subnet to attach to
+  # proxy, services and compute hosts
+  # to. IPs above 192.168.60.128 will
+  # be statically allocate.
   management_network: 192.168.60.0
+
+  # The data network will be configured
+  # as the public network for OpenStack.
   data_network: 192.168.61.0

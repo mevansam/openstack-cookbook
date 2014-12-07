@@ -22,16 +22,25 @@ use based on your current directory using [direnv](http://direnv.net/).
 2. Install the knife-stackbuilder gem.
 
 	```
-	$ gem install knife-stackbuilder
+	$ gem install -​-no-document knife-stackbuilder
 	```
-3. If you plan to execute the vagrant templates then you need to get the
+3. Clone this repository
+
+	```
+	$ git clone https://github.com/mevansam/openstack-ha-cookbook.git
+	```
+4. If you plan to execute the vagrant templates then you need to get the
 [knife-vagrant2](https://github.com/makern/knife-vagrant2) plugin for knife and the
 [vagrant-ohai](https://github.com/avishai-ish-shalom/vagrant-ohai) plugin for vagrant. However, instead of the
 original the following patched/updated plugins need to be installed as follows.
-
-    > These patches and updates are in the process being pushed to their respective upstream repositories.
-
-4. 
+	```
+	$ cd openstack-ha-cookbook
+	$ gem install --no-document vagrant-plugins/knife-vagrant2-0.0.5.gem
+	$ vagrant plugin install vagrant-plugins/vagrant-ohai-0.1.8.gem
+	```
+    > These patches and updates are in the process being pushed to their respective upstream repositories. The patched gems are available at:
+    > * [knife-vagrant2](https://github.com/mevansam/chef-knife-vagrant2.git)
+    > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
 
 
