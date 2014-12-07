@@ -38,40 +38,31 @@ cookbook 'openstack-telemetry',
     branch: 'stable/icehouse'
 
 cookbook 'openstack-identity',
-    path: '../chef/openstack-identity'
-#    git: 'https://github.com/mevansam/chef-cookbook-openstack-identity.git',
-#    branch: 'stable/icehouse'
+    git: 'https://github.com/mevansam/chef-cookbook-openstack-identity.git',
+    branch: 'stable/icehouse'
 cookbook 'openstack-image',
-    path: '../chef/openstack-image'
-#    git: 'https://github.com/mevansam/chef-cookbook-openstack-image.git',
-#    branch: 'stable/icehouse'
+    git: 'https://github.com/mevansam/chef-cookbook-openstack-image.git',
+    branch: 'stable/icehouse'
 cookbook 'openstack-block-storage',
-    path: '../chef/openstack-block-storage'
-#    git: 'https://github.com/mevansam/chef-cookbook-openstack-block-storage',
-#    branch: 'stable/icehouse'
+    git: 'https://github.com/mevansam/chef-cookbook-openstack-block-storage',
+    branch: 'stable/icehouse'
 cookbook 'openstack-compute',
-    path: '../chef/openstack-compute'
-#    git: 'https://github.com/mevansam/chef-cookbook-openstack-compute.git',
-#    branch: 'stable/icehouse'
+    git: 'https://github.com/mevansam/chef-cookbook-openstack-compute.git',
+    branch: 'stable/icehouse'
 cookbook 'openstack-network',
-    path: '../chef/openstack-network'
-#    git: 'https://github.com/mevansam/chef-cookbook-openstack-network.git',
-#    branch: 'stable/icehouse'
+    git: 'https://github.com/mevansam/chef-cookbook-openstack-network.git',
+    branch: 'stable/icehouse'
 cookbook 'openstack-dashboard',
-    path: '../chef/openstack-dashboard'
-#    git: 'https://github.com/mevansam/chef-cookbook-openstack-dashboard',
-#    branch: 'stable/icehouse'
+    git: 'https://github.com/mevansam/chef-cookbook-openstack-dashboard',
+    branch: 'stable/icehouse'
 
 cookbook 'sysutils',
-    path: '../chef/sysutils'
-#    git: 'https://github.com/mevansam/chef-cookbook-sysutils.git'
+    git: 'https://github.com/mevansam/chef-cookbook-sysutils.git'
 cookbook 'compute',
     git: 'https://github.com/mevansam/chef-cookbook-compute.git'
 cookbook 'network',
-    path: '../chef/network'
-#    git: 'https://github.com/mevansam/chef-cookbook-network.git'
+    git: 'https://github.com/mevansam/chef-cookbook-network.git'
 cookbook 'storage',
     git: 'https://github.com/mevansam/chef-cookbook-storage.git'
 cookbook 'openstack-services',
-    path: '../chef/openstack-services'
-#    git: 'https://github.com/mevansam/chef-cookbook-openstack-services.git'
+    git: 'https://github.com/mevansam/chef-cookbook-openstack-services.git'
