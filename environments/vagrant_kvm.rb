@@ -6,8 +6,22 @@ description "HA OpenStack Environment."
 env = YAML.load_file(File.expand_path("../../etc/#{env_name}.yml", __FILE__))
 
 ## Pre-process environment variables
+openstack_ha_proxy = env['openstack']['endpoints']['openstack_ha_proxy']
 
-openstack_proxy = env['openstack']['endpoints']['openstack_haproxy_name']
+# If openstack proxy is an IP then simply create a self-signed
+# cert for the environment as by default all end-points need to
+# be secured via SSL
+if openstack_ha_proxy=~/\d+\.\d+\.\d+\.\d+/
+
+    openstack_proxy = "#{env_name}.#{env['domain']}"
+    unless Dir.exist?(File.dirname(__FILE__) +  '/../.certs/' + openstack_proxy)
+        chef_server_url = Chef::Config[:chef_server_url]
+        `knife stack upload certificates --server=#{openstack_proxy} -E #{env_name} -s #{chef_server_url}`
+    end
+else
+    openstack_proxy =  openstack_ha_proxy
+end
+
 openstack_network = env['openstack']['network']
 
 ## Build the Chef environment
@@ -65,21 +79,21 @@ override_attributes(
 
         # Highly-Available Proxy load balancer
         # endpoint for all OpenStack services
-        'openstack_ha_proxy' => openstack_proxy,
+        'openstack_ha_proxy' => openstack_ha_proxy,
 
         'region' => env['openstack']['region'],
         'apt' => {
             'live_updates_enabled' => false
         },
         'endpoints' => {
-            'host' => openstack_proxy,
+            'host' => openstack_ha_proxy,
             'bind-host' => '0.0.0.0',
             'db' => {
-                'host' => env['openstack']['endpoints']['database_server'] || openstack_proxy,
+                'host' => env['openstack']['endpoints']['database_server'] || openstack_ha_proxy,
                 'port' => env['database']['port']
             },
             'mq' => {
-                'host' => env['openstack']['endpoints']['messaging_server'] || openstack_proxy,
+                'host' => env['openstack']['endpoints']['messaging_server'] || openstack_ha_proxy,
                 'port' => env['messaging']['ampq_port']
             },
             'identity-api' => {

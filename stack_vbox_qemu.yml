@@ -1,12 +1,14 @@
 ---
 name: vbox_qemu
 
-vagrant_provider: virtualbox
+vagrant:
+  provider: virtualbox
+  box_name: chef/ubuntu-14.04
+  box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
 
 stack:
 
 - node: openstack-proxy
-  scale: 2
   attributes:
     pacemaker_cluster_name: openstack-proxy
     pacemaker_mcast_address: 239.255.42.1
@@ -100,7 +102,7 @@ stack:
           virt_type: qemu
       network:
         l3:
-          is_clustered: false
+          is_clustered: true
   knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_2G]
   run_list:
   - recipe[ohai]

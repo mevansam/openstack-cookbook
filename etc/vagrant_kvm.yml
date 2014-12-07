@@ -1,13 +1,17 @@
 ---
 
-domain: pcf-services.com
+domain: mydomain.org
 
 # Root keys
 root:
   password: ej343fa8f4038e4f
 
 services:
-  # AWS
+  # This is used to give your local IPs DNS names
+  # that are resolved via the AWS route53 service.
+  # If AWS_KEY/AWS_SECRET are set as empty environment
+  # variables or entered as empty strings then names
+  # will not be routable to your local ips.
   aws:
     aws_key: "<<AWS_KEY$AWS Access Key ID: "
     aws_secret: "<<AWS_SECRET*AWS Secret Access Key: "
@@ -48,7 +52,7 @@ openstack:
   # OpenStack endpoints
   endpoints:
 
-    openstack_haproxy_name: os-msam.pcf-services.com
+    openstack_ha_proxy: 192.168.60.254
 
   # OpenStack Neutron settings
   network:
@@ -72,7 +76,7 @@ openstack:
 # Load balancing proxy
 proxy:
 
-  vip_address: 192.168.60.129
+  vip_address: 192.168.60.254
   vip_cidr_netmask: 24
   vip_nic: eth2
 

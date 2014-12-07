@@ -7,9 +7,9 @@ vagrant_ubuntu_1404:
     plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
-      provider: "#{my['vagrant_provider']}"
-      box: chef/ubuntu-14.04
-      box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+      provider: "#{my['vagrant']['provider']}"
+      box: "#{my['vagrant']['box_name']}"
+      box_url: "#{my['vagrant']['box_url']}"
       memsize: 768
       subnet: "#{env['vagrant']['management_network']}/25"
       port_forward: {}
@@ -34,9 +34,9 @@ vagrant_ubuntu_1404:
     plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
-      provider: "#{my['vagrant_provider']}"
-      box: chef/ubuntu-14.04
-      box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+      provider: "#{my['vagrant']['provider']}"
+      box: "#{my['vagrant']['box_name']}"
+      box_url: "#{my['vagrant']['box_url']}"
       memsize: 4096
       subnet: "#{env['vagrant']['management_network']}/25"
       # The '+' at the end of the IP indicates that the last octet
@@ -58,7 +58,8 @@ vagrant_ubuntu_1404:
         'storageattach', :id, '--storagectl', "SATA Controller", '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './cinder_volume.vdi'
       # VMWare: Create additional hard disk for Cinder volumes
       vmx_parameters: >
-        ehci.present=FALSE::
+        numvcpus=2::
+        vhv.enable=TRUE::
         scsi0:1.present=TRUE::
         scsi0:1.fileName=cinder_volume.vmdk::
         scsi0:1.fileSize=20GB
@@ -74,9 +75,9 @@ vagrant_ubuntu_1404:
     plugin: vagrant
     options:
       vagrant_dir: ~/.vagrant
-      provider: "#{my['vagrant_provider']}"
-      box: chef/ubuntu-14.04
-      box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+      provider: "#{my['vagrant']['provider']}"
+      box: "#{my['vagrant']['box_name']}"
+      box_url: "#{my['vagrant']['box_url']}"
       memsize: 2048
       subnet: "#{env['vagrant']['management_network']}/25"
       port_forward: {}
@@ -91,6 +92,9 @@ vagrant_ubuntu_1404:
       # VBox: enable promiscuous mode on nic on data network
       vb_customize: >
         'modifyvm', :id, "--nicpromisc3", "allow-all"
+      vmx_parameters: >
+        numvcpus=2::
+        vhv.enable=TRUE
       inline_config: |
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"
         config.ohai.enable = true
