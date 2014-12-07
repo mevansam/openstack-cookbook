@@ -80,5 +80,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Author | Email | Company
-------------------------- | ------------------------- | -----
+- | - | -
 Mevan Samaratunga | mevansam@gmail.com<br/> msamaratunga@pivotal.io | Pivotal
