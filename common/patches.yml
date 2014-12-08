@@ -1,8 +1,22 @@
 ---
 # Patch scripts to fix issues in openstack
 
+# Bug in Neutron nova notification code does not include
+# the insecure attribute when notifying nova regarding
+# the creation of a VIF. This results in a timeout and
+# nova-compute rolling back the VM creation.
 patch_neutron_nova_ssl_notification: >
   is_patched=$(cat /usr/lib/python2.7/dist-packages/neutron/notifiers/nova.py | grep 'auth_url=cfg.CONF.nova_admin_auth_url,insecure=True,');
   [ -n "$is_patched" ] ||
       sed -i.bak "s/auth_url=cfg.CONF.nova_admin_auth_url,/auth_url=cfg.CONF.nova_admin_auth_url,insecure=True,/" /usr/lib/python2.7/dist-packages/neutron/notifiers/nova.py;
   service neutron-server restart
+
+# Error during creation of a VM on KVM indicates that
+# Nova cannot find /var/run/libvirt/libvirt-sock. It was
+# discovered that /var/run/libvirt had permission root:root
+# although the socket has permission root:libvirtd and
+# nova user is part of the libvirtd group. This patch
+# ensures that the socket's parent directory's permissions
+# are consistent.
+patch_nova_compute_libvirt_permissions: >
+  [ -d "/var/run/libvirt" ] && chown root:libvirtd /var/run/libvirt

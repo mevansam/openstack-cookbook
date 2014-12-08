@@ -106,7 +106,13 @@ TODO: ...
 
 TODO: ...
 
-### OpenStack HA Multi-Hypervisor Template
+### OpenStack Highly Available Multi-Hypervisor Template
+
+TODO: ...
+
+### OpenStack DevStack Vagrant Template with PyDevd
+
+TODO: ...
 
 ## Design
 
@@ -119,8 +125,9 @@ TODO: ...
 ## Contributing
 
 1. Fork the repository on Github
-2. Create the
-5. Submit a Pull Request
+2. Create and test the template
+3. Document how to use the template
+4. Submit a Pull Request
 
 ## License and Authors
 
