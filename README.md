@@ -4,6 +4,37 @@ This cookbook is an automation framework that can be used to setup enterprise gr
 environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in an
 executable template which can be shared with the community.
 
+## Design
+
+This cookbook evolved from an effort to make it easier to use the OpenStack Chef cookbooks available on
+[StackForge](https://github.com/stackforge). It was modeled after the
+[OpenStack Chef Repo](https://github.com/stackforge/openstack-chef-repo) and borrows heavily from its collection of
+Chef roles. However instead of SpiceWeasel it uses a custom Knife plugin called
+[Knife StackBuilder](https://github.com/mevansam/chef-knife-stackbuilder) to interact with the Chef Server to build
+the cluster using a topology described in a YAML file.
+
+The StackBuilder plugin executes the topology by executing additional knife calls using knife cloud plugins to
+bootstrap hosts and apply and customize their run-list. During execution the plugin requires a path to a standard
+Chef repo folder. It can also  invoke Berkshelf to bulk upload cookbooks in the Repo and perform other tasks such as
+creating the Chef environment, uploading roles and encrypted data bags. It enforces a particular standard when
+processing the Repo data files to enable externalizing the Chef environment and data bag attributes to support
+multiple custom configurations with a single environment template. This allows you to simplify the complexity of
+building the Chef environment required by the Stackforge cookbooks to build an OpenStack cluster.
+
+It was created in favor of leveraging SpiceWeasel or Chef-Provisioning to address the following:
+
+* Externalize a Chef environment so it can be templatized and customized based on the executing shell environment and
+ a source environment variables file.
+
+* Ability to describe dependencies between various nodes in the topology and execute in order.
+
+* Be able to modify the Chef nodes attributes at execution time.
+
+* Create a mode around using certificates (and creation of self-signed certificates) to setup SSL as well as securing
+ all data in Data Bags via encryption using a key per environment (integration with Chef-Vault is coming).
+
+* Simplify the build steps to 'upload Chef repo', 'build stack', 'interact with the stack', ... etc.
+
 ## Supported Platforms
 
 The tools and templates have been tested on the following platforms.
@@ -111,10 +142,6 @@ TODO: ...
 TODO: ...
 
 ### OpenStack DevStack Vagrant Template with PyDevd
-
-TODO: ...
-
-## Design
 
 TODO: ...
 
