@@ -9,12 +9,10 @@ executable template which can be shared with the community.
 Currently the tooling and templates have been tested on the following platforms.
 
 * Tools:
-
-** Mac OS X
+	* Mac OS X
 
 * Templates:
-
-** Vagrant VirtualBox on Max OS X
+	* Vagrant VirtualBox on Max OS X
 
 ## Installation
 
