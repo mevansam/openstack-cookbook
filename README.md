@@ -6,13 +6,15 @@ executable template which can be shared with the community.
 
 ## Supported Platforms
 
-Tools:
+Currently the tooling and templates have been tested on the following platforms.
 
-* Mac OS X
+* Tools:
 
-Templates:
+** Mac OS X
 
-* Vagrant VirtualBox on Max OS X
+* Templates:
+
+** Vagrant VirtualBox on Max OS X
 
 ## Installation
 
