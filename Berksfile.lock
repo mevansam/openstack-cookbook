@@ -9,25 +9,38 @@ DEPENDENCIES
   hostsfile (~> 2.4.5)
   keepalived (~> 1.2.0)
   network
-    path: ../chef/network
+    git: https://github.com/mevansam/chef-cookbook-network.git
+    revision: f81fe72ad6811c3af6104d018e4ee942536fc81e
   ntp (= 1.6.5)
   ohai (= 2.0.1)
   openstack-block-storage
-    path: ../chef/openstack-block-storage
+    git: https://github.com/mevansam/chef-cookbook-openstack-block-storage
+    revision: e87c12ece9dcc55d556be2e5c941cc6927e20d43
+    branch: stable/icehouse
   openstack-common
     git: https://github.com/stackforge/cookbook-openstack-common
     revision: ad0f56149d8805537446e68275e27a11094e280f
     branch: stable/icehouse
   openstack-compute
-    path: ../chef/openstack-compute
+    git: https://github.com/mevansam/chef-cookbook-openstack-compute.git
+    revision: 142f5f5f546bcb367bfbfc40496650aeff39571d
+    branch: stable/icehouse
   openstack-dashboard
-    path: ../chef/openstack-dashboard
+    git: https://github.com/mevansam/chef-cookbook-openstack-dashboard
+    revision: c0c308d82d667a6a994e23cd4bcf370e53744f4f
+    branch: stable/icehouse
   openstack-identity
-    path: ../chef/openstack-identity
+    git: https://github.com/mevansam/chef-cookbook-openstack-identity.git
+    revision: 425cf2412c311fa7f8214d54e32e240529bbdf85
+    branch: stable/icehouse
   openstack-image
-    path: ../chef/openstack-image
+    git: https://github.com/mevansam/chef-cookbook-openstack-image.git
+    revision: dd61668b131daaff5eee432dd3d9a607135645f3
+    branch: stable/icehouse
   openstack-network
-    path: ../chef/openstack-network
+    git: https://github.com/mevansam/chef-cookbook-openstack-network.git
+    revision: abceb8a3a55e6193a0a45e831c651f376b116dca
+    branch: stable/icehouse
   openstack-object-storage
     git: https://github.com/stackforge/cookbook-openstack-object-storage
     revision: bb9c607292a80dbd18364be838c2f293302c2abd
@@ -45,7 +58,8 @@ DEPENDENCIES
     revision: 7f683b9f566939bcc23c64311652055a9594307b
     branch: stable/icehouse
   openstack-services
-    path: ../chef/openstack-services
+    git: https://github.com/mevansam/chef-cookbook-openstack-services.git
+    revision: ac6be0e3a8c6831ba56015cf7f0c4a717daedecf
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e
@@ -55,7 +69,7 @@ DEPENDENCIES
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
     git: https://github.com/kennonkwok/rabbitmq.git
-    revision: f9db2cce80129f57bc18c3f6a438edc5147db6f7
+    revision: 600b1ff4f52989cd1040791dc1c24c94f6c964fc
   selinux (= 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
@@ -65,7 +79,8 @@ DEPENDENCIES
     revision: 7057c632683bcc6a86b7a6a99f8d4c8fd04a807a
   sudo (= 2.6.0)
   sysutils
-    path: ../chef/sysutils
+    git: https://github.com/mevansam/chef-cookbook-sysutils.git
+    revision: 7be9ab6f00aa3c55e2e7ca7edeeb6b4b8a82ca28
   xfs (= 1.1.0)
   yum (= 3.2.2)
   yum-epel (= 0.4.0)
@@ -207,7 +222,7 @@ GRAPH
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.5.0)
+  rabbitmq (3.5.1)
     erlang (>= 0.9.0)
   runit (1.5.10)
     build-essential (>= 0.0.0)
