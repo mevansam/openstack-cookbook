@@ -1,5 +1,5 @@
 {
   "id": "aws",
-  "aws_access_key_id": "#{env['services']['aws'] ? env['services']['aws']['aws_key'] : ''}",
-  "aws_secret_access_key": "#{env['services']['aws'] ? env['services']['aws']['aws_secret'] : ''}"
+  "aws_access_key_id": "#{env['services'] && env['services']['aws'] ? env['services']['aws']['aws_key'] : ''}",
+  "aws_secret_access_key": "#{env['services'] && env['services']['aws'] ? env['services']['aws']['aws_secret'] : ''}"
 }
