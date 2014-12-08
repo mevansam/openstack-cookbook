@@ -89,7 +89,9 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
-      # VBox: enable promiscuous mode on nic on data network
+      # VBox: enable promiscuous mode on nic on data network. For VMware
+      # Fusion/Workstation simply uncheck 'Require authenticaiton to
+      # enter promoscuous mode' under global network settings/preferences.
       vb_customize: >
         'modifyvm', :id, "--nicpromisc3", "allow-all"
       vmx_parameters: >

@@ -1,13 +1,18 @@
 # OpenStack High-Availability Cookbook
 
 This cookbook is an automation framework that can be used to setup enterprise grade highly available OpenStack
-environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in a template
-which can be shared with the community. It captures these various OpenStack topologies in templates, which can be
-executed in a repeatable manner.
+environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in an
+executable template which can be shared with the community.
 
 ## Supported Platforms
 
-TODO: ...
+Tools:
+
+* Mac OS X
+
+Templates:
+
+* Vagrant VirtualBox on Max OS X
 
 ## Installation
 
@@ -19,7 +24,7 @@ within a ChefDK environment.
 contained ruby environment. If you have other ruby environments managed by rvm/rubyenv, you can manage which one to
 use based on your current directory using [direnv](http://direnv.net/).
 
-2. Install the knife-stackbuilder gem.
+2. Install the [knife-stackbuilder](https://github.com/mevansam/chef-knife-stackbuilder) gem.
 
 	```
 	$ gem install -​-no-document knife-stackbuilder
@@ -42,7 +47,27 @@ use based on your current directory using [direnv](http://direnv.net/).
     > * [knife-vagrant2](https://github.com/mevansam/chef-knife-vagrant2.git)
     > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
+5. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line then create a python
+virtual environment and install the OpenStack python clients as follows.
 
+	```
+	$ mkdir -p [your workspace]/openstack-cli
+	$ cd [your workspace]/openstack-cli
+
+	$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
+    $ tar xvf virtualenv-1.11.tar.gz
+    $ python virtualenv-1.11/virtualenv.py pyos
+    $ rm -rf virtualenv-1.11
+    $ yos/bin/pip install virtualenv-1.11.tar.gz
+    $ rm -fr virtualenv-1.11.tar.gz
+    
+    $ source pyos/bin/activate
+    $ pip install python-keystoneclient
+    $ pip install python-glanceclient
+    $ pip install python-cinderclient
+    $ pip install python-neutronclient
+    $ pip install python-novaclient
+    ```
 
 ### OpenStack KVM on Vagrant Template
 
