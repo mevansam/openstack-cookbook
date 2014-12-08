@@ -4,7 +4,7 @@ This cookbook is an automation framework that can be used to setup enterprise gr
 environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in an
 executable template which can be shared with the community.
 
-## Design
+## Design & Use
 
 This cookbook evolved from an effort to make it easier to use the OpenStack Chef cookbooks available on
 [StackForge](https://github.com/stackforge). It was modeled after the
@@ -47,6 +47,46 @@ execution environment.
 
 ![Image of OpenStack HA Configuration File Structure]
 (docs/images/config_files.png)
+
+The high-lighted files create the static Chef environment, whereas the Stack File can introduce variability to the
+deployment. The high-lighted arrows imply that variable substition happens automatically based on the selected Chef
+environment.
+
+### Inspecting the environment
+
+It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
+[Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
+
+> To run chef zero execute ```ruby run_zero.rb``` from within this repositories folder.
+> You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
+
+1. The Chef Environment
+
+	First upload the Chef environment to chef server
+
+	```
+	$ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+
+	Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
+
+	```
+	Inspect the environment
+
+	```
+	$ knife environment show vagrant_kvm -c etc/chef-zero_knife.rb
+
+    chef_type:           environment
+    cookbook_versions:
+    default_attributes:
+    description:         HA OpenStack Environment.
+    json_class:          Chef::Environment
+    name:                vagrant_kvm
+    override_attributes:
+    .
+    .
+    .
+
+	```
 
 ## Supported Platforms
 
