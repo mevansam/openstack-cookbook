@@ -47,20 +47,28 @@ use based on your current directory using [direnv](http://direnv.net/).
     > * [knife-vagrant2](https://github.com/mevansam/chef-knife-vagrant2.git)
     > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
-5. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line then create a python
-virtual environment and install the OpenStack python clients as follows.
+5. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python
+virtual environment and install the python clients as follows.
+
+	* Create a work area
 
 	```
 	$ mkdir -p [your workspace]/openstack-cli
 	$ cd [your workspace]/openstack-cli
+	```
+	* Install a python virtual environment
 
+	````
 	$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
     $ tar xvf virtualenv-1.11.tar.gz
     $ python virtualenv-1.11/virtualenv.py pyos
     $ rm -rf virtualenv-1.11
     $ yos/bin/pip install virtualenv-1.11.tar.gz
     $ rm -fr virtualenv-1.11.tar.gz
-    
+    ````
+
+	* Activate the virtual environment and install the clients
+	````
     $ source pyos/bin/activate
     $ pip install python-keystoneclient
     $ pip install python-glanceclient
