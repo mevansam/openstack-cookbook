@@ -62,7 +62,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 
 1. The Chef Environment
 
-	First upload the Chef environment to chef server
+	First upload the Chef environment to Chef server
 
 	```
 	$ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
@@ -70,6 +70,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 	Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
 
 	```
+
 	Inspect the environment
 
 	```
@@ -87,6 +88,40 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
     .
 
 	```
+
+2. Data bags
+
+	First upload the data bag for a specific environment to the Chef server
+
+	```
+	$ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+
+    Uploaded item 'ceilometer' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
+    Uploaded item 'cinder' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
+    .
+    .
+    .
+	```
+	Show data bags
+
+	```
+	$ knife data bag list -c etc/chef-zero_knife.rb
+
+    certificates-vagrant_kvm
+    os_db_passwords-vagrant_kvm
+    os_secrets-vagrant_kvm
+	.
+	.
+	.
+	```
+	Inspect a data bag item
+
+	```
+	$ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm -c etc/chef-zero_knife.rb
+
+	horizon: 0p3n5tack
+    id:      horizon
+    ```
 
 ## Supported Platforms
 
