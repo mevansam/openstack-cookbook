@@ -57,7 +57,7 @@ environment.
 It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
 [Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
 
-> To run chef zero execute ```ruby run_zero.rb``` from within this repositories folder.
+> To run chef zero execute ```ruby run_zero.rb``` from within this repository's folder.
 > You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
 
 1. The Chef Environment
@@ -122,6 +122,28 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 	horizon: 0p3n5tack
     id:      horizon
     ```
+
+3. The Stack
+
+	Run the following to show the parsed Stack file. This will show the complete stack file with all the includes and
+	externalized variables resolved.
+
+	```
+	$ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+
+	Stack file:
+    ---
+    name: vbox_qemu
+    vagrant:
+      provider: virtualbox
+      box_name: chef/ubuntu-14.04
+      box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+    stack:
+    - node: openstack-proxy
+    .
+    .
+    .
+	```
 
 ## Supported Platforms
 
