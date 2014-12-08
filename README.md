@@ -14,12 +14,12 @@ Chef roles. However instead of SpiceWeasel it uses a custom Knife plugin called
 the cluster using a topology described in a YAML file.
 
 The StackBuilder plugin executes the topology by executing additional knife calls using knife cloud plugins to
-bootstrap hosts and apply and customize their run-list. During execution the plugin requires a path to a standard
-Chef repo folder. It can also  invoke Berkshelf to bulk upload cookbooks in the Repo and perform other tasks such as
-creating the Chef environment, uploading roles and encrypted data bags. It enforces a particular standard when
-processing the Repo data files to enable externalizing the Chef environment and data bag attributes to support
-multiple custom configurations with a single environment template. This allows you to simplify the complexity of
-building the Chef environment required by the Stackforge cookbooks to build an OpenStack cluster.
+bootstrap hosts and apply and customize their run-lists. During execution the plugin requires a path to a standard
+Chef repo folder. It can also invoke Berkshelf to bulk upload cookbooks and perform other tasks such as creating the
+Chef environment and uploading roles and encrypted data bags. It enforces a particular standard when processing the
+data files to enable externalizing the Chef environment and data bag attributes to support multiple custom
+configurations with a single environment template. This allows you to simplify the complexity of building the Chef
+environment required by the Stackforge cookbooks to build an OpenStack cluster.
 
 It was created in favor of leveraging SpiceWeasel or Chef-Provisioning to address the following:
 
@@ -34,6 +34,19 @@ It was created in favor of leveraging SpiceWeasel or Chef-Provisioning to addres
  all data in Data Bags via encryption using a key per environment (integration with Chef-Vault is coming).
 
 * Simplify the build steps to 'upload Chef repo', 'build stack', 'interact with the stack', ... etc.
+
+Think of StackBuilder as a Ansible or SaltStack for Chef Knife.
+
+### The Repository Structure
+
+The repository structure is based off the [chef-repo](http://docs.getchef.com/chef_repo.html) structure used for Chef
+development. The only difference being that it favors using [Berkshelf](http://berkshelf.com/v2.0/) to manage
+cookbooks and data bags are created by environment when uploaded via StackBuilder. At a high level the following
+diagram outlines the relationship between the various files in the repo and how they contributed to the final
+execution environment.
+
+![Image of OpenStack HA Configuration File Structure]
+(docs/images/config_files.png)
 
 ## Supported Platforms
 
