@@ -50,13 +50,13 @@ use based on your current directory using [direnv](http://direnv.net/).
 5. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python
 virtual environment and install the python clients as follows.
 
-	* Create a work area
+	* Create work area and cd to it
 
 	```
 	$ mkdir -p [your workspace]/openstack-cli
 	$ cd [your workspace]/openstack-cli
 	```
-	* Install a python virtual environment
+	* Install the python virtual environment
 
 	````
 	$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
@@ -76,6 +76,9 @@ virtual environment and install the python clients as follows.
     $ pip install python-neutronclient
     $ pip install python-novaclient
     ```
+
+	Once you have setup the openstack environment copy the `openrc` file created on the controller host to this work
+	area and source it before calling the OpenStack APIs via the client tools.
 
 ### OpenStack KVM on Vagrant Template
 
