@@ -4,7 +4,7 @@ This cookbook is an automation framework that can be used to setup enterprise gr
 environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in an
 executable template which can be shared with the community.
 
-## Design & Use
+## Overview
 
 This cookbook evolved from an effort to make it easier to use the OpenStack Chef cookbooks available on
 [StackForge](https://github.com/stackforge). It was modeled after the
@@ -129,7 +129,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 	externalized variables resolved.
 
 	```
-	$ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+	$ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
 
 	Stack file:
     ---
@@ -143,6 +143,50 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
     .
     .
     .
+	```
+
+### Building a stack
+
+1. Preparation
+
+	Before the stack can be built the Chef repository needs to be uploaded. The following stack command loads the
+	entire repository. It is simply a combination of individual stack repo commands executed in bulk for a specific
+	Chef environment. This will also upload all the cookbooks specified in the Berkshelf file.
+
+	```
+	$ knife stack upload repo --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+
+	Resolving cookbook dependencies...
+    Fetching 'network' from source at ../chef/network
+    Fetching 'openstack-block-storage' from source at ../chef/openstack-block-storage
+    Fetching 'openstack-compute' from source at ../chef/openstack-compute
+    Fetching 'openstack-dashboard' from source at ../chef/openstack-dashboard
+    Fetching 'openstack-identity' from source at ../chef/openstack-identity
+    Fetching 'openstack-image' from source at ../chef/openstack-image
+    Fetching 'openstack-network' from source at ../chef/openstack-network
+    Fetching 'openstack-services' from source at ../chef/openstack-services
+    Fetching 'sysutils' from source at ../chef/sysutils
+	.
+	.
+	.
+	Uploaded item 'aws' of data bag 'service_endpoints-vagrant_kvm' to 'http://192.168.1.10:9999'.
+    Uploaded item 'qip' of data bag 'service_endpoints-vagrant_kvm' to 'http://192.168.1.10:9999'.
+    Uploaded item 'root' of data bag 'users-vagrant_kvm' to 'http://192.168.1.10:9999'.
+    Uploaded 'vagrant_kvm' certificate for server 'vagrant_kvm.mydomain.org' to data bag 'certificates-vagrant_kvm' at 'http://192.168.1.10:9999'.
+	```
+
+2. Execution
+
+	To execute a stack simply determine which stack you want to build for a specific environment and run the following.
+
+	```
+	$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+
+	Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
+    Creating node resource 'openstack-proxy[0]'.
+	.
+	.
+	.
 	```
 
 ## Supported Platforms
