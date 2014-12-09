@@ -12,7 +12,6 @@ cookbook 'xfs',              '1.1.0'
 cookbook 'hostsfile',        '~> 2.4.5'
 cookbook 'keepalived',       '~> 1.2.0'
 cookbook 'haproxy',          '~> 1.6.6'
-cookbook 'gem_installation', '~> 2.0.1'
 
 cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
 cookbook 'rabbitmq', git: 'https://github.com/kennonkwok/rabbitmq.git'

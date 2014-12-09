@@ -4,13 +4,12 @@ DEPENDENCIES
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
-  gem_installation (~> 2.0.1)
   haproxy (~> 1.6.6)
   hostsfile (~> 2.4.5)
   keepalived (~> 1.2.0)
   network
     git: https://github.com/mevansam/chef-cookbook-network.git
-    revision: f81fe72ad6811c3af6104d018e4ee942536fc81e
+    revision: c77667f484f2e3f2b2e5b961d3478bb5677fba06
   ntp (= 1.6.5)
   ohai (= 2.0.1)
   openstack-block-storage
@@ -80,7 +79,7 @@ DEPENDENCIES
   sudo (= 2.6.0)
   sysutils
     git: https://github.com/mevansam/chef-cookbook-sysutils.git
-    revision: 7be9ab6f00aa3c55e2e7ca7edeeb6b4b8a82ca28
+    revision: a28f6eda6824ba793f89bb5ae29d6857c995d48e
   xfs (= 1.1.0)
   yum (= 3.2.2)
   yum-epel (= 0.4.0)
@@ -111,9 +110,6 @@ GRAPH
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
     yum-erlang_solutions (>= 0.0.0)
-  gem_installation (2.0.1)
-    apt (>= 0.0.0)
-    build-essential (>= 0.0.0)
   git (4.0.2)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
@@ -139,7 +135,6 @@ GRAPH
     build-essential (>= 0.0.0)
     mysql (>= 0.0.0)
   network (0.1.0)
-    gem_installation (~> 2.0.1)
     hostsfile (~> 2.4.5)
     network_interfaces (~> 1.0.0)
     sysutils (>= 0.0.0)
