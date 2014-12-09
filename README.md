@@ -4,6 +4,9 @@ This cookbook is an automation framework that can be used to setup enterprise gr
 environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in an
 executable template which can be shared with the community.
 
+> This README assumes that you are familiar with the Chef automation
+> framework and the basics of using Knife to interact with a Chef Server.
+
 ## Overview
 
 This cookbook evolved from an effort to make it easier to use the OpenStack Chef cookbooks available on
@@ -24,18 +27,21 @@ environment required by the Stackforge cookbooks to build an OpenStack cluster.
 It was created in favor of leveraging SpiceWeasel or Chef-Provisioning to address the following:
 
 * Externalize a Chef environment so it can be templatized and customized based on the executing shell environment and
- a source environment variables file.
+a source environment variables file.
 
 * Ability to describe dependencies between various nodes in the topology and execute in order.
 
 * Be able to modify the Chef nodes attributes at execution time.
 
-* Create a mode around using certificates (and creation of self-signed certificates) to setup SSL as well as securing
- all data in Data Bags via encryption using a key per environment (integration with Chef-Vault is coming).
+* Leverage [Chef Knife community plugins](https://docs.getchef.com/community_plugin_knife.html) to target multiple
+clouds.
+
+* Create a model around using certificates (and creation of self-signed certificates) to setup SSL as well as securing
+all data in Data Bags via encryption using a key per environment (integration with Chef-Vault is coming).
 
 * Simplify the build steps to 'upload Chef repo', 'build stack', 'interact with the stack', ... etc.
 
-Think of StackBuilder as a Ansible or SaltStack for Chef Knife.
+Think of StackBuilder as an Ansible or SaltStack for Chef Knife.
 
 ### The Repository Structure
 
@@ -143,6 +149,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
     .
     .
     .
+	Stack build for '.../openstack-ha-cookbook/stack_vbox_qemu.yml' took 30 minutes and '12.020' seconds
 	```
 
 ### Building a stack
@@ -188,6 +195,9 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 	.
 	.
 	```
+	The ```stack-id``` is a unique identifier for the stack you are building. Knife uses this ID to locate all nodes
+	belonging to the OpenStack cluster to determine current state. If one is not provided a uuid will be generated as
+	the for the ID.
 
 ## Supported Platforms
 
@@ -270,6 +280,52 @@ virtual environment and install the python clients as follows.
 
 ![Image of OpenStack KVM setup on Vagrant]
 (docs/images/vagrant_kvm.png)
+
+The Vagrant template can be used to launch a minimal OpenStack cluster using a nested hypervisor on either Virtual
+Box or VMware. The Chef OpenStack environment for this minimal environment is described in
+```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
+```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default
+setup KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions
+to guests required to run a nested hypervisor.
+
+To execute the VirtualBox template from the repository folder:
+
+```
+# Run Chef-Zero
+$ ruby run_zero.rb
+
+# Load Chef-Zero
+$ knife stack upload repo -c etc/chef-zero_knife.rb
+
+# Build the stack
+$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.r
+
+.
+.
+.
+
+# Delete the stack when you are done playing with OpenStack
+$ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.r
+```
+
+From a shell provisioned with the OpenStack CLI use the following gists to initialize the OpenStack environment.
+* [Sample openrc for the Vagrant stack](https://gist.github.com/mevansam/d0d517ea321c6b199e55)
+* [Script to upload an image, create a network and import your ssh public key](https://gist.github.com/mevansam/2b8ee9e248d1b5082552)
+
+> If you execute this template with Chef Zero remember to upload the repo to Chef-Zero before execution.
+> Since Chef-Zero is an in-memory minimal Chef server if you restart the process then you need to reload it.
+
+#### Troubleshooting
+
+1. If the build fails with a cookbook error it is safe to re-run it. Sometimes failures can occur due to time-outs
+when downloading binaries from the internet, if you are on a very slow connection or the public repository servers
+are overloaded.
+
+2. If VM creation is halted this leaves the Knife Vagrant plugin's VM directory in a bad state. If this happens you
+need to first delete them either from the VirtualBox UI or in the case of VMWare kill the VM processes. Once deleted
+delete their meta-data folders in the ~/.vagrant folder.
+
+
 
 ### OpenStack KVM on VMWare Template
 
