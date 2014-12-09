@@ -302,7 +302,7 @@ $ knife stack upload repo -c etc/chef-zero_knife.rb
 $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
 ```
 
-If the stack build completes successfully horizon will be available at [https://192.168.60.200](https://192.168.60
+If the stack build completes successfully, horizon will be available at [https://192.168.60.200](https://192.168.60
 .200), and you can login with the credentials ```admin/0p3n5tack```.
 
 From a shell provisioned with the OpenStack CLI, use the following gists to initialize the OpenStack environment.
@@ -311,6 +311,13 @@ From a shell provisioned with the OpenStack CLI, use the following gists to init
 
 > If you execute this template with Chef Zero remember to upload the repo to Chef-Zero before execution.
 > Since Chef-Zero is an in-memory minimal Chef server if you restart the process then you need to reload it.
+
+When you are done you can delete the entire cluster by running the following command:
+
+```
+$ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+
+```
 
 #### Troubleshooting
 
