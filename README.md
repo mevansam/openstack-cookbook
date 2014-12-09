@@ -286,7 +286,8 @@ Box or VMware. The Chef OpenStack environment for this minimal environment is de
 ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
 ```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default
 setup KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions
-to guests required to run a nested hypervisor.
+to guests required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to
+launch the stack and more if you want to scale it out.
 
 To execute the VirtualBox template from the repository folder:
 
@@ -298,17 +299,13 @@ $ ruby run_zero.rb
 $ knife stack upload repo -c etc/chef-zero_knife.rb
 
 # Build the stack
-$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.r
-
-.
-.
-.
-
-# Delete the stack when you are done playing with OpenStack
-$ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.r
+$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
 ```
 
-From a shell provisioned with the OpenStack CLI use the following gists to initialize the OpenStack environment.
+If the stack build completes successfully you will be able to login to [horizon](https://192.168.60.200) with the
+credentials ```admin/0p3n5tack```.
+
+From a shell provisioned with the OpenStack CLI, use the following gists to initialize the OpenStack environment.
 * [Sample openrc for the Vagrant stack](https://gist.github.com/mevansam/d0d517ea321c6b199e55)
 * [Script to upload an image, create a network and import your ssh public key](https://gist.github.com/mevansam/2b8ee9e248d1b5082552)
 
@@ -322,10 +319,8 @@ when downloading binaries from the internet, if you are on a very slow connectio
 are overloaded.
 
 2. If VM creation is halted this leaves the Knife Vagrant plugin's VM directory in a bad state. If this happens you
-need to first delete them either from the VirtualBox UI or in the case of VMWare kill the VM processes. Once deleted
+need to delete them via the VirtualBox UI or in the case of VMWare kill the VM processes. Once deleted
 delete their meta-data folders in the ~/.vagrant folder.
-
-
 
 ### OpenStack KVM on VMWare Template
 
