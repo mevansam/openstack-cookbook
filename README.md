@@ -302,8 +302,8 @@ $ knife stack upload repo -c etc/chef-zero_knife.rb
 $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
 ```
 
-If the stack build completes successfully, horizon will be available at [https://192.168.60.200](https://192.168.60
-.200), and you can login with the credentials ```admin/0p3n5tack```.
+If the stack build completes successfully, horizon will be available at
+[https://192.168.60.200](https://192.168.60.200), and you can login with the credentials ```admin/0p3n5tack```.
 
 From a shell provisioned with the OpenStack CLI, use the following gists to initialize the OpenStack environment.
 * [Sample openrc for the Vagrant stack](https://gist.github.com/mevansam/d0d517ea321c6b199e55)

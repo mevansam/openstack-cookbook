@@ -17,6 +17,10 @@ cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
 cookbook 'rabbitmq', git: 'https://github.com/kennonkwok/rabbitmq.git'
 cookbook 'statsd',   git: 'https://github.com/att-cloud/cookbook-statsd'
 
+#cookbook 'chef-docker',
+#    git: 'https://github.com/bflad/chef-docker.git',
+#    branch: '0.36-stable'
+
 cookbook 'openstack-common',
     git: 'https://github.com/stackforge/cookbook-openstack-common',
     branch: 'stable/icehouse'
