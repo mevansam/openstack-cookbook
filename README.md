@@ -212,13 +212,14 @@ The tools and templates have been tested on the following platforms.
 
 ## Installation
 
-You can run this framework by installing the required Chef configuration tools within your rvm/rubyenv environments
-or within a ChefDK environments. The recommended approach described below sets up the required additional tools
-within a ChefDK environment.
+The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive use of threading. During testing it has been noticed that if installed within the ChefDK gem environment the plugin exits with a "deadlock" error. This does not exist within a regular Ruby 2.1.5 environment. So it is recommended that this plugin be installed within a Ruby 2.1.5 managed by a Ruby version manager like RVM.
 
-1. First download and install the latest [ChefDK](https://downloads.getchef.com/chef-dk/). This will give you a self
-contained ruby environment. If you have other ruby environments managed by rvm/rubyenv, you can manage which one to
-use based on your current directory using [direnv](http://direnv.net/).
+1. First create a Ruby 2.1.5 environment. For example using [RVM](http://rvm.io)
+
+	```
+	$ curl -sSL https://get.rvm.io | bash -s stable
+	$ rvm install 2.1
+	```
 
 2. Install the [knife-stackbuilder](https://github.com/mevansam/chef-knife-stackbuilder) gem.
 
@@ -232,15 +233,12 @@ use based on your current directory using [direnv](http://direnv.net/).
 	$ cd openstack-ha-cookbook
 	```
 4. If you plan to execute the vagrant templates then you need to get the updated
-[knife-vagrant2](https://github.com/makern/knife-vagrant2) plugin for knife and the
 [vagrant-ohai](https://github.com/avishai-ish-shalom/vagrant-ohai) plugin for vagrant.
 
 	```
-	$ gem install --no-document vagrant-plugins/knife-vagrant2-0.0.5.gem
 	$ vagrant plugin install vagrant-plugins/vagrant-ohai-0.1.8.gem
 	```
-    > These patches and updates are in the process being pushed to their respective upstream repositories. The patched gems are available at:
-    > * [knife-vagrant2](https://github.com/mevansam/chef-knife-vagrant2.git)
+    > These patches and updates are in the process being pushed to their respective upstream repositories. The patched vagrant gem is available at:
     > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
 5. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python
