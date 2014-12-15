@@ -212,7 +212,7 @@ The tools and templates have been tested on the following platforms.
 
 ## Installation
 
-The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive use of threading. During testing it has been noticed that if installed within the ChefDK gem environment the plugin exits with a "deadlock" error. This does not exist within a regular Ruby 2.1.5 environment. So it is recommended that this plugin be installed within a Ruby 2.1.5 managed by a Ruby version manager like RVM.
+The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive use of threading. During testing it has been noticed that if installed within the ChefDK gem environment the plugin exits with a "deadlock" error. This does not exist within a regular Ruby 2.1.5 environment. So it is recommended that this plugin be installed within a Ruby environment managed by a Ruby version manager like RVM.
 
 1. First create a Ruby 2.1.5 environment. For example using [RVM](http://rvm.io)
 
