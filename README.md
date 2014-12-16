@@ -90,9 +90,9 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 5. Optional: create .chef folder and copy chef-zero knife configuration files if you plan to use chef-zero as you default chef.
 
 	```
-	$ mkdir ~/.chef
-	$ cp etc/chef-zero_* ~/.chef
-	$ mv ~/.chef/chef-zero_knife.rb ~/.chef/knife.rb
+	$ mkdir .chef
+	$ cp etc/chef-zero_* .chef
+	$ mv ~/.chef/chef-zero_knife.rb .chef/knife.rb
 	```
 
 6. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python
@@ -283,7 +283,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 
 2. Execution
 
-	To execute a stack simply determine which stack you want to build for a specific environment and run the following.
+	To execute a stack simply determine which stack you want to build for a specific environment and run the following. If you have added a default knife configuration you can omit the -c argument. 
 
 	```
 	$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
