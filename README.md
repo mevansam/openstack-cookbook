@@ -257,7 +257,7 @@ virtual environment and install the python clients as follows.
     $ tar xvf virtualenv-1.11.tar.gz
     $ python virtualenv-1.11/virtualenv.py pyos
     $ rm -rf virtualenv-1.11
-    $ yos/bin/pip install virtualenv-1.11.tar.gz
+    $ pyos/bin/pip install virtualenv-1.11.tar.gz
     $ rm -fr virtualenv-1.11.tar.gz
     ````
 
