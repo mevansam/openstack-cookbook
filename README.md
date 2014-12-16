@@ -69,7 +69,8 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 2. Install the [knife-stackbuilder](https://github.com/mevansam/chef-knife-stackbuilder) gem.
 
 	```
-	$ gem install -​-no-document knife-stackbuilder
+	$ gem install --no-document knife-stackbuilder
+	$ gem install --no-document berkshelf
 	```
 3. Clone this repository
 
@@ -86,7 +87,15 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
     > These patches and updates are in the process being pushed to their respective upstream repositories. The patched vagrant gem is available at:
     > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
-5. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python
+5. Optional: create .chef folder and copy chef-zero knife configuration files if you plan to use chef-zero as you default chef.
+
+	```
+	mkdir .chef
+	cp etc/chef-zero_* .chef
+	mv .chef/chef-zero_knife.rb .chef/knife.rb
+	```
+
+6. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python
 virtual environment and install the python clients as follows.
 
 	* Create work area and cd to it
@@ -289,16 +298,16 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 	belonging to the OpenStack cluster to determine current state. If one is not provided a uuid will be generated as
 	the for the ID.
 
-```
-# Run Chef-Zero
-$ ruby run_zero.rb
+	```
+	# Run Chef-Zero
+	$ ruby run_zero.rb
 
-# Load Chef-Zero
-$ knife stack upload repo -c etc/chef-zero_knife.rb
+	# Load Chef-Zero
+	$ knife stack upload repo -c etc/chef-zero_knife.rb
 
-# Build the stack
-$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
-```
+	# Build the stack
+	$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+	```
 
 If the stack build completes successfully, horizon will be available at
 [https://192.168.60.200](https://192.168.60.200), and you can login with the credentials ```admin/0p3n5tack```.
