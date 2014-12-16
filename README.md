@@ -269,7 +269,13 @@ virtual environment and install the python clients as follows.
     $ pip install python-cinderclient
     $ pip install python-neutronclient
     $ pip install python-novaclient
+    
     ```
+    
+    '''
+    $ # Copy paste friendly
+    $ pip install python-keystoneclient python-glanceclient python-cinderclient python-neutronclient python-novaclient
+    '''
 
 	Once you have setup the openstack environment copy the `openrc` file created on the controller host to this work
 	area and source it before calling the OpenStack APIs via the client tools.
