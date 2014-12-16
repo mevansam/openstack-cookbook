@@ -95,10 +95,9 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 	$ mv ~/.chef/chef-zero_knife.rb .chef/knife.rb
 	```
 
-6. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python
-virtual environment and install the python clients as follows.
+6. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
 
-	* Create work area and cd to it
+	* Create work area and cd to it. This should not be inside the openstack-ha-cookbook repo.
 
 	```
 	$ mkdir -p [your workspace]/openstack-cli
