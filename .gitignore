@@ -11,3 +11,4 @@ tmp/
 target
 *.swp
 
+openstack-cli/
