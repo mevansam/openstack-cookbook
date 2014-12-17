@@ -5,6 +5,7 @@ vagrant:
   provider: virtualbox
   box_name: chef/ubuntu-14.04
   box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+  key_file: ~/.vagrant/insecure_key
 
 stack:
 

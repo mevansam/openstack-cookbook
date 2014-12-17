@@ -17,12 +17,55 @@ vagrant_ubuntu_1404:
       use_cachier: false
       distro: chef-full
       host_key_verify: false
-      identity_file: ~/.vagrant/insecure_key
+      identity_file: "#{my['vagrant']['key_file']}"
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
       inline_config: |
+        config.ssh.private_key_path = "#{my['vagrant']['key_file']}"
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['management_network']}"
+        config.ohai.enable = true
+        config.ohai.primary_nic = "eth1"
+        config.vm.provision "shell", inline: "mkdir -p /etc/chef"
+        config.vm.provision "shell", inline: "apt-get update"
+      run_list:
+      - recipe[ohai]
+
+  create_1nic_2G:
+    plugin: vagrant
+    options:
+      vagrant_dir: ~/.vagrant
+      provider: "#{my['vagrant']['provider']}"
+      box: "#{my['vagrant']['box_name']}"
+      box_url: "#{my['vagrant']['box_url']}"
+      memsize: 2048
+      subnet: "#{env['vagrant']['management_network']}/25"
+      # The '+' at the end of the IP indicates that the last octet
+      # is incremented by the created node instance's index value.
+      ip_address: "#{env['proxy']['backend_default_ip']}+"
+      port_forward: {}
+      share_folders: []
+      use_cachier: false
+      distro: chef-full
+      host_key_verify: false
+      identity_file: "#{my['vagrant']['key_file']}"
+      ssh_user: vagrant
+      ssh_port: 22
+      sudo: true
+      # VBox: Create additional hard disk for Cinder volumes
+      vb_customize: >
+        'createhd', '--filename', './cinder_volume.vdi', '--size', 20 * 1024::
+        "storagectl", :id, "--name", "SATA Controller", "--add", "sata"::
+        'storageattach', :id, '--storagectl', "SATA Controller", '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './cinder_volume.vdi'
+      # VMWare: Create additional hard disk for Cinder volumes
+      vmx_parameters: >
+        numvcpus=2::
+        vhv.enable=TRUE::
+        scsi0:1.present=TRUE::
+        scsi0:1.fileName=cinder_volume.vmdk::
+        scsi0:1.fileSize=20GB
+      inline_config: |
+        config.ssh.private_key_path = "#{my['vagrant']['key_file']}"
         config.ohai.enable = true
         config.ohai.primary_nic = "eth1"
         config.vm.provision "shell", inline: "mkdir -p /etc/chef"
@@ -47,7 +90,7 @@ vagrant_ubuntu_1404:
       use_cachier: false
       distro: chef-full
       host_key_verify: false
-      identity_file: ~/.vagrant/insecure_key
+      identity_file: "#{my['vagrant']['key_file']}"
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
@@ -64,6 +107,7 @@ vagrant_ubuntu_1404:
         scsi0:1.fileName=cinder_volume.vmdk::
         scsi0:1.fileSize=20GB
       inline_config: |
+        config.ssh.private_key_path = "#{my['vagrant']['key_file']}"
         config.ohai.enable = true
         config.ohai.primary_nic = "eth1"
         config.vm.provision "shell", inline: "mkdir -p /etc/chef"
@@ -85,7 +129,7 @@ vagrant_ubuntu_1404:
       use_cachier: false
       distro: chef-full
       host_key_verify: false
-      identity_file: ~/.vagrant/insecure_key
+      identity_file: "#{my['vagrant']['key_file']}"
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
@@ -94,10 +138,51 @@ vagrant_ubuntu_1404:
       # enter promoscuous mode' under global network settings/preferences.
       vb_customize: >
         'modifyvm', :id, "--nicpromisc3", "allow-all"
+      # For VMware ensure authentication is not required to enter
+      # promiscuous mode via GUI settings.
       vmx_parameters: >
         numvcpus=2::
         vhv.enable=TRUE
       inline_config: |
+        config.ssh.private_key_path = "#{my['vagrant']['key_file']}"
+        config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"
+        config.ohai.enable = true
+        config.ohai.primary_nic = "eth1"
+        config.vm.provision "shell", inline: "mkdir -p /etc/chef"
+        config.vm.provision "shell", inline: "apt-get update"
+      run_list:
+      - recipe[ohai]
+
+  create_2nic_4G:
+    plugin: vagrant
+    options:
+      vagrant_dir: ~/.vagrant
+      provider: "#{my['vagrant']['provider']}"
+      box: "#{my['vagrant']['box_name']}"
+      box_url: "#{my['vagrant']['box_url']}"
+      memsize: 4096
+      subnet: "#{env['vagrant']['management_network']}/25"
+      port_forward: {}
+      share_folders: []
+      use_cachier: false
+      distro: chef-full
+      host_key_verify: false
+      identity_file: "#{my['vagrant']['key_file']}"
+      ssh_user: vagrant
+      ssh_port: 22
+      sudo: true
+      # VBox: enable promiscuous mode on nic on data network. For VMware
+      # Fusion/Workstation simply uncheck 'Require authenticaiton to
+      # enter promoscuous mode' under global network settings/preferences.
+      vb_customize: >
+        'modifyvm', :id, "--nicpromisc3", "allow-all"
+      # For VMware ensure authentication is not required to enter
+      # promiscuous mode via GUI settings.
+      vmx_parameters: >
+        numvcpus=2::
+        vhv.enable=TRUE
+      inline_config: |
+        config.ssh.private_key_path = "#{my['vagrant']['key_file']}"
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"
         config.ohai.enable = true
         config.ohai.primary_nic = "eth1"
