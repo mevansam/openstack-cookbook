@@ -30,6 +30,7 @@ vagrant_ubuntu_1404:
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
+      - recipe[build-essential]
 
   create_1nic_2G:
     plugin: vagrant
@@ -72,6 +73,7 @@ vagrant_ubuntu_1404:
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
+      - recipe[build-essential]
 
   create_1nic_4G:
     plugin: vagrant
@@ -114,6 +116,7 @@ vagrant_ubuntu_1404:
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
+      - recipe[build-essential]
 
   create_2nic_2G:
     plugin: vagrant
@@ -152,6 +155,7 @@ vagrant_ubuntu_1404:
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
+      - recipe[build-essential]
 
   create_2nic_4G:
     plugin: vagrant
@@ -190,3 +194,4 @@ vagrant_ubuntu_1404:
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
+      - recipe[build-essential]
