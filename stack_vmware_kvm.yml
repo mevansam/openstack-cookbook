@@ -5,6 +5,7 @@ vagrant:
   provider: vmware_fusion
   box_name: mevansam/chef-ubuntu-14.04
   box_url: https://vagrantcloud.com/mevansam/boxes/chef-ubuntu-14.04
+  key_file: ~/.vagrant/insecure_key
 
 stack:
 
