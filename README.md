@@ -92,7 +92,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 	```
 	$ mkdir .chef
 	$ cp etc/chef-zero_* .chef
-	$ mv ~/.chef/chef-zero_knife.rb .chef/knife.rb
+	$ mv .chef/chef-zero_knife.rb .chef/knife.rb
 	```
 
 6. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
@@ -107,12 +107,12 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
 	````
 	$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
-    $ tar xvf virtualenv-1.11.tar.gz
-    $ python virtualenv-1.11/virtualenv.py pyos
-    $ rm -rf virtualenv-1.11
-    $ pyos/bin/pip install virtualenv-1.11.tar.gz
-    $ rm -fr virtualenv-1.11.tar.gz
-    ````
+    	$ tar xvf virtualenv-1.11.tar.gz
+    	$ python virtualenv-1.11/virtualenv.py pyos
+    	$ rm -rf virtualenv-1.11
+    	$ pyos/bin/pip install virtualenv-1.11.tar.gz
+    	$ rm -fr virtualenv-1.11.tar.gz
+    	````
 
 	* Activate the virtual environment and install the clients
 	````
