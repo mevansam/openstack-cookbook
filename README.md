@@ -294,23 +294,6 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   Stack build for '.../openstack-ha-cookbook/stack_vbox_qemu.yml' took 30 minutes and '12.020' seconds
   ```
 
-### OpenStack KVM on Vagrant Template
-
-![Image of OpenStack KVM setup on Vagrant]
-(docs/images/vagrant_kvm.png)
-
-The Vagrant template can be used to launch a minimal OpenStack cluster using a nested hypervisor on either Virtual
-Box or VMware. The Chef OpenStack environment for this minimal environment is described in
-```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
-```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default
-setup KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions
-to guests required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to
-launch the stack and more if you want to scale it out.
-
-To execute the VirtualBox template from the repository folder:
-
-
-
 ### The Repository Structure
 
 The repository structure is based off the [chef-repo](http://docs.getchef.com/chef_repo.html) structure used for Chef
@@ -325,6 +308,25 @@ execution environment.
 The high-lighted files create the static Chef environment, whereas the Stack File can introduce variability to the
 deployment. The high-lighted arrows imply that variable substition happens automatically based on the selected Chef
 environment.
+
+### OpenStack KVM on Vagrant Template
+
+#### Basic Environment in Vagrant
+
+TODO:
+
+#### Simulated HA Environment in Vagrant
+
+![Image of OpenStack KVM setup on Vagrant]
+(docs/images/vagrant_kvm.png)
+
+The Vagrant template can be used to launch a minimal OpenStack HA cluster using a nested hypervisor on either Virtual
+Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters. The Chef OpenStack 
+environment for this minimal environment is described in ```environments/vagrant_kvm```. The two stack files for 
+VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and ```stack_vmware_kvm.yml``` respectively. It should be noted 
+that, although the environment attributes will by default setup KVM, the VirtualBox stack template overrides KVM with 
+Qemu, as VirtualBox does not expose the processor extensions to guests required to run a nested hypervisor. You will 
+need at a minimimum 7GB of memory available on the host to launch the stack and more if you want to scale it out.
 
 #### Troubleshooting
 
