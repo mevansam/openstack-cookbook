@@ -336,38 +336,6 @@ are overloaded.
 need to delete them via the VirtualBox UI or in the case of VMWare kill the VM processes. Once deleted
 delete their meta-data folders in the ~/.vagrant folder.
 
-### OpenStack KVM on VMWare Template
-
-TODO: ...
-
-### OpenStack HA KVM Template
-
-TODO: ...
-
-### OpenStack HA VMWare ESX Template
-
-TODO: ...
-
-### OpenStack HA XenServer Template
-
-TODO: ...
-
-### OpenStack HA HyperV Template
-
-TODO: ...
-
-### OpenStack Highly Available Multi-Hypervisor Template
-
-TODO: ...
-
-### OpenStack DevStack Vagrant Template with PyDevd
-
-TODO: ...
-
-## Extending
-
-TODO: ...
-
 ## Contributing
 
 1. Fork the repository on Github
