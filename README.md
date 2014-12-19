@@ -200,6 +200,100 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   $ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
   ```
 
+### Inspecting the environment
+
+It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
+[Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
+
+> To run chef zero execute ```ruby run_zero.rb``` from within this repository's folder.
+> You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
+
+1. The Chef Environment
+
+  First upload the Chef environment to Chef server
+
+  ```
+  $ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+
+  Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
+  ```
+
+  Inspect the environment
+
+  ```
+  $ knife environment show vagrant_kvm -c etc/chef-zero_knife.rb
+
+  chef_type:           environment
+  cookbook_versions:
+  default_attributes:
+  description:         HA OpenStack Environment.
+  json_class:          Chef::Environment
+  name:                vagrant_kvm
+  override_attributes:
+  .
+  .
+  .
+  ```
+
+2. Data bags
+
+  First upload the data bag for a specific environment to the Chef server
+
+  ```
+  $ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+
+  Uploaded item 'ceilometer' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
+  Uploaded item 'cinder' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
+  .
+  .
+  .
+  ```
+
+  Show data bags
+
+  ```
+  $ knife data bag list -c etc/chef-zero_knife.rb
+
+  certificates-vagrant_kvm
+  os_db_passwords-vagrant_kvm
+  os_secrets-vagrant_kvm
+  .
+  .
+  .
+  ```
+  
+  Inspect a data bag item
+
+  ```
+  $ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm -c etc/chef-zero_knife.rb
+
+  horizon: 0p3n5tack
+  id:      horizon
+  ```
+
+3. The Stack
+
+  Run the following to show the parsed Stack file. This will show the complete stack file with all the includes and
+  externalized variables resolved.
+
+  ```
+  $ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+
+  Stack file:
+  ---
+  name: vbox_qemu
+  vagrant:
+    provider: virtualbox
+    box_name: chef/ubuntu-14.04
+    box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+  stack:
+  - node: openstack-proxy
+  .
+  .
+  .
+  Stack build for '.../openstack-ha-cookbook/stack_vbox_qemu.yml' took 30 minutes and '12.020' seconds
+  ```
+
 ### OpenStack KVM on Vagrant Template
 
 ![Image of OpenStack KVM setup on Vagrant]
@@ -231,100 +325,6 @@ execution environment.
 The high-lighted files create the static Chef environment, whereas the Stack File can introduce variability to the
 deployment. The high-lighted arrows imply that variable substition happens automatically based on the selected Chef
 environment.
-
-### Inspecting the environment
-
-It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
-[Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
-
-> To run chef zero execute ```ruby run_zero.rb``` from within this repository's folder.
-> You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
-
-1. The Chef Environment
-
-	First upload the Chef environment to Chef server
-
-	```
-	$ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
-
-	Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
-
-	```
-
-	Inspect the environment
-
-	```
-	$ knife environment show vagrant_kvm -c etc/chef-zero_knife.rb
-
-    chef_type:           environment
-    cookbook_versions:
-    default_attributes:
-    description:         HA OpenStack Environment.
-    json_class:          Chef::Environment
-    name:                vagrant_kvm
-    override_attributes:
-    .
-    .
-    .
-
-	```
-
-2. Data bags
-
-	First upload the data bag for a specific environment to the Chef server
-
-	```
-	$ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm -c etc/chef-zero_knife.rb
-
-    Uploaded item 'ceilometer' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
-    Uploaded item 'cinder' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
-    .
-    .
-    .
-	```
-	Show data bags
-
-	```
-	$ knife data bag list -c etc/chef-zero_knife.rb
-
-    certificates-vagrant_kvm
-    os_db_passwords-vagrant_kvm
-    os_secrets-vagrant_kvm
-	.
-	.
-	.
-	```
-	Inspect a data bag item
-
-	```
-	$ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm -c etc/chef-zero_knife.rb
-
-	horizon: 0p3n5tack
-    id:      horizon
-    ```
-
-3. The Stack
-
-	Run the following to show the parsed Stack file. This will show the complete stack file with all the includes and
-	externalized variables resolved.
-
-	```
-	$ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
-
-	Stack file:
-    ---
-    name: vbox_qemu
-    vagrant:
-      provider: virtualbox
-      box_name: chef/ubuntu-14.04
-      box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
-    stack:
-    - node: openstack-proxy
-    .
-    .
-    .
-	Stack build for '.../openstack-ha-cookbook/stack_vbox_qemu.yml' took 30 minutes and '12.020' seconds
-	```
 
 #### Troubleshooting
 
@@ -392,3 +392,4 @@ limitations under the License.
 Author | Email | Company
 -------|-------|--------
 Mevan Samaratunga | msamaratunga@pivotal.io | [Pivotal](http://www.pivotal.io)
+Josh Kruck | jkruck@pivotal.io | [Pivotal](http://www.pivotal.io)
