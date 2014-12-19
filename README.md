@@ -194,9 +194,6 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   * [Sample openrc for the Vagrant stack](https://gist.github.com/mevansam/d0d517ea321c6b199e55)
   * [Script to upload an image, create a network and import your ssh public key](https://gist.github.com/mevansam/2b8ee9e248d1b5082552)
 
-  > If you execute this template with Chef Zero remember to upload the repo to Chef-Zero before execution.
-  > Since Chef-Zero is an in-memory minimal Chef server if you restart the process then you need to reload it.
-
 3. When you are done you can delete the entire cluster by running the following command:
 
   ```
