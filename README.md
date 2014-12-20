@@ -321,12 +321,13 @@ TODO:
 (docs/images/vagrant_kvm.png)
 
 The Vagrant template can be used to launch a minimal OpenStack HA cluster using a nested hypervisor on either Virtual
-Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters. The Chef OpenStack 
-environment for this minimal environment is described in ```environments/vagrant_kvm```. The two stack files for 
-VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and ```stack_vmware_kvm.yml``` respectively. It should be noted 
-that, although the environment attributes will by default setup KVM, the VirtualBox stack template overrides KVM with 
-Qemu, as VirtualBox does not expose the processor extensions to guests required to run a nested hypervisor. You will 
-need at a minimimum 7GB of memory available on the host to launch the stack and more if you want to scale it out.
+Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters and Percona MySQ and Rabbit MQ
+will deploy as single node clusters unless scaled up. The Chef OpenStack environment for this minimal environment is described
+in ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
+```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default setup
+KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions to guests
+required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to launch the stack and
+more if you want to scale it out.
 
 #### Troubleshooting
 
