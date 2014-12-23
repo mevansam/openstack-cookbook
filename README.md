@@ -219,7 +219,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
   ```
   # Run Chef-Zero
-  $ ruby run_zero.rb
+  $ scripts/start_chef_zero.sh
 
   # Load Chef-Zero
   $ knife stack upload repo -c etc/chef-zero_knife.rb
