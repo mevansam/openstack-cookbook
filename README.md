@@ -122,11 +122,11 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
     [website](http://logstash.net/). Untar it to a known location and ensure that the ```[logstash home dir]/bin``` folder is
     added to the PATH environment variable.
   
-  To start and stop Chef-Zero
+  To start Chef-Zero
   ```
   $ scripts/start_chef_zero.sh
   ```
-  To stop and stop Chef-Zero
+  To stop Chef-Zero
   ```
   $ scripts/stop_chef_zero.sh
   ```
@@ -134,7 +134,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   ```
   $ scripts/start_log_servers.sh
   ```
-  To stop and stop Chef-Zero
+  To stop log services.
   ```
   $ scripts/stop_log_servers.sh
   ```
