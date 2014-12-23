@@ -49,11 +49,11 @@ Think of StackBuilder as an Ansible or SaltStack for Chef Knife.
 The tools and templates have been tested on the following platforms.
 
 * Tools:
-	* Mac OS X
+  * Mac OS X
 
 * Vagrant Template:
-	* VirtualBox on Mac OS X
-	* VMware Fusion on Mac OS X
+  * VirtualBox on Mac OS X
+  * VMware Fusion on Mac OS X
 
 ## Installation
 
@@ -61,85 +61,238 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
 1. First create a Ruby 2.1.5 environment. For example using [RVM](http://rvm.io)
 
-	```
-	$ curl -sSL https://get.rvm.io | bash -s stable
-	$ rvm install 2.1
-	```
+  ```
+  $ curl -sSL https://get.rvm.io | bash -s stable
+  $ rvm install 2.1
+  ```
 
 2. Install the [knife-stackbuilder](https://github.com/mevansam/chef-knife-stackbuilder) gem.
 
-	```
-	$ gem install --no-document knife-stackbuilder
-	$ gem install --no-document berkshelf
-	```
+  ```
+  $ gem install --no-document knife-stackbuilder
+  $ gem install --no-document berkshelf
+  ```
+  
 3. Clone this repository
 
-	```
-	$ git clone https://github.com/mevansam/openstack-ha-cookbook.git
-	$ cd openstack-ha-cookbook
-	```
+  ```
+  $ git clone https://github.com/mevansam/openstack-ha-cookbook.git
+  $ cd openstack-ha-cookbook
+  ```
+  
 4. If you plan to execute the vagrant templates then you need to get the updated
 [vagrant-ohai](https://github.com/avishai-ish-shalom/vagrant-ohai) plugin for vagrant.
 
-	```
-	$ vagrant plugin install vagrant-plugins/vagrant-ohai-0.1.8.gem
-	```
-    > These patches and updates are in the process being pushed to their respective upstream repositories. The patched vagrant gem is available at:
-    > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
+  ```
+  $ vagrant plugin install vagrant-plugins/vagrant-ohai-0.1.8.gem
+  ```
+  
+  > These patches and updates are in the process being pushed to their respective upstream repositories. The patched vagrant gem is available at:
+  > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
 5. Optional: create .chef folder and copy chef-zero knife configuration files if you plan to use chef-zero as you default chef.
 
-	```
-	$ mkdir .chef
-	$ cp etc/chef-zero_* .chef
-	$ mv .chef/chef-zero_knife.rb .chef/knife.rb
-	```
+  ```
+  $ mkdir .chef
+  $ cp etc/chef-zero_* .chef
+  $ mv .chef/chef-zero_knife.rb .chef/knife.rb
+  ```
 
 6. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
 
-	* Create work area and cd to it. This should not be inside the openstack-ha-cookbook repo.
-
-	```
-	$ mkdir -p [your workspace]/openstack-cli
-	$ cd [your workspace]/openstack-cli
-	```
-	* Install the python virtual environment
-
-	````
-	$ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
-    	$ tar xvf virtualenv-1.11.tar.gz
-    	$ python virtualenv-1.11/virtualenv.py pyos
-    	$ rm -rf virtualenv-1.11
-    	$ pyos/bin/pip install virtualenv-1.11.tar.gz
-    	$ rm -fr virtualenv-1.11.tar.gz
-    	````
-
-	* Activate the virtual environment and install the clients
-	````
-    $ source pyos/bin/activate
-    $ pip install python-keystoneclient python-glanceclient python-cinderclient python-neutronclient python-novaclient
+  * Create work area and cd to it. This should not be inside the openstack-ha-cookbook repo.
+  
+  ```
+  $ mkdir -p [your workspace]/openstack-cli
+  $ cd [your workspace]/openstack-cli
+  ```
     
-    ````
+  * Install the python virtual environment
 
-	Once you have setup the openstack environment copy the `openrc` file created on the controller host to this work
-	area and source it before calling the OpenStack APIs via the client tools.
+  ````
+  $ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
+  $ tar xvf virtualenv-1.11.tar.gz
+  $ python virtualenv-1.11/virtualenv.py pyos
+  $ rm -rf virtualenv-1.11
+  $ pyos/bin/pip install virtualenv-1.11.tar.gz
+  $ rm -fr virtualenv-1.11.tar.gz
+  ````
 
-### OpenStack KVM on Vagrant Template
+  * Activate the virtual environment and install the clients
+    
+  ````
+  $ source pyos/bin/activate
+  $ pip install python-keystoneclient python-glanceclient python-cinderclient python-neutronclient python-novaclient
+  ````
 
-![Image of OpenStack KVM setup on Vagrant]
-(docs/images/vagrant_kvm.png)
+  Once you have setup the openstack environment copy the `openrc` file created on the controller host to this work
+  area and source it before calling the OpenStack APIs via the client tools.
+  
+### Building a stack
 
-The Vagrant template can be used to launch a minimal OpenStack cluster using a nested hypervisor on either Virtual
-Box or VMware. The Chef OpenStack environment for this minimal environment is described in
-```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
-```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default
-setup KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions
-to guests required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to
-launch the stack and more if you want to scale it out.
+1. Preparation
 
-To execute the VirtualBox template from the repository folder:
+  Before the stack can be built the Chef repository needs to be uploaded. The following stack command loads the
+  entire repository. It is simply a combination of individual stack repo commands executed in bulk for a specific
+  Chef environment. This will also upload all the cookbooks specified in the Berkshelf file.
 
+  ```
+  $ knife stack upload repo --environment=vagrant_kvm -c etc/chef-zero_knife.rb
 
+  Resolving cookbook dependencies...
+  Fetching 'network' from source at ../chef/network
+  Fetching 'openstack-block-storage' from source at ../chef/openstack-block-storage
+  Fetching 'openstack-compute' from source at ../chef/openstack-compute
+  Fetching 'openstack-dashboard' from source at ../chef/openstack-dashboard
+  Fetching 'openstack-identity' from source at ../chef/openstack-identity
+  Fetching 'openstack-image' from source at ../chef/openstack-image
+  Fetching 'openstack-network' from source at ../chef/openstack-network
+  Fetching 'openstack-services' from source at ../chef/openstack-services
+  Fetching 'sysutils' from source at ../chef/sysutils
+  .
+  .
+  .
+  Uploaded item 'aws' of data bag 'service_endpoints-vagrant_kvm' to 'http://192.168.1.10:9999'.
+  Uploaded item 'qip' of data bag 'service_endpoints-vagrant_kvm' to 'http://192.168.1.10:9999'.
+  Uploaded item 'root' of data bag 'users-vagrant_kvm' to 'http://192.168.1.10:9999'.
+  Uploaded 'vagrant_kvm' certificate for server 'vagrant_kvm.mydomain.org' to data bag 'certificates-vagrant_kvm' at 'http://192.168.1.10:9999'.
+  ```
+
+2. Execution
+
+  To execute a stack simply determine which stack you want to build for a specific environment and run the following. If you have added a default knife configuration you can omit the -c argument. 
+
+  ```
+  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+
+  Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
+  Creating node resource 'openstack-proxy[0]'.
+  .
+  .
+  .
+  ```
+  
+  The ```stack-id``` is a unique identifier for the stack you are building. Knife uses this ID to locate all nodes
+  belonging to the OpenStack cluster to determine current state. If one is not provided a uuid will be generated as
+  the for the ID.
+
+  ```
+  # Run Chef-Zero
+  $ ruby run_zero.rb
+
+  # Load Chef-Zero
+  $ knife stack upload repo -c etc/chef-zero_knife.rb
+
+  # Build the stack
+  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+  ```
+
+  If the stack build completes successfully, horizon will be available at
+  [https://192.168.60.200](https://192.168.60.200), and you can login with the credentials ```admin/0p3n5tack```.
+
+  From a shell provisioned with the OpenStack CLI, use the following gists to initialize the OpenStack environment.
+  * [Sample openrc for the Vagrant stack](https://gist.github.com/mevansam/d0d517ea321c6b199e55)
+  * [Script to upload an image, create a network and import your ssh public key](https://gist.github.com/mevansam/2b8ee9e248d1b5082552)
+
+3. When you are done you can delete the entire cluster by running the following command:
+
+  ```
+  $ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+  ```
+
+### Inspecting the environment
+
+It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
+[Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
+
+> To run chef zero execute ```ruby run_zero.rb``` from within this repository's folder.
+> You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
+
+1. The Chef Environment
+
+  First upload the Chef environment to Chef server
+
+  ```
+  $ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+
+  Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
+  ```
+
+  Inspect the environment
+
+  ```
+  $ knife environment show vagrant_kvm -c etc/chef-zero_knife.rb
+
+  chef_type:           environment
+  cookbook_versions:
+  default_attributes:
+  description:         HA OpenStack Environment.
+  json_class:          Chef::Environment
+  name:                vagrant_kvm
+  override_attributes:
+  .
+  .
+  .
+  ```
+
+2. Data bags
+
+  First upload the data bag for a specific environment to the Chef server
+
+  ```
+  $ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+
+  Uploaded item 'ceilometer' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
+  Uploaded item 'cinder' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
+  .
+  .
+  .
+  ```
+
+  Show data bags
+
+  ```
+  $ knife data bag list -c etc/chef-zero_knife.rb
+
+  certificates-vagrant_kvm
+  os_db_passwords-vagrant_kvm
+  os_secrets-vagrant_kvm
+  .
+  .
+  .
+  ```
+  
+  Inspect a data bag item
+
+  ```
+  $ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm -c etc/chef-zero_knife.rb
+
+  horizon: 0p3n5tack
+  id:      horizon
+  ```
+
+3. The Stack
+
+  Run the following to show the parsed Stack file. This will show the complete stack file with all the includes and
+  externalized variables resolved.
+
+  ```
+  $ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+
+  Stack file:
+  ---
+  name: vbox_qemu
+  vagrant:
+    provider: virtualbox
+    box_name: chef/ubuntu-14.04
+    box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+  stack:
+  - node: openstack-proxy
+  .
+  .
+  .
+  Stack build for '.../openstack-ha-cookbook/stack_vbox_qemu.yml' took 30 minutes and '12.020' seconds
+  ```
 
 ### The Repository Structure
 
@@ -156,174 +309,25 @@ The high-lighted files create the static Chef environment, whereas the Stack Fil
 deployment. The high-lighted arrows imply that variable substition happens automatically based on the selected Chef
 environment.
 
-### Inspecting the environment
+### OpenStack KVM on Vagrant Template
 
-It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
-[Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
+#### Basic Environment in Vagrant
 
-> To run chef zero execute ```ruby run_zero.rb``` from within this repository's folder.
-> You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
+TODO:
 
-1. The Chef Environment
+#### Simulated HA Environment in Vagrant
 
-	First upload the Chef environment to Chef server
+![Image of OpenStack KVM setup on Vagrant]
+(docs/images/vagrant_kvm.png)
 
-	```
-	$ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
-
-	Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
-
-	```
-
-	Inspect the environment
-
-	```
-	$ knife environment show vagrant_kvm -c etc/chef-zero_knife.rb
-
-    chef_type:           environment
-    cookbook_versions:
-    default_attributes:
-    description:         HA OpenStack Environment.
-    json_class:          Chef::Environment
-    name:                vagrant_kvm
-    override_attributes:
-    .
-    .
-    .
-
-	```
-
-2. Data bags
-
-	First upload the data bag for a specific environment to the Chef server
-
-	```
-	$ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm -c etc/chef-zero_knife.rb
-
-    Uploaded item 'ceilometer' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
-    Uploaded item 'cinder' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
-    .
-    .
-    .
-	```
-	Show data bags
-
-	```
-	$ knife data bag list -c etc/chef-zero_knife.rb
-
-    certificates-vagrant_kvm
-    os_db_passwords-vagrant_kvm
-    os_secrets-vagrant_kvm
-	.
-	.
-	.
-	```
-	Inspect a data bag item
-
-	```
-	$ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm -c etc/chef-zero_knife.rb
-
-	horizon: 0p3n5tack
-    id:      horizon
-    ```
-
-3. The Stack
-
-	Run the following to show the parsed Stack file. This will show the complete stack file with all the includes and
-	externalized variables resolved.
-
-	```
-	$ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
-
-	Stack file:
-    ---
-    name: vbox_qemu
-    vagrant:
-      provider: virtualbox
-      box_name: chef/ubuntu-14.04
-      box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
-    stack:
-    - node: openstack-proxy
-    .
-    .
-    .
-	Stack build for '.../openstack-ha-cookbook/stack_vbox_qemu.yml' took 30 minutes and '12.020' seconds
-	```
-
-### Building a stack
-
-1. Preparation
-
-	Before the stack can be built the Chef repository needs to be uploaded. The following stack command loads the
-	entire repository. It is simply a combination of individual stack repo commands executed in bulk for a specific
-	Chef environment. This will also upload all the cookbooks specified in the Berkshelf file.
-
-	```
-	$ knife stack upload repo --environment=vagrant_kvm -c etc/chef-zero_knife.rb
-
-	Resolving cookbook dependencies...
-    Fetching 'network' from source at ../chef/network
-    Fetching 'openstack-block-storage' from source at ../chef/openstack-block-storage
-    Fetching 'openstack-compute' from source at ../chef/openstack-compute
-    Fetching 'openstack-dashboard' from source at ../chef/openstack-dashboard
-    Fetching 'openstack-identity' from source at ../chef/openstack-identity
-    Fetching 'openstack-image' from source at ../chef/openstack-image
-    Fetching 'openstack-network' from source at ../chef/openstack-network
-    Fetching 'openstack-services' from source at ../chef/openstack-services
-    Fetching 'sysutils' from source at ../chef/sysutils
-	.
-	.
-	.
-	Uploaded item 'aws' of data bag 'service_endpoints-vagrant_kvm' to 'http://192.168.1.10:9999'.
-    Uploaded item 'qip' of data bag 'service_endpoints-vagrant_kvm' to 'http://192.168.1.10:9999'.
-    Uploaded item 'root' of data bag 'users-vagrant_kvm' to 'http://192.168.1.10:9999'.
-    Uploaded 'vagrant_kvm' certificate for server 'vagrant_kvm.mydomain.org' to data bag 'certificates-vagrant_kvm' at 'http://192.168.1.10:9999'.
-	```
-
-2. Execution
-
-	To execute a stack simply determine which stack you want to build for a specific environment and run the following. If you have added a default knife configuration you can omit the -c argument. 
-
-	```
-	$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
-
-	Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
-    Creating node resource 'openstack-proxy[0]'.
-	.
-	.
-	.
-	```
-	The ```stack-id``` is a unique identifier for the stack you are building. Knife uses this ID to locate all nodes
-	belonging to the OpenStack cluster to determine current state. If one is not provided a uuid will be generated as
-	the for the ID.
-
-	```
-	# Run Chef-Zero
-	$ ruby run_zero.rb
-
-	# Load Chef-Zero
-	$ knife stack upload repo -c etc/chef-zero_knife.rb
-
-	# Build the stack
-	$ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
-	```
-
-If the stack build completes successfully, horizon will be available at
-[https://192.168.60.200](https://192.168.60.200), and you can login with the credentials ```admin/0p3n5tack```.
-
-From a shell provisioned with the OpenStack CLI, use the following gists to initialize the OpenStack environment.
-* [Sample openrc for the Vagrant stack](https://gist.github.com/mevansam/d0d517ea321c6b199e55)
-* [Script to upload an image, create a network and import your ssh public key](https://gist.github.com/mevansam/2b8ee9e248d1b5082552)
-
-> If you execute this template with Chef Zero remember to upload the repo to Chef-Zero before execution.
-> Since Chef-Zero is an in-memory minimal Chef server if you restart the process then you need to reload it.
-
-When you are done you can delete the entire cluster by running the following command:
-
-```
-$ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
-
-```
+The Vagrant template can be used to launch a minimal OpenStack HA cluster using a nested hypervisor on either Virtual
+Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters and Percona MySQ and Rabbit MQ
+will deploy as single node clusters unless scaled up. The Chef OpenStack environment for this minimal environment is described
+in ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
+```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default setup
+KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions to guests
+required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to launch the stack and
+more if you want to scale it out.
 
 #### Troubleshooting
 
@@ -334,38 +338,6 @@ are overloaded.
 2. If VM creation is halted this leaves the Knife Vagrant plugin's VM directory in a bad state. If this happens you
 need to delete them via the VirtualBox UI or in the case of VMWare kill the VM processes. Once deleted
 delete their meta-data folders in the ~/.vagrant folder.
-
-### OpenStack KVM on VMWare Template
-
-TODO: ...
-
-### OpenStack HA KVM Template
-
-TODO: ...
-
-### OpenStack HA VMWare ESX Template
-
-TODO: ...
-
-### OpenStack HA XenServer Template
-
-TODO: ...
-
-### OpenStack HA HyperV Template
-
-TODO: ...
-
-### OpenStack Highly Available Multi-Hypervisor Template
-
-TODO: ...
-
-### OpenStack DevStack Vagrant Template with PyDevd
-
-TODO: ...
-
-## Extending
-
-TODO: ...
 
 ## Contributing
 
@@ -391,3 +363,4 @@ limitations under the License.
 Author | Email | Company
 -------|-------|--------
 Mevan Samaratunga | msamaratunga@pivotal.io | [Pivotal](http://www.pivotal.io)
+Josh Kruck | jkruck@pivotal.io | [Pivotal](http://www.pivotal.io)
