@@ -98,7 +98,46 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   $ mv .chef/chef-zero_knife.rb .chef/knife.rb
   ```
 
-6. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
+6. The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server.
+ 
+  * In order to use logio you need to install node.js. It is recommended you use [nvm](https://github.com/creationix/nvm) 
+    to manage your node install rather than the [installable packages](http://nodejs.org/download/) distributed by Joyent.
+
+    Ensure the following is added to your default shell profile (.zlogin if you are using .zshrc), as the NVM install only
+    adds it to the ```.bashrc``` file.
+    
+    ```
+    export NVM_DIR="/Users/msamaratunga/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+    ```
+    
+    Install node.js and then logio as follows.
+    
+    ```
+    $ nvm install stable
+    $ nvm use 0.10
+    $ npm install -g log.io
+    ```
+  * You also need to ensure that the ``[logstash home dir]/bin``` folder is added to the PATH environment variable.
+  
+  To start and stop Chef-Zero
+  ```
+  $ scripts/start_chef_zero.sh
+  ```
+  To stop and stop Chef-Zero
+  ```
+  $ scripts/stop_chef_zero.sh
+  ```
+  To start log services. Once started the log.io streaming console will be available at [http://localhost:9081](http://localhost:9081).
+  ```
+  $ scripts/start_log_servers.sh
+  ```
+  To stop and stop Chef-Zero
+  ```
+  $ scripts/stop_log_servers.sh
+  ```
+
+7. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
 
   * Create work area and cd to it. This should not be inside the openstack-ha-cookbook repo.
   
