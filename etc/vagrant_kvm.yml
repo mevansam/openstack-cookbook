@@ -92,6 +92,38 @@ openstack:
       external_bridge: br-eth2
       external_interface: eth2
 
+# log configuration
+logs:
+  logio:
+    ports:
+      http: 9081
+      stream: 28777
+  syslog:
+    haproxy:
+      protocol: tcp
+      port: 51400
+    identity:
+      protocol: tcp
+      port: 51401
+    image:
+      protocol: tcp
+      port: 51402
+    block_storage:
+      protocol: tcp
+      port: 51403
+    nova:
+      protocol: tcp
+      port: 51404
+    neutron:
+      protocol: tcp
+      port: 51405
+    __user__:
+      protocol: tcp
+      port: 51406
+    __daemon__:
+      protocol: tcp
+      port: 51407
+
 vagrant:
   # x.x.x.x/25 subnet to attach to
   # proxy, services and compute hosts
