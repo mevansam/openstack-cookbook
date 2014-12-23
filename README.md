@@ -118,7 +118,9 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
     $ nvm use 0.10
     $ npm install -g log.io
     ```
-  * You also need to ensure that the ``[logstash home dir]/bin``` folder is added to the PATH environment variable.
+  * Logstash requires the Java JDK to be installed in the system. You can download the latest logstash distribution from its
+    [website](http://logstash.net/). Untar it to a known location and ensure that the ```[logstash home dir]/bin``` folder is
+    added to the PATH environment variable.
   
   To start and stop Chef-Zero
   ```
