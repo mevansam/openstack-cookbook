@@ -1,6 +1,6 @@
 {
-  "name": "os-network-l3-agent",
-  "description": "OpenStack network l3-agent service",
+  "name": "os-ops-caching",
+  "description": "Installs memcache server",
   "json_class": "Chef::Role",
   "default_attributes": {
   },
@@ -9,8 +9,7 @@
   "chef_type": "role",
   "run_list": [
     "role[os-base]",
-    "recipe[openstack-common::sysctl]",
-    "recipe[openstack-network::l3_agent]"
+    "recipe[memcached]"
   ],
   "env_run_lists": {
   }

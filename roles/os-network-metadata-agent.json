@@ -9,6 +9,7 @@
   "chef_type": "role",
   "run_list": [
     "role[os-base]",
+    "recipe[openstack-common::sysctl]",
     "recipe[openstack-network::metadata_agent]"
   ],
   "env_run_lists": {

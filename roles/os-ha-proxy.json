@@ -144,9 +144,7 @@
     },
     "json_class": "Chef::Role",
     "run_list": [
-        "recipe[ntp::default]",
         "recipe[sysutils::default]",
-        "recipe[network::default]",
         "recipe[openstack-services::ha-proxy]"
     ]
 }

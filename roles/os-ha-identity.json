@@ -8,9 +8,7 @@
     },
     "chef_type": "role",
     "run_list": [
-        "recipe[ntp::default]",
         "recipe[sysutils::default]",
-        "recipe[network::default]",
         "recipe[openstack-services::ha-os-common]",
         "role[os-identity]"
     ],
