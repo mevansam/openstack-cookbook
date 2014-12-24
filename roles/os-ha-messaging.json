@@ -16,7 +16,7 @@
     "override_attributes": { 
     },
     "chef_type": "role",
-    "run_list" : [
+    "run_list": [
         "recipe[ntp::default]",
         "recipe[sysutils::default]",
         "recipe[network::default]",

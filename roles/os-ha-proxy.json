@@ -143,7 +143,7 @@
         }
     },
     "json_class": "Chef::Role",
-    "run_list" : [
+    "run_list": [
         "recipe[ntp::default]",
         "recipe[sysutils::default]",
         "recipe[network::default]",
