@@ -1,0 +1,134 @@
+---
+name: vbox_qemu
+
+environment: vagrant_ha_kvm
+
+vagrant:
+  provider: virtualbox
+  box_name: chef/ubuntu-14.04
+  box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+  key_file: "#{Dir.home}/.vagrant/insecure_key"
+
+stack:
+
+# The HAproxy load balancer that frontends all
+# the OpenStack services. When services are
+# scaled out the loadbalancer will discover the
+# added/deleted nodes via Chef Ohai.
+- node: openstack-proxy
+  attributes:
+    pacemaker_cluster_name: openstack-proxy
+    pacemaker_mcast_address: 239.255.42.1
+    pacemaker_mcast_port: 5405
+  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_768M]
+
+# This node combines all the HAproxy instances
+# into a pacemaker cluster. It does not create
+# any VMs but it will replace the run list of
+# the target VMs with the one given.
+- node: openstack-proxy-cluster
+  targets:
+  - openstack-proxy
+  attributes:
+    haproxy:
+      is_clustered: true
+  run_list:
+  - recipe[ohai]
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-proxy]
+
+# This node install all the OpenStack services
+# including the database and queue.
+- node: compute-services
+  depends_on:
+  - openstack-proxy-cluster
+  attributes:
+    # Override optimized settings in os-ha-database
+    # so mysql will run in a much smaller environment
+    percona:
+      server:
+        key_buffer: 16M,
+        max_allowed_packet: 64M,
+        thread_stack: 192K,
+        thread_cache_size: 16,
+        query_cache_size: 64M,
+        query_cache_limit: 2M,
+        innodb_buffer_pool_size: 128M
+    openstack:
+      compute:
+        libvirt:
+          virt_type: qemu
+      block-storage:
+        volume:
+          create_volume_group: true
+          create_volume_group_type: block_devices
+          block_devices: /dev/sdb
+  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_1nic_4G]
+  run_list:
+  - recipe[ohai]
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-database]
+  - role[os-ha-messaging]
+  - role[os-ha-dashboard]
+  - role[os-ha-identity]
+  - role[os-ha-image]
+  - role[os-ha-block-storage-kvm-lvm]
+  - role[os-ha-controller-kvm]
+  - recipe[openstack-services::monkey-patch]
+  run_on_event:
+    configure: <<+[./common/patches.yml][patch_neutron_nova_ssl_notification]
+
+# Reloads the haproxy configuration with
+# the correct names and backend-ips of
+# the controllers.
+- node: proxy-reload
+  depends_on:
+  - compute-services
+  targets:
+  - openstack-proxy
+  run_on_event:
+    configure: >
+      chef-client -l info
+
+# OpenStack Hypervisor node
+- node: compute-host
+  attributes:
+    # Cluster every 2 instances. i.e. instance 0 and 1
+    # will be put into a cluster named 'network-node-0'
+    # and 2 and 3 into a cluster named 'network-node-1'
+    # and so on.
+    pacemaker_cluster_name: <<!'network-node-'+(#{index}/2).to_s
+    pacemaker_mcast_address: 239.255.42.2
+    pacemaker_mcast_port: 5405
+  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_2G]
+
+# Sets up the nova compute and neutron network
+# cluster. The clusters are named such that every
+# 2 consecutive nodes are named same. Each of these
+# two nodes will be combined into a Pacemaker cluster
+# that will run the Neutron L3 agents.
+- node: compute-network-cluster
+  depends_on:
+  - compute-services
+  targets:
+  - compute-host
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth2
+    openstack:
+      compute:
+        libvirt:
+          virt_type: qemu
+      network:
+        l3:
+          is_clustered: true
+  run_list:
+  - recipe[ohai]
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-compute-kvm]
+  - role[os-ha-network-kvm]
+  - recipe[openstack-services::monkey-patch]
