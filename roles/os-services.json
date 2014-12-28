@@ -1,0 +1,85 @@
+{
+    "name": "os-services",
+    "description": "All-in-one role for openstack services",
+    "json_class": "Chef::Role",
+    "default_attributes": { 
+        "env": {
+            "users": [ 
+                [ "www-data", "/var/lib/www", null, false ]
+            ]
+        },
+        "openstack": {
+            "endpoints": {
+                "image-registry-bind": {
+                    "host": "127.0.0.1"
+                },
+                "image-registry": {
+                    "host": "127.0.0.1"
+                }
+            },
+            "dashboard": {
+                "use_ssl": true
+            },
+            "compute": {
+                "debug": "False",
+                "verbose": "False",
+                "config": {
+                    "flat_injected": "False"
+                },
+                "network": {
+                    "service_type": "neutron",
+                    "neutron": {
+                        "firewall_driver": "nova.virt.firewall.NoopFirewallDriver",
+                        "public_network_name": "",
+                        "dns_server": ""
+                    }
+                }
+            },
+            "network": {
+                "debug": "False",
+                "verbose": "False",
+                "service_plugins": [
+                    "neutron.services.l3_router.l3_router_plugin.L3RouterPlugin"
+                ],
+                "l3": {
+                    "external_network_bridge": ""
+                },
+                "dhcp": {
+                    "log-facility": "/var/log/neutron/dnsmasq.log",
+                    "upstream_dns_servers": [ ]
+                }
+            }
+        }
+    },
+    "override_attributes": {
+        "openstack": {
+            "image": {
+                "upload_images": [ ]
+            }
+        }
+    },
+    "chef_type": "role",
+    "run_list": [
+        "recipe[sysutils::default]",
+        "recipe[openstack-services::ha-os-common]",
+        "recipe[openstack-common::default]",
+        "recipe[openstack-common::logging]",
+        "recipe[openstack-common::set_endpoints_by_interface]",
+        "recipe[openstack-services::dashboard-certs]",
+        "recipe[openstack-dashboard::server]",
+        "recipe[openstack-identity::server]",
+        "recipe[openstack-image::api]",
+        "recipe[openstack-image::registry]",
+        "recipe[openstack-block-storage::api]",
+        "recipe[openstack-block-storage::scheduler]",
+        "recipe[openstack-compute::api-os-compute]",
+        "recipe[openstack-compute::api-ec2]",
+        "recipe[openstack-compute::nova-cert]",
+        "recipe[openstack-compute::conductor]",
+        "recipe[openstack-compute::scheduler]",
+        "recipe[openstack-compute::vncproxy]",
+        "recipe[openstack-compute::nova-setup]",
+        "recipe[openstack-network::server]"
+    ],
+    "env_run_lists": { }
+}
