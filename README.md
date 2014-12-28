@@ -90,7 +90,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   > These patches and updates are in the process being pushed to their respective upstream repositories. The patched vagrant gem is available at:
   > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
-5. Optional: create .chef folder and copy chef-zero knife configuration files if you plan to use chef-zero as you default chef.
+5. Optional: create ```.chef``` folder and copy chef-zero knife configuration files if you plan to use chef-zero as you default chef.
 
   ```
   $ mkdir .chef
@@ -98,7 +98,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   $ mv .chef/chef-zero_knife.rb .chef/knife.rb
   ```
 
-6. The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server.
+6. The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server. If you start Chef-Zero using the scripts it will create the ```.chef``` folder and you can skip step 5.
  
   * In order to use logio you need to install node.js. It is recommended you use [nvm](https://github.com/creationix/nvm) 
     to manage your node install rather than the [installable packages](http://nodejs.org/download/) distributed by Joyent.
@@ -121,6 +121,11 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   * Logstash requires the Java JDK to be installed in the system. You can download the latest logstash distribution from its
     [website](http://logstash.net/). Untar it to a known location and ensure that the ```[logstash home dir]/bin``` folder is
     added to the PATH environment variable.
+ 
+  * You can also run [RabbitMQ](https://www.rabbitmq.com/download.html) and [MySql](http://dev.mysql.com/downloads/) as local
+    services so you do not need to create a VM to host those services. In order to run these services locally you first need to
+    install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
+    folders.
   
   To start Chef-Zero
   ```
@@ -130,15 +135,32 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   ```
   $ scripts/stop_chef_zero.sh
   ```
-  To start log services. Once started the log.io streaming console will be available at [http://localhost:9081](http://localhost:9081).
+  To start log services. Once started the log.io streaming console will be available at
+  [http://localhost:9081](http://localhost:9081). Make sure you provide the correct Chef environment for your build.
   ```
-  $ scripts/start_log_servers.sh
+  $ scripts/start_log_servers.sh vagrant_kvm
   ```
   To stop log services.
   ```
   $ scripts/stop_log_servers.sh
   ```
-
+  To start the Ops services (RabbitMQ and MySQL)
+  ```
+  $ scripts/start_ops_servers.sh vagrant_kvm
+  ```
+  To seed the MySQL databases.
+  ```
+  $ scripts/create_mysql_osdb.sh vagrant_kvm
+  ```
+  To stop log services.
+  ```
+  $ scripts/stop_ops_servers.sh
+  ```
+  To restart all of the above via a single script.
+  ```
+  $ scripts/reset_all.sh vagrant_kvm
+  ```
+ 
 7. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
 
   * Create work area and cd to it. This should not be inside the openstack-ha-cookbook repo.
