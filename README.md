@@ -362,9 +362,9 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 ### The Repository Structure
 
 The repository structure is based off the [chef-repo](http://docs.getchef.com/chef_repo.html) structure used for Chef
-development. The only difference being that it favors using [Berkshelf](http://berkshelf.com/v2.0/) to manage
-cookbooks and data bags are created by environment when uploaded via StackBuilder. At a high level the following
-diagram outlines the relationship between the various files in the repo and how they contributed to the final
+development. You can managed it via Knife and [Berkshelf](http://berkshelf.com/v2.0/). For data bags you need to use
+```knife stack upload data bags ...```, so that they are created and encrypted by environment. At a high level the 
+following diagram outlines the relationship between the various files in the repo and how they contributed to the final
 execution environment.
 
 ![Image of OpenStack HA Configuration File Structure]
@@ -378,21 +378,26 @@ environment.
 
 #### Basic Environment in Vagrant
 
-TODO:
-
-#### Simulated HA Environment in Vagrant
-
 ![Image of OpenStack KVM setup on Vagrant]
 (docs/images/vagrant_kvm.png)
 
-The Vagrant template can be used to launch a minimal OpenStack HA cluster using a nested hypervisor on either Virtual
+This vagrant template can be used to launch a minimal OpenStack QEMU/KVM node. It builds a 10G vagrant VM so you have
+sufficient space on the compute node to test products that can be deployed to OpenStack. For example Bosh/CloudFoundry.
+
+#### Simulated HA Environment in Vagrant
+
+![Image of OpenStack HA KVM setup on Vagrant]
+(docs/images/vagrant_hakvm.png)
+
+This Vagrant template can be used to launch a minimal OpenStack HA cluster using a nested hypervisor on either Virtual
 Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters and Percona MySQ and Rabbit MQ
 will deploy as single node clusters unless scaled up. The Chef OpenStack environment for this minimal environment is described
 in ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
 ```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default setup
 KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions to guests
 required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to launch the stack and
-more if you want to scale it out.
+more if you want to scale it out. This template can be used purely to test an HA OpenStack configuration and is not very useful
+beyond that.
 
 #### Troubleshooting
 
