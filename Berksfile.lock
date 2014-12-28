@@ -58,7 +58,7 @@ DEPENDENCIES
     branch: stable/icehouse
   openstack-services
     git: https://github.com/mevansam/chef-cookbook-openstack-services.git
-    revision: ac6be0e3a8c6831ba56015cf7f0c4a717daedecf
+    revision: 2a3367f4af9f5000218ae4773f8e211c4dfe1eb7
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e
@@ -68,7 +68,7 @@ DEPENDENCIES
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
     git: https://github.com/kennonkwok/rabbitmq.git
-    revision: 600b1ff4f52989cd1040791dc1c24c94f6c964fc
+    revision: 7901152258abe688fb0519650ed1cd06c5291194
   selinux (= 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
@@ -97,10 +97,10 @@ GRAPH
     network (= 0.1.0)
     sysutils (= 1.0.0)
   cpu (0.2.0)
-  database (2.3.0)
+  database (2.3.1)
     aws (>= 0.0.0)
-    mysql (>= 5.0.0)
-    mysql-chef_gem (>= 0.0.0)
+    mysql (~> 5.0)
+    mysql-chef_gem (~> 0.0)
     postgresql (>= 1.0.0)
     xfs (>= 0.0.0)
   dmg (2.2.2)
@@ -110,10 +110,10 @@ GRAPH
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
     yum-erlang_solutions (>= 0.0.0)
-  git (4.0.2)
+  git (4.1.0)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
-    runit (>= 1.0.0)
+    runit (>= 1.0)
     windows (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
@@ -217,9 +217,9 @@ GRAPH
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.5.1)
+  rabbitmq (3.7.0)
     erlang (>= 0.9.0)
-  runit (1.5.10)
+  runit (1.5.12)
     build-essential (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
@@ -236,7 +236,7 @@ GRAPH
     modules (>= 0.1.2)
     sudo (= 2.6.0)
     yum (= 3.2.2)
-  windows (1.34.8)
+  windows (1.36.1)
     chef_handler (>= 0.0.0)
   xfs (1.1.0)
   yum (3.2.2)
@@ -244,5 +244,5 @@ GRAPH
     yum (~> 3.0)
   yum-erlang_solutions (0.2.0)
     yum (~> 3.0)
-  yum-mysql-community (0.1.10)
+  yum-mysql-community (0.1.11)
     yum (>= 3.0)
