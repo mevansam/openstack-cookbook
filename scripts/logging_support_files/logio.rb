@@ -64,7 +64,7 @@ class LogStash::Codecs::LogIO < LogStash::Codecs::Base
   #
   #     debug myapp >> 09:45:15 AM UTC : ....... "type" => "myapp",
   #       ^
-  config :standard_stream_format, :validate => :string, :default => "%{type}"
+  config :standard_stream_format, :validate => :string, :default => "%{syslog_program}"
 
   # Only applies to DEBUG output.  This specifies the string to
   # use for the 'node' that is passed to log.io. This supports sprintf strings.
@@ -294,7 +294,7 @@ class LogStash::Codecs::LogIO < LogStash::Codecs::Base
     # e.g. +log|debug|myapp|INFO|A log message\r\n
     
     # Resolve a few strings
-    standard_field_stream = data.sprintf(@standard_stream_format)
+    standard_field_stream = data.sprintf(@standard_stream_format).ljust(32, '_')
     standard_field_node   = if data["syslog_hostname"].nil? then "--UNKNOWN--" else data.sprintf(@standard_node_format).upcase end
     standard_field_level  = data.sprintf(@standard_log_level_format)
 
