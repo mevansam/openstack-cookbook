@@ -6,7 +6,9 @@
 .certs
 .project
 .idea/
-./
+.logs/
+.run/
+.build/
 tmp/
 target
 *.swp
