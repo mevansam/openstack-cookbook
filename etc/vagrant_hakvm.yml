@@ -2,6 +2,8 @@
 
 domain: mydomain.org
 
+disable_local_firewall: true
+
 # Root keys
 root:
   password: ej343fa8f4038e4f
@@ -25,16 +27,37 @@ ntp:
   - 3.pool.ntp.org
 
 database:
+  backup_password: 0p3n5tack
+  replication_password: 0p3n5tack
   port: 3306
-  use_ssl: false
 
 messaging:
   user: openstack
   password: 0p3n5tack
-  ampq_port: 5672
-  use_ssl: false
+  cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
+  ampq_port: 5671
+  ampq_mgmt_port: 15671
   services_path: os_services
   compute_path: os_compute_kvm
+
+# Load balancing proxy
+proxy:
+
+  vip_address: &vip_address 192.168.60.200
+  vip_cidr_netmask: 24
+  vip_nic: eth2
+
+  # Initially all backend pools will
+  # point to this IP. This creates
+  # a default path for any services
+  # that require another service
+  # that will eventually be served
+  # from HAProxy.
+  #
+  # IPs of all service VMs will
+  # statically allocated from this
+  # address.
+  backend_default_ip: 192.168.60.128
 
 openstack:
   region: kvm_vbox
@@ -50,28 +73,9 @@ openstack:
   # OpenStack endpoints
   endpoints:
 
-    openstack_services: 192.168.60.2
-
-    # Uses SSL for all end-points
-    use_ssl: false
-    is_insecure: true
-
-    identity-api:
-      port: 5000
-    identity-admin:
-      port: 35357
-    image-api:
-      port: 9292
-    block-storage-api:
-      port: 8776
-    compute-api:
-      port: 8774
-    compute-ec2-api:
-      port: 8773
-    compute-novnc:
-      port: 6080
-    network-api:
-      port: 9696
+    # If this is a FQDN then it will be mapped to the 
+    # vip address using the configured DNS provider
+    openstack_ha_proxy: *vip_address
 
   # OpenStack Neutron settings
   network:

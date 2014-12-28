@@ -1,30 +1,4 @@
-env_name = File.basename( __FILE__, ".rb")
-
-name env_name
-description "HA OpenStack Environment."
-
-env = YAML.load_file(File.expand_path("../../etc/#{env_name}.yml", __FILE__))
-
-## Pre-process environment variables
-openstack_ha_proxy = env['openstack']['endpoints']['openstack_ha_proxy']
-
-# If openstack proxy is an IP then simply create a self-signed
-# cert for the environment as by default all end-points need to
-# be secured via SSL
-if openstack_ha_proxy=~/\d+\.\d+\.\d+\.\d+/
-
-    openstack_proxy = "#{env_name}.#{env['domain']}"
-    unless Dir.exist?(File.dirname(__FILE__) +  '/../.certs/' + openstack_proxy)
-        chef_server_url = Chef::Config[:chef_server_url]
-        `knife stack upload certificates --server=#{openstack_proxy} -E #{env_name} -s #{chef_server_url}`
-    end
-else
-    openstack_proxy =  openstack_ha_proxy
-end
-
-openstack_network = env['openstack']['network']
-
-## Build the Chef environment
+# OpenStack environment template
 
 override_attributes(
     'ntp' => env['ntp'],
@@ -34,7 +8,7 @@ override_attributes(
         'domain' => env['domain'],
 
         # Disables Ubuntu firewall on all Ubunty hosts
-        'firewall' => false
+        'firewall' => env['disable_local_firewall'] ? false : nil
     },
     'percona' => {
         'server' => {
@@ -79,58 +53,75 @@ override_attributes(
 
         # Highly-Available Proxy load balancer
         # endpoint for all OpenStack services
-        'openstack_ha_proxy' => openstack_ha_proxy,
+        'openstack_ha_proxy' => openstack_services,
 
+        'logging' => {
+            # Work around for bug https://bugs.launchpad.net/openstack-chef/+bug/1365677
+            'ignore' => {
+                'null' => 'NOTSET',
+            },
+            'loggers' => env['logs']['loggers']
+        },
         'region' => env['openstack']['region'],
         'apt' => {
             'live_updates_enabled' => false
         },
         'endpoints' => {
-            'host' => openstack_ha_proxy,
+            'host' => openstack_services,
             'bind-host' => '0.0.0.0',
             'db' => {
-                'host' => env['openstack']['endpoints']['database_server'] || openstack_ha_proxy,
                 'port' => env['database']['port']
             },
             'mq' => {
-                'host' => env['openstack']['endpoints']['messaging_server'] || openstack_ha_proxy,
                 'port' => env['messaging']['ampq_port']
             },
+            'rsyslog' => {
+                'protocol' => 'tcp'
+            },
             'identity-api' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['identity-api']['port']
             },
             'identity-admin' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['identity-admin']['port']
             },
             'image-api' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['image-api']['port']
             },
             'block-storage-api' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['block-storage-api']['port']
             },
             'compute-api' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['compute-api']['port']
             },
             'compute-ec2-api' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['compute-ec2-api']['port']
             },
             'compute-ec2-admin' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['compute-ec2-api']['port']
             },
             'compute-novnc' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['compute-novnc']['port']
             },
             'network-api' => {
-                'scheme' => 'https',
-                'insecure' => true
+                'scheme' => env['openstack']['endpoints']['scheme']=='true' ? 'https' : 'http',
+                'insecure' => env['openstack']['endpoints']['scheme']=='true',
+                'port' => env['openstack']['endpoints']['network-api']['port']
             }
         },
         'mq' => {
@@ -138,37 +129,37 @@ override_attributes(
             'orchestration' => {
                 'rabbit' => {
                     'vhost' => env['messaging']['services_path'],
-                    'use_ssl' => true
+                    'use_ssl' => env['messaging']['use_ssl']=='true'
                 }
             },
             'telemetry' => {
                 'rabbit' => {
                     'vhost' => env['messaging']['services_path'],
-                    'use_ssl' => true
+                    'use_ssl' => env['messaging']['use_ssl']=='true'
                 }
             },
             'image' => {
                 'rabbit' => {
                     'vhost' => env['messaging']['services_path'],
-                    'use_ssl' => true
+                    'use_ssl' => env['messaging']['use_ssl']=='true'
                 }
             },
             'block-storage' => {
                 'rabbit' => {
                     'vhost' => env['messaging']['compute_path'],
-                    'use_ssl' => true
+                    'use_ssl' => env['messaging']['use_ssl']=='true'
                 }
             },
             'compute' => {
                 'rabbit' => {
                     'vhost' => env['messaging']['compute_path'],
-                    'use_ssl' => true
+                    'use_ssl' => env['messaging']['use_ssl']=='true'
                 }
             },
             'network' => {
                 'rabbit' => {
                     'vhost' => env['messaging']['compute_path'],
-                    'use_ssl' => true
+                    'use_ssl' => env['messaging']['use_ssl']=='true'
                 }
             }
         },
@@ -212,86 +203,6 @@ override_attributes(
         'dashboard' => {
             'certificate_databag_item' => openstack_proxy,
             'ssl_no_verify' => true
-        }
-    },
-    'haproxy' => {
-        'certificate_databag_items' => {
-            'default' => openstack_proxy
-        },
-        'virtual_ip_address' => env['proxy']['vip_address'],
-        'virtual_ip_cidr_netmask' => env['proxy']['vip_cidr_netmask'] || 24,
-        'virtual_ip_nic' => env['proxy']['vip_nic'],
-        'backend_default_ip' => env['proxy']['backend_default_ip'],
-
-        # Each pool name should match a corresponding OpenStack
-        # endpoint service as defined in the openstack-common. The
-        # os-ha-proxy cookbook looks up the corresponding service
-        # ports from the openstack configuration unless it is
-        # explicitly specified as for the horizon pools.
-        'server_pools' => {
-            'db' => {
-                'profile' => 'mysql',
-                'cluster_role' => 'os-ha-database'
-            },
-            'mq' => {
-                'profile' => 'rabbitmq',
-                'cluster_role' => 'os-ha-messaging'
-            },
-            'mq_admin' => {
-                'port' => 15671,
-                'profile' => 'ssl',
-                'cluster_role' => 'os-ha-messaging'
-            },
-            'identity-api' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-identity'
-            },
-            'identity-admin' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-identity'
-            },
-            'image-api' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-image'
-            },
-            'block-storage-api' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-block-storage-kvm-lvm'
-            },
-            'compute-api' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-controller-kvm'
-            },
-            'compute-ec2-api' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-controller-kvm'
-            },
-            'compute-novnc' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-controller-kvm'
-            },
-            'network-api' => {
-                'profile' => 'http',
-                'bind_ssl' => 'default',
-                'cluster_role' => 'os-ha-controller-kvm'
-            },
-            'horizon_web' => {
-                'port' => 80,
-                'profile' => 'http',
-                'cluster_role' => 'os-ha-controller-kvm'
-            },
-            'horizon_web_ssl' => {
-                'port' => 443,
-                'profile' => 'ssl',
-                'cluster_role' => 'os-ha-controller-kvm'
-            }
         }
     }
 )
