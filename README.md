@@ -396,8 +396,8 @@ in ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare
 ```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default setup
 KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions to guests
 required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to launch the stack and
-more if you want to scale it out. This template can be used purely to test an HA OpenStack configuration and is not very useful
-beyond that.
+more if you want to scale it out. This template can be used purely to test an HA OpenStack configuration and scale out via the
+StackBuilder plugin, but it is not very useful beyond that.
 
 #### Troubleshooting
 
