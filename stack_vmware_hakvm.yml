@@ -1,12 +1,12 @@
 ---
-name: vbox_qemu
+name: vmware_kvm
 
-environment: vagrant_ha_kvm
+environment: vagrant_hakvm
 
 vagrant:
-  provider: virtualbox
-  box_name: chef/ubuntu-14.04
-  box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
+  provider: vmware_fusion
+  box_name: mevansam/chef-ubuntu-14.04
+  box_url: https://vagrantcloud.com/mevansam/boxes/chef-ubuntu-14.04
   key_file: "#{Dir.home}/.vagrant/insecure_key"
 
 stack:
@@ -56,9 +56,11 @@ stack:
         query_cache_limit: 2M,
         innodb_buffer_pool_size: 128M
     openstack:
-      compute:
-        libvirt:
-          virt_type: qemu
+      endpoints:
+        db:
+          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
+        mq:
+          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
       block-storage:
         volume:
           create_volume_group: true
@@ -119,9 +121,11 @@ stack:
       network_interfaces:
       - device: eth2
     openstack:
-      compute:
-        libvirt:
-          virt_type: qemu
+      endpoints:
+        db:
+          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
+        mq:
+          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
       network:
         l3:
           is_clustered: true
@@ -132,3 +136,5 @@ stack:
   - role[os-ha-compute-kvm]
   - role[os-ha-network-kvm]
   - recipe[openstack-services::monkey-patch]
+  run_on_event:
+    configure: <<+[./common/patches.yml][patch_nova_compute_libvirt_permissions]

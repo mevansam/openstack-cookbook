@@ -1,57 +1,45 @@
 ---
 name: vbox_qemu
 
+# Determine IP of local host
+host_ip: &host_ip "#{require 'socket'; UDPSocket.open {|s| s.connect('8.8.8.8', 1); s.addr.last}}"
+
+environment: vagrant_kvm
+
 vagrant:
   provider: virtualbox
   box_name: chef/ubuntu-14.04
   box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
-  key_file: ~/.vagrant/insecure_key
+  key_file: "#{Dir.home}/.vagrant/insecure_key"
 
 stack:
 
-# The HAproxy load balancer that frontends all
-# the OpenStack services. When services are
-# scaled out the loadbalancer will discover the
-# added/deleted nodes via Chef Ohai.
-- node: openstack-proxy
-  attributes:
-    pacemaker_cluster_name: openstack-proxy
-    pacemaker_mcast_address: 239.255.42.1
-    pacemaker_mcast_port: 5405
-  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_768M]
+# OpenStack Nova/Neutron controller & Hypervisor node
+- node: compute
+  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_10G]
+  run_on_event:
+    install: |
+      echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list
+      apt-get -y update
+      apt-get install --force-yes -y lxc-docker
 
-# This node combines all the HAproxy instances
-# into a pacemaker cluster. It does not create
-# any VMs but it will replace the run list of
-# the target VMs with the one given.
-- node: openstack-proxy-cluster
+# This node will build the services container and
+# apply the run-list to the target compute host
+- node: services
   targets:
-  - openstack-proxy
+  - compute
   attributes:
-    haproxy:
-      is_clustered: true
-  run_list:
-  - recipe[ohai]
-  - role[os-ha-proxy]
-
-# This node install all the OpenStack services
-# including the database and queue.
-- node: compute-services
-  depends_on:
-  - openstack-proxy-cluster
-  attributes:
-    # Override optimized settings in os-ha-database
-    # so mysql will run in a much smaller environment
-    percona:
-      server:
-        key_buffer: 16M,
-        max_allowed_packet: 64M,
-        thread_stack: 192K,
-        thread_cache_size: 16,
-        query_cache_size: 64M,
-        query_cache_limit: 2M,
-        innodb_buffer_pool_size: 128M
+    env:
+      network_interfaces:
+      - device: eth2
     openstack:
+      endpoints:
+        db:
+          host: *host_ip
+        mq:
+          host: *host_ip
+        rsyslog:
+          host: *host_ip
       compute:
         libvirt:
           virt_type: qemu
@@ -60,67 +48,67 @@ stack:
           create_volume_group: true
           create_volume_group_type: block_devices
           block_devices: /dev/sdb
-  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_1nic_4G]
+  # The OpenStack services are installed into a
+  # container which is pushed out to the target
+  # compute host.
+  knife:
+    plugin: container
+    image: chef/ubuntu-14.04
+    inline_dockerfile: |
+      RUN DEBIAN_FRONTEND=noninteractive apt-get update -y
+      RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential libghc-zlib-dev libxml2-dev libxslt-dev
+    run_list:
+    - role[os-services]
+    - recipe[openstack-services::monkey-patch]
+    # The services launched by runit
+    container_services:
+      rsyslog:             <<+[./common/openstack.yml][container][services][rsyslog]
+      apache2:             <<+[./common/openstack.yml][container][services][apache2]
+      keystone:            <<+[./common/openstack.yml][container][services][keystone]
+      glance-api:          <<+[./common/openstack.yml][container][services][glance-api]
+      glance-registry:     <<+[./common/openstack.yml][container][services][glance-registry]
+      cinder-api:          <<+[./common/openstack.yml][container][services][cinder-api]
+      cinder-scheduler:    <<+[./common/openstack.yml][container][services][cinder-scheduler]
+      nova-api-os-compute: <<+[./common/openstack.yml][container][services][nova-api-os-compute]
+      nova-cert:           <<+[./common/openstack.yml][container][services][nova-cert]
+      nova-consoleauth:    <<+[./common/openstack.yml][container][services][nova-consoleauth]
+      nova-conductor:      <<+[./common/openstack.yml][container][services][nova-conductor]
+      nova-scheduler:      <<+[./common/openstack.yml][container][services][nova-scheduler]
+      nova-api-ec2:        <<+[./common/openstack.yml][container][services][nova-api-ec2]
+      nova-novncproxy:     <<+[./common/openstack.yml][container][services][nova-novncproxy]
+      neutron-server:      <<+[./common/openstack.yml][container][services][neutron-server]
+    container_start:
+      options: --memory 1000M
+      ports:
+        dashboard_http: 80:80
+        dashboard_https: 443:443
+        identity-api: "#{env['openstack']['endpoints']['identity-api']['port']}:#{env['openstack']['endpoints']['identity-api']['port']}"
+        identity-admin: "#{env['openstack']['endpoints']['identity-admin']['port']}:#{env['openstack']['endpoints']['identity-admin']['port']}"
+        image-api: "#{env['openstack']['endpoints']['image-api']['port']}:#{env['openstack']['endpoints']['image-api']['port']}"
+        block-storage-api: "#{env['openstack']['endpoints']['block-storage-api']['port']}:#{env['openstack']['endpoints']['block-storage-api']['port']}"
+        compute-api: "#{env['openstack']['endpoints']['compute-api']['port']}:#{env['openstack']['endpoints']['compute-api']['port']}"
+        compute-ec2-api: "#{env['openstack']['endpoints']['compute-ec2-api']['port']}:#{env['openstack']['endpoints']['compute-ec2-api']['port']}"
+        compute-novnc: "#{env['openstack']['endpoints']['compute-novnc']['port']}:#{env['openstack']['endpoints']['compute-novnc']['port']}"
+        network-api:  "#{env['openstack']['endpoints']['network-api']['port']}:#{env['openstack']['endpoints']['network-api']['port']}"
+  # The compute host runs the nova computer, neutron
+  # agents and cinder volume services natively on
+  # the target host.
   run_list:
   - recipe[ohai]
-  - role[os-ha-database]
-  - role[os-ha-messaging]
-  - role[os-ha-dashboard]
-  - role[os-ha-identity]
-  - role[os-ha-image]
-  - role[os-ha-block-storage-kvm-lvm]
-  - role[os-ha-controller-kvm]
-  - recipe[openstack-services::monkey-patch]
-  run_on_event:
-    configure: <<+[./common/patches.yml][patch_neutron_nova_ssl_notification]
-
-# Reloads the haproxy configuration with
-# the correct names and backend-ips of
-# the controllers.
-- node: proxy-reload
-  depends_on:
-  - compute-services
-  targets:
-  - openstack-proxy
-  run_on_event:
-    configure: >
-      chef-client -l info
-
-# OpenStack Hypervisor node
-- node: compute-host
-  attributes:
-    # Cluster every 2 instances. i.e. instance 0 and 1
-    # will be put into a cluster named 'network-node-0'
-    # and 2 and 3 into a cluster named 'network-node-1'
-    # and so on.
-    pacemaker_cluster_name: <<!'network-node-'+(#{index}/2).to_s
-    pacemaker_mcast_address: 239.255.42.2
-    pacemaker_mcast_port: 5405
-  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_2G]
-
-# Sets up the nova compute and neutron network
-# cluster. The clusters are named such that every
-# 2 consecutive nodes are named same. Each of these
-# two nodes will be combined into a Pacemaker cluster
-# that will run the Neutron L3 agents.
-- node: compute-network-cluser
-  depends_on:
-  - compute-services
-  targets:
-  - compute-host
-  attributes:
-    env:
-      network_interfaces:
-      - device: eth2
-    openstack:
-      compute:
-        libvirt:
-          virt_type: qemu
-      network:
-        l3:
-          is_clustered: true
-  run_list:
-  - recipe[ohai]
+  - recipe[ntp]
+  - recipe[network]
+  # Service registration recipes
+  - recipe[openstack-common::client]
+  - recipe[openstack-common::openrc]
+  - recipe[openstack-identity::registration]
+  - recipe[openstack-image::identity_registration]
+  - recipe[openstack-block-storage::identity_registration]
+  - recipe[openstack-compute::identity_registration]
+  - recipe[openstack-network::identity_registration]
+  # Block storage volume role
+  - role[os-block-storage-volume]
+  # Compute and Network node roles
   - role[os-ha-compute-kvm]
   - role[os-ha-network-kvm]
+  # Monkey patch upstart services
   - recipe[openstack-services::monkey-patch]
