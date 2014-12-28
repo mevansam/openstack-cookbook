@@ -47,15 +47,14 @@
     "run_list": [
         "recipe[sysutils::default]",
         "recipe[openstack-services::ha-os-common]",
-        "role[os-compute-api-ec2]",
         "role[os-compute-api-os-compute]",
-        "recipe[openstack-services::ha-os-controller]",
+        "role[os-compute-api-ec2]",
         "role[os-compute-cert]",
         "role[os-compute-conductor]",
         "role[os-compute-scheduler]",
         "role[os-compute-vncproxy]",
         "role[os-network-server]",
-        "recipe[openstack-network::server]",
+        "recipe[openstack-services::ha-os-controller]",
         "recipe[openstack-network::identity_registration]"
     ],
     "env_run_lists": { }
