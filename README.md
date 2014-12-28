@@ -161,7 +161,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   $ scripts/reset_all.sh vagrant_kvm
   ```
 
-> Both steps 5. and 6. are relevant only if you plan to build the vagrant templates.
+ > Both steps 5. and 6. are relevant only if you plan to build the vagrant templates.
  
 7. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
 
