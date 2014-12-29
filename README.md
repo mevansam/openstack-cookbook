@@ -364,7 +364,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
 The repository structure is based off the [chef-repo](http://docs.getchef.com/chef_repo.html) structure used for Chef
 development. You can managed it via Knife and [Berkshelf](http://berkshelf.com/v2.0/). For data bags you need to use
 ```knife stack upload data bags ...```, so that they are created and encrypted by environment. At a high level the 
-following diagram outlines the relationship between the various files in the repo and how they contributed to the final
+following diagram outlines the relationship between the various files in the repo and how they contribute to the final
 execution environment.
 
 ![Image of OpenStack HA Configuration File Structure]
