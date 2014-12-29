@@ -390,7 +390,7 @@ sufficient space on the compute node to test products that can be deployed to Op
 (docs/images/vagrant_hakvm.png)
 
 This Vagrant template can be used to launch a minimal OpenStack HA cluster using a nested hypervisor on either Virtual
-Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters and Percona MySQ and Rabbit MQ
+Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters and Percona MySQL and Rabbit MQ
 will deploy as single node clusters unless scaled up. The Chef OpenStack environment for this minimal environment is described
 in ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
 ```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default setup
