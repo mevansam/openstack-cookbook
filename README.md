@@ -386,6 +386,8 @@ environment.
 This vagrant template can be used to launch a minimal OpenStack QEMU/KVM node. It builds a 10G vagrant VM so you have
 sufficient space on the compute node to test products that can be deployed to OpenStack. For example Bosh/CloudFoundry.
 
+> To use this template you need to have docker installed on the host so that the container images can be built.
+
 #### Simulated HA Environment in Vagrant
 
 ![Image of OpenStack HA KVM setup on Vagrant]
@@ -400,8 +402,6 @@ KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does n
 required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to launch the stack and
 more if you want to scale it out. This template can be used purely to test an HA OpenStack configuration and scale out via the
 StackBuilder plugin, but it is not very useful beyond that.
-
-> To use this template you need to have docker installed on the host so that the container images can be built.
 
 #### Troubleshooting
 
