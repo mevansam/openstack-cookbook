@@ -126,7 +126,8 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
     services so you do not need to create a VM to host those services. In order to run these services locally you first need to
     install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
     folders.
-   > In order to use RabbitMQ and MySQL running in the host environment the stack template should build OpenStack to suppor it.
+   > In order to use RabbitMQ and MySQL running in the host environment the template should build OpenStack in a way that 
+   > the services connect to the local host. i.e. ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```
   
   To start Chef-Zero
   ```
