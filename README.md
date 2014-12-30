@@ -126,6 +126,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
     services so you do not need to create a VM to host those services. In order to run these services locally you first need to
     install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
     folders.
+   > In order to use RabbitMQ and MySQL running in the host environment the stack template should build OpenStack to suppor it.
   
   To start Chef-Zero
   ```
@@ -398,6 +399,8 @@ KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does n
 required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to launch the stack and
 more if you want to scale it out. This template can be used purely to test an HA OpenStack configuration and scale out via the
 StackBuilder plugin, but it is not very useful beyond that.
+
+> To use this template you need to have docker installed on the host so that the container images can be built.
 
 #### Troubleshooting
 
