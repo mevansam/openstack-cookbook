@@ -394,14 +394,14 @@ sufficient space on the compute node to test products that can be deployed to Op
 (docs/images/vagrant_hakvm.png)
 
 This Vagrant template can be used to launch a minimal OpenStack HA cluster using a nested hypervisor on either Virtual
-Box or VMware. The HAProxy nodes as well as the Compute nodes are setup as Pacemaker clusters and Percona MySQL and Rabbit MQ
-will deploy as single node clusters unless scaled up. The Chef OpenStack environment for this minimal environment is described
-in ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are ```stack_vbox_qemu.yml``` and
-```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment attributes will by default setup
-KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the processor extensions to guests
-required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the host to launch the stack and
-more if you want to scale it out. This template can be used purely to test an HA OpenStack configuration and scale out via the
-StackBuilder plugin, but it is not very useful beyond that.
+Box or VMware. The HAProxy nodes as well as the Compute/Network nodes are setup as single node Pacemaker clusters. Percona 
+and RabbitMQ are deployed as single node clusters using each product's cluster capability. The Chef OpenStack environment
+for this minimal environment is described in ```environments/vagrant_kvm```. The two stack files for VirtualBox and VMWare are
+```stack_vbox_qemu.yml``` and ```stack_vmware_kvm.yml``` respectively. It should be noted that, although the environment
+attributes will by default setup KVM, the VirtualBox stack template overrides KVM with Qemu, as VirtualBox does not expose the
+processor extensions to guests required to run a nested hypervisor. You will need at a minimimum 7GB of memory available on the
+host to launch the stack and more if you want to scale it out. This template can be used purely to test an HA OpenStack
+configuration and scale out via the StackBuilder plugin, but it is not very useful beyond that.
 
 #### Troubleshooting
 
