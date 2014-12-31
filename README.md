@@ -378,7 +378,7 @@ environment.
 
 ### OpenStack KVM on Vagrant Template
 
-#### Basic Environment in Vagrant
+#### Basic Environment using Vagrant
 
 ![Image of OpenStack KVM setup on Vagrant]
 (docs/images/vagrant_kvm.png)
@@ -388,7 +388,7 @@ sufficient space on the compute node to test products that can be deployed to Op
 
 > To use this template you need to have docker installed on the host so that the container images can be built.
 
-#### Simulated HA Environment in Vagrant
+#### Simulated HA Environment using Vagrant
 
 ![Image of OpenStack HA KVM setup on Vagrant]
 (docs/images/vagrant_hakvm.png)
