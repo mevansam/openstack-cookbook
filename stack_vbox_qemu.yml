@@ -54,9 +54,7 @@ stack:
   knife:
     plugin: container
     image: chef/ubuntu-14.04
-    inline_dockerfile: |
-      RUN DEBIAN_FRONTEND=noninteractive apt-get update -y
-      RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential libghc-zlib-dev libxml2-dev libxslt-dev
+    inline_dockerfile: <<+[./common/openstack.yml][container][inline_dockerfile]
     run_list:
     - role[os-services]
     - recipe[openstack-services::monkey-patch]
@@ -112,3 +110,5 @@ stack:
   - role[os-ha-network-kvm]
   # Monkey patch upstart services
   - recipe[openstack-services::monkey-patch]
+  run_on_event:
+    configure: <<+[./common/openstack.yml][reconfigure-containers]

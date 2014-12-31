@@ -1,36 +1,82 @@
 ---
 # Runit startup commands for OpenStack services when containerized
 container:
+
+  inline_dockerfile: |
+      RUN DEBIAN_FRONTEND=noninteractive apt-get update -y
+      RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential libghc-zlib-dev libxml2-dev libxslt-dev
+      
+      # Patch chef-init
+      #
+      # https://github.com/RIYIC/chef-init/commit/58126135c16d964795f67439dbb902a2b499e701
+      #
+      RUN sed -i.bak 's/def restart_service/def restart_service\n          wait_for_service_enable\n/' \
+        /opt/chef/embedded/lib/ruby/gems/1.9.1/gems/chef-init-0.3.2/lib/chef/provider/container_service/runit.rb
+      RUN sed -i.bak 's/      def container_service_command_specified/      def provider(arg=nil)\n          Chef::Provider::ContainerService::Runit\n      end\n\n      def provider=(str)\n          @provider = Chef::Provider::ContainerService::Runit\n      end\n\n      def container_service_command_specified/' \
+        /opt/chef/embedded/lib/ruby/gems/1.9.1/gems/chef-init-0.3.2/lib/chef/resource/container_service.rb
+
   services:
     rsyslog:
       command: /usr/sbin/rsyslogd -n
     apache2:
-      command: /usr/sbin/apache2ctl -DFOREGROUND
-    messaging:
-      command: /usr/sbin/rabbitmq-server
+      command: >
+        /bin/sh -c ". /etc/apache2/envvars && /usr/sbin/apache2 -DNO_DETACH -DFOREGROUND -k start"
+      finish: >
+        /bin/sh -c ". /etc/apache2/envvars && /usr/sbin/apache2 -k stop"
     keystone:
-      command: /usr/bin/keystone-all
+      command: >
+        ps -ef | awk '/\/usr\/bin\/keystone-all/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/keystone-all
     glance-api:
-      command: /usr/bin/glance-api > /tmp/glance.log
+      command: >
+        ps -ef | awk '/\/usr\/bin\/glance-api/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/glance-api
     glance-registry:
-      command: /usr/bin/glance-registry
+      command: >
+        ps -ef | awk '/\/usr\/bin\/glance-registry/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/glance-registry
     cinder-api:
-      command: /usr/bin/cinder-api --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-api.log
+      command: >
+        ps -ef | awk '/\/usr\/bin\/cinder-api/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/cinder-api --config-file=/etc/cinder/cinder.conf
     cinder-scheduler:
-      command: /usr/bin/cinder-scheduler --config-file=/etc/cinder/cinder.conf --log-file=/var/log/cinder/cinder-scheduler.log
+      command: >
+        ps -ef | awk '/\/usr\/bin\/cinder-scheduler/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/cinder-scheduler --config-file=/etc/cinder/cinder.conf
     nova-api-os-compute:
-      command: /usr/bin/nova-api-os-compute --config-file=/etc/nova/nova.conf
+      command: >
+        ps -ef | awk '/\/usr\/bin\/nova-api-os-compute/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/nova-api-os-compute --config-file=/etc/nova/nova.conf
     nova-cert:
-      command: /usr/bin/nova-cert --config-file=/etc/nova/nova.conf
+      command: >
+        ps -ef | awk '/\/usr\/bin\/nova-cert/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/nova-cert --config-file=/etc/nova/nova.conf
     nova-consoleauth:
-      command: /usr/bin/nova-consoleauth --config-file=/etc/nova/nova.conf
+      command: >
+        ps -ef | awk '/\/usr\/bin\/nova-consoleauth/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/nova-consoleauth --config-file=/etc/nova/nova.conf
     nova-conductor:
-      command: /usr/bin/nova-conductor --config-file=/etc/nova/nova.conf
+      command: >
+        ps -ef | awk '/\/usr\/bin\/nova-conductor/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/nova-conductor --config-file=/etc/nova/nova.conf
     nova-scheduler:
-      command: /usr/bin/nova-scheduler --config-file=/etc/nova/nova.conf
+      command: >
+        ps -ef | awk '/\/usr\/bin\/nova-scheduler/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/nova-scheduler --config-file=/etc/nova/nova.conf
     nova-api-ec2:
-      command: /usr/bin/nova-api-ec2 --config-file=/etc/nova/nova.conf
+      command: >
+        ps -ef | awk '/\/usr\/bin\/nova-api-ec2/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/nova-api-ec2 --config-file=/etc/nova/nova.conf
     nova-novncproxy:
-      command: /usr/bin/nova-novncproxy --config-file=/etc/nova/nova.conf
+      command: >
+        ps -ef | awk '/\/usr\/bin\/nova-novncproxy/ { print $2 }' | xargs kill -15 &&
+        /usr/bin/nova-novncproxy --config-file=/etc/nova/nova.conf
     neutron-server:
-      command: /usr/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini
+      command: >
+        ps -ef | awk '/\/usr\/bin\/neutron-server / { print $2 }' | xargs kill -15 &&
+        /usr/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini
+
+reconfigure-containers: |
+  for i in $(docker ps -a | awk '/chef-init/ { print $1 }'); do
+    docker exec -d $i chef-client --once
+  done

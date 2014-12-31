@@ -45,8 +45,10 @@ while true; do
   rabbitmqctl list_users > /dev/null 2>&1
   if [ $? -eq 0 ]; then
     user_exists=$(rabbitmqctl list_users | awk -v u=$messaging_user '$1==u { print "yes" }')
-    [ "$user_exists" == "yes" ] && rabbitmqctl delete_user $messaging_user
-    break
+    if [ "$user_exists" == "yes" ]; then
+      rabbitmqctl delete_user $messaging_user
+      [ $? -eq 0 ] && break
+    fi
   fi
 done
 

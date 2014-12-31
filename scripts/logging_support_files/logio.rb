@@ -294,7 +294,7 @@ class LogStash::Codecs::LogIO < LogStash::Codecs::Base
     # e.g. +log|debug|myapp|INFO|A log message\r\n
     
     # Resolve a few strings
-    standard_field_stream = data.sprintf(@standard_stream_format).ljust(32, '_')
+    standard_field_stream = data.sprintf(@standard_stream_format).ljust(32, "\xC2\xA0")
     standard_field_node   = if data["syslog_hostname"].nil? then "--UNKNOWN--" else data.sprintf(@standard_node_format).upcase end
     standard_field_level  = data.sprintf(@standard_log_level_format)
 
