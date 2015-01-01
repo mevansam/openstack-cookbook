@@ -405,8 +405,8 @@ configuration and scale out via the StackBuilder plugin, but it is not very usef
 
 > Since the OpenStack guests are created on a host-only network they will not be routable to the internet. So if you
 > want the guests to be able to connect to the internet and your host is a Mac, you can configure you OS X host to NAT
-> out the host only network by following 
-> [this guide](http://blog.nasmart.me/internet-access-with-virtualbox-host-only-networks-on-os-x-mavericks/).
+> out the host only network by running the script ```scripts/config_vmnet_nat.sh vagrant_kvm```, which is based on
+> [this guide](http://blog.nasmart.me/internet-access-with-virtualbox-host-only-networks-on-os-x-mavericks/). 
 
 #### Troubleshooting
 
