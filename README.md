@@ -403,6 +403,11 @@ processor extensions to guests required to run a nested hypervisor. You will nee
 host to launch the stack and more if you want to scale it out. This template can be used purely to test an HA OpenStack
 configuration and scale out via the StackBuilder plugin, but it is not very useful beyond that.
 
+> Since the OpenStack guests are created on a host-only network they will not be routable to the internet. So if you
+> want the guests to be able to connect to the internet and your host is a Mac, you can configure you OS X host to NAT
+> out the host only network by following 
+> [this guide](http://blog.nasmart.me/internet-access-with-virtualbox-host-only-networks-on-os-x-mavericks/).
+
 #### Troubleshooting
 
 1. If the build fails with a cookbook error it is safe to re-run it. Sometimes failures can occur due to time-outs
