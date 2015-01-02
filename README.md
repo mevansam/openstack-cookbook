@@ -153,6 +153,8 @@ The repository's ```scripts``` folder contains a few useful scripts to manage st
  > In order to use RabbitMQ and MySQL running in the host environment the template should build OpenStack in a way that 
  > the services connect to the local host. i.e. ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```
 
+When starting the log or ops services make sure you provide the chef environment so the scripts can determine the correct ports to configure.
+
 To start Chef-Zero
 ```
 $ scripts/start_chef_zero.sh
@@ -160,15 +162,6 @@ $ scripts/start_chef_zero.sh
 To stop Chef-Zero
 ```
 $ scripts/stop_chef_zero.sh
-```
-To start log services. Once started the log.io streaming console will be available at
-[http://localhost:9081](http://localhost:9081). Make sure you provide the correct Chef environment for your build.
-```
-$ scripts/start_log_servers.sh vagrant_kvm
-```
-To stop log services.
-```
-$ scripts/stop_log_servers.sh
 ```
 To start the Ops services (RabbitMQ and MySQL)
 ```
@@ -178,9 +171,18 @@ To seed the MySQL databases.
 ```
 $ scripts/create_mysql_osdb.sh vagrant_kvm
 ```
-To stop log services.
+To stop Ops services.
 ```
 $ scripts/stop_ops_servers.sh
+```
+To start Log Services. 
+```
+$ scripts/start_log_servers.sh vagrant_kvm
+```
+Once started the log.io streaming console will be available at
+[http://localhost:9081](http://localhost:9081). To stop log services.
+```
+$ scripts/stop_log_servers.sh
 ```
 To restart all of the above via a single script.
 ```
