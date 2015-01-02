@@ -150,10 +150,10 @@ The repository's ```scripts``` folder contains a few useful scripts to manage st
   services so you do not need to create a VM to host those services. In order to run these services locally you first need to
   install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
   folders.
- > In order to use RabbitMQ and MySQL running in the host environment the template should build OpenStack in a way that 
+ > To use RabbitMQ and MySQL running in the host environment the template should build OpenStack in a way that 
  > the services connect to the local host. i.e. ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```
 
-When starting the log or ops services make sure you provide the chef environment so the scripts can determine the correct ports to configure.
+When starting the log or ops services make sure you provide the chef environment so the scripts can determine the correct ports to configure. You will also need to enable passwordless sudo for your use (if you are not root) by appending ```[your username]    ALL = (ALL) NOPASSWD: ALL``` by editing the ```sudoers``` file via ```visudo```
 
 To start Chef-Zero
 ```
