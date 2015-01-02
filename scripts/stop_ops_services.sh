@@ -5,7 +5,7 @@ RUNDIR=$DIR/../.run
 
 if [ -e $RUNDIR/rabbitmq-server.pid ]
 then
-  kill -15 $(cat $RUNDIR/rabbitmq-server.pid)
+  sudo kill -15 $(cat $RUNDIR/rabbitmq-server.pid)
   rm $RUNDIR/rabbitmq-server.pid
   echo "RabbitMQ stopped."
 fi

@@ -34,37 +34,38 @@ if [ ! -e "$RABBITMQ_SERVER" ]; then
   exit 1
 fi
 
-[ -e $RUNDIR/rabbitmq-server.pid ] && kill -9 $(cat $RUNDIR/rabbitmq-server.pid) > /dev/null 2>&1 && rm $RUNDIR/rabbitmq-server.pid
+[ -e $RUNDIR/rabbitmq-server.pid ] && sudo kill -15 $(cat $RUNDIR/rabbitmq-server.pid) > /dev/null 2>&1 && rm $RUNDIR/rabbitmq-server.pid
 
-nohup rabbitmq-server > $LOGDIR/rabbitmq.log 2>&1 &
+sudo nohup rabbitmq-server > $LOGDIR/rabbitmq.log 2>&1 &
 echo $! > $RUNDIR/rabbitmq-server.pid
 echo "RabbitMQ started."
 
 # Wait until RabbitMQ has started
 while true; do
-  rabbitmqctl list_users > /dev/null 2>&1
+  sudo rabbitmqctl list_users > /dev/null 2>&1
   if [ $? -eq 0 ]; then
-    user_exists=$(rabbitmqctl list_users | awk -v u=$messaging_user '$1==u { print "yes" }')
+    user_exists=$(sudo rabbitmqctl list_users | awk -v u=$messaging_user '$1==u { print "yes" }')
     if [ "$user_exists" == "yes" ]; then
-      rabbitmqctl delete_user $messaging_user
+      sudo rabbitmqctl delete_user $messaging_user
       [ $? -eq 0 ] && break
     fi
   fi
+  sleep 1
 done
 
-rabbitmqctl add_user $messaging_user $messaging_password
-rabbitmqctl set_user_tags $messaging_user administrator
-rabbitmqctl set_permissions $messaging_user \".*\" \".*\" \".*\"
+sudo rabbitmqctl add_user $messaging_user $messaging_password
+sudo rabbitmqctl set_user_tags $messaging_user administrator
+sudo rabbitmqctl set_permissions $messaging_user \".*\" \".*\" \".*\"
 
-vhost_exists=$(rabbitmqctl list_vhosts | awk -v h=$messaging_services_path '$1==h { print "yes" }')
-[ "$vhost_exists" == "yes" ] && rabbitmqctl delete_vhost $messaging_services_path
-rabbitmqctl add_vhost $messaging_services_path
-rabbitmqctl set_permissions -p $messaging_services_path $messaging_user ".*" ".*" ".*"
+vhost_exists=$(sudo rabbitmqctl list_vhosts | awk -v h=$messaging_services_path '$1==h { print "yes" }')
+[ "$vhost_exists" == "yes" ] && sudo rabbitmqctl delete_vhost $messaging_services_path
+sudo rabbitmqctl add_vhost $messaging_services_path
+sudo rabbitmqctl set_permissions -p $messaging_services_path $messaging_user ".*" ".*" ".*"
 
-vhost_exists=$(rabbitmqctl list_vhosts | awk -v h=$messaging_compute_path '$1==h { print "yes" }')
-[ "$vhost_exists" == "yes" ] && rabbitmqctl delete_vhost $messaging_compute_path
-rabbitmqctl add_vhost $messaging_compute_path
-rabbitmqctl set_permissions -p $messaging_compute_path $messaging_user ".*" ".*" ".*"
+vhost_exists=$(sudo rabbitmqctl list_vhosts | awk -v h=$messaging_compute_path '$1==h { print "yes" }')
+[ "$vhost_exists" == "yes" ] && sudo rabbitmqctl delete_vhost $messaging_compute_path
+sudo rabbitmqctl add_vhost $messaging_compute_path
+sudo rabbitmqctl set_permissions -p $messaging_compute_path $messaging_user ".*" ".*" ".*"
 
 #######################
 # Start MySQL Server
