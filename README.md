@@ -155,8 +155,13 @@ The repository's ```scripts``` folder contains a few useful scripts to manage st
 
 When starting the log or ops services make sure you provide the chef environment to the scripts so that they can determine the correct ports to configure. You will also need to enable passwordless sudo for your user (if you are not root). 
 
-Run ```visudo``` and append:
+Edit the sudoers file.
 ```
+$ sudo visudo
+.
+.
+# Append to sudoers file
+#
 [your username]    ALL = (ALL) NOPASSWD: ALL
 ``` 
 To start Chef-Zero
