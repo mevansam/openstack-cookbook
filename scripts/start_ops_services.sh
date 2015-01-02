@@ -44,10 +44,13 @@ echo "RabbitMQ started."
 while true; do
   sudo rabbitmqctl list_users > /dev/null 2>&1
   if [ $? -eq 0 ]; then
-    user_exists=$(sudo rabbitmqctl list_users | awk -v u=$messaging_user '$1==u { print "yes" }')
+    user_exists=$(sudo rabbitmqctl list_users | awk -v u=$messaging_user '$1==u { print "yes" }')    
+    error=$?
     if [ "$user_exists" == "yes" ]; then
       sudo rabbitmqctl delete_user $messaging_user
       [ $? -eq 0 ] && break
+    elif [ $error -eq 0 ]
+      break
     fi
   fi
   sleep 1
