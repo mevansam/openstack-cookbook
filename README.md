@@ -119,75 +119,76 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
   Once you have setup the openstack environment copy the `openrc` file created on the controller host to this work
   area and source it before calling the OpenStack APIs via the client tools.
-  
 
 ## Support Scripts
 
-The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server. If you start Chef-Zero using the scripts it will create the ```.chef``` folder containing the knife configuration for Chef-Zero.
- 
-  * In order to use logio you need to install node.js. It is recommended you use [nvm](https://github.com/creationix/nvm) 
-    to manage your node install rather than the [installable packages](http://nodejs.org/download/) distributed by Joyent.
+The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server. If you start Chef-Zero using the scripts it will create the ```.chef``` folder and you can skip step 5.
 
-    Ensure the following is added to your default shell profile (.zlogin if you are using .zshrc), as the NVM install only
-    adds it to the ```.bashrc``` file.
-    
-    ```
-    export NVM_DIR="/Users/msamaratunga/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-    ```
-    
-    Install node.js and then logio as follows.
-    
-    ```
-    $ nvm install stable
-    $ nvm use 0.10
-    $ npm install -g log.io
-    ```
-  * Logstash requires the Java JDK to be installed in the system. You can download the latest logstash distribution from its
-    [website](http://logstash.net/). Untar it to a known location and ensure that the ```[logstash home dir]/bin``` folder is
-    added to the PATH environment variable.
- 
-  * You can also run [RabbitMQ](https://www.rabbitmq.com/download.html) and [MySql](http://dev.mysql.com/downloads/) as local
-    services so you do not need to create a VM to host those services. In order to run these services locally you first need to
-    install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
-    folders.
-   > In order to use RabbitMQ and MySQL running in the host environment the template should build OpenStack in a way that 
-   > the services connect to the local host. i.e. ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```
+* In order to use logio you need to install node.js. It is recommended you use [nvm](https://github.com/creationix/nvm) 
+  to manage your node install rather than the [installable packages](http://nodejs.org/download/) distributed by Joyent.
+
+  Ensure the following is added to your default shell profile (.zlogin if you are using .zshrc), as the NVM install only
+  adds it to the ```.bashrc``` file.
   
-  To start Chef-Zero
   ```
-  $ scripts/start_chef_zero.sh
+  export NVM_DIR="/Users/msamaratunga/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
   ```
-  To stop Chef-Zero
+  
+  Install node.js and then logio as follows.
+  
   ```
-  $ scripts/stop_chef_zero.sh
+  $ nvm install stable
+  $ nvm use 0.10
+  $ npm install -g log.io
   ```
-  To start log services. Once started the log.io streaming console will be available at
-  [http://localhost:9081](http://localhost:9081). Make sure you provide the correct Chef environment for your build.
-  ```
-  $ scripts/start_log_servers.sh vagrant_kvm
-  ```
-  To stop log services.
-  ```
-  $ scripts/stop_log_servers.sh
-  ```
-  To start the Ops services (RabbitMQ and MySQL)
-  ```
-  $ scripts/start_ops_servers.sh vagrant_kvm
-  ```
-  To seed the MySQL databases.
-  ```
-  $ scripts/create_mysql_osdb.sh vagrant_kvm
-  ```
-  To stop log services.
-  ```
-  $ scripts/stop_ops_servers.sh
-  ```
-  To restart all of the above via a single script.
-  ```
-  $ scripts/reset_all.sh vagrant_kvm
-  ```
+* Logstash requires the Java JDK to be installed in the system. You can download the latest logstash distribution from its
+  [website](http://logstash.net/). Untar it to a known location and ensure that the ```[logstash home dir]/bin``` folder is
+  added to the PATH environment variable.
 
+* You can also run [RabbitMQ](https://www.rabbitmq.com/download.html) and [MySql](http://dev.mysql.com/downloads/) as local
+  services so you do not need to create a VM to host those services. In order to run these services locally you first need to
+  install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
+  folders.
+ > In order to use RabbitMQ and MySQL running in the host environment the template should build OpenStack in a way that 
+ > the services connect to the local host. i.e. ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```
+
+To start Chef-Zero
+```
+$ scripts/start_chef_zero.sh
+```
+To stop Chef-Zero
+```
+$ scripts/stop_chef_zero.sh
+```
+To start log services. Once started the log.io streaming console will be available at
+[http://localhost:9081](http://localhost:9081). Make sure you provide the correct Chef environment for your build.
+```
+$ scripts/start_log_servers.sh vagrant_kvm
+```
+To stop log services.
+```
+$ scripts/stop_log_servers.sh
+```
+To start the Ops services (RabbitMQ and MySQL)
+```
+$ scripts/start_ops_servers.sh vagrant_kvm
+```
+To seed the MySQL databases.
+```
+$ scripts/create_mysql_osdb.sh vagrant_kvm
+```
+To stop log services.
+```
+$ scripts/stop_ops_servers.sh
+```
+To restart all of the above via a single script.
+```
+$ scripts/reset_all.sh vagrant_kvm
+```
+
+ > Both steps 5. and 6. are relevant only if you plan to build the vagrant templates.
+ 
 ### Building a stack
 
 1. Preparation
