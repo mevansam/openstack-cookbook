@@ -151,8 +151,9 @@ The repository's ```scripts``` folder contains a few useful scripts to manage st
   install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
   folders.
  
- If you are using the teamplates ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```, wich depend on MySQL on the host 
- then you need to ensure the following is added to the MySQL configuration at ```/usr/local/mysql/my.cnf```.
+ If you are using the tamplates ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```, wich depend on MySQL on the host 
+ then you need to ensure the following is added to the MySQL configuration at ```/usr/local/mysql/my.cnf```, to avoid the
+ bug described at [https://bugs.launchpad.net/glance/+bug/1279000](https://bugs.launchpad.net/glance/+bug/1279000).
  
  ```
  [mysqld]
