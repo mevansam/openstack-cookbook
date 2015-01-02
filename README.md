@@ -189,8 +189,6 @@ To restart all of the above via a single script.
 $ scripts/reset_all.sh vagrant_kvm
 ```
 
- > Both steps 5. and 6. are relevant only if you plan to build the vagrant templates.
- 
 ### Building a stack
 
 1. Preparation
