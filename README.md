@@ -90,15 +90,40 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
   > These patches and updates are in the process being pushed to their respective upstream repositories. The patched vagrant gem is available at:
   > * [vagrant-ohai](https://github.com/mevansam/vagrant-ohai.git)
 
-5. Optional: create ```.chef``` folder and copy chef-zero knife configuration files if you plan to use chef-zero as you default chef.
+5. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
 
+  * Create work area and cd to it. This should not be inside the openstack-ha-cookbook repo.
+  
   ```
-  $ mkdir .chef
-  $ cp etc/chef-zero_* .chef
-  $ mv .chef/chef-zero_knife.rb .chef/knife.rb
+  $ mkdir -p [your workspace]/openstack-cli
+  $ cd [your workspace]/openstack-cli
   ```
+    
+  * Install the python virtual environment
 
-6. The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server. If you start Chef-Zero using the scripts it will create the ```.chef``` folder and you can skip step 5.
+  ````
+  $ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
+  $ tar xvf virtualenv-1.11.tar.gz
+  $ python virtualenv-1.11/virtualenv.py pyos
+  $ rm -rf virtualenv-1.11
+  $ pyos/bin/pip install virtualenv-1.11.tar.gz
+  $ rm -fr virtualenv-1.11.tar.gz
+  ````
+
+  * Activate the virtual environment and install the clients
+    
+  ````
+  $ source pyos/bin/activate
+  $ pip install python-keystoneclient python-glanceclient python-cinderclient python-neutronclient python-novaclient
+  ````
+
+  Once you have setup the openstack environment copy the `openrc` file created on the controller host to this work
+  area and source it before calling the OpenStack APIs via the client tools.
+  
+
+## Support Scripts
+
+The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server. If you start Chef-Zero using the scripts it will create the ```.chef``` folder and you can skip step 5.
  
   * In order to use logio you need to install node.js. It is recommended you use [nvm](https://github.com/creationix/nvm) 
     to manage your node install rather than the [installable packages](http://nodejs.org/download/) distributed by Joyent.
@@ -165,36 +190,6 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
  > Both steps 5. and 6. are relevant only if you plan to build the vagrant templates.
  
-7. If you want to setup the OpenStack CLI tools to interact with OpenStack via the command line, then create a python virtual environment and install the python clients as follows.
-
-  * Create work area and cd to it. This should not be inside the openstack-ha-cookbook repo.
-  
-  ```
-  $ mkdir -p [your workspace]/openstack-cli
-  $ cd [your workspace]/openstack-cli
-  ```
-    
-  * Install the python virtual environment
-
-  ````
-  $ curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.tar.gz
-  $ tar xvf virtualenv-1.11.tar.gz
-  $ python virtualenv-1.11/virtualenv.py pyos
-  $ rm -rf virtualenv-1.11
-  $ pyos/bin/pip install virtualenv-1.11.tar.gz
-  $ rm -fr virtualenv-1.11.tar.gz
-  ````
-
-  * Activate the virtual environment and install the clients
-    
-  ````
-  $ source pyos/bin/activate
-  $ pip install python-keystoneclient python-glanceclient python-cinderclient python-neutronclient python-novaclient
-  ````
-
-  Once you have setup the openstack environment copy the `openrc` file created on the controller host to this work
-  area and source it before calling the OpenStack APIs via the client tools.
-  
 ### Building a stack
 
 1. Preparation
