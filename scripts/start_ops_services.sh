@@ -45,11 +45,10 @@ while true; do
   sudo rabbitmqctl list_users > /dev/null 2>&1
   if [ $? -eq 0 ]; then
     user_exists=$(sudo rabbitmqctl list_users | awk -v u=$messaging_user '$1==u { print "yes" }')    
-    error=$?
     if [ "$user_exists" == "yes" ]; then
       sudo rabbitmqctl delete_user $messaging_user
       [ $? -eq 0 ] && break
-    elif [ $error -eq 0 ]
+    else
       break
     fi
   fi
@@ -69,6 +68,7 @@ vhost_exists=$(sudo rabbitmqctl list_vhosts | awk -v h=$messaging_compute_path '
 [ "$vhost_exists" == "yes" ] && sudo rabbitmqctl delete_vhost $messaging_compute_path
 sudo rabbitmqctl add_vhost $messaging_compute_path
 sudo rabbitmqctl set_permissions -p $messaging_compute_path $messaging_user ".*" ".*" ".*"
+
 
 #######################
 # Start MySQL Server
