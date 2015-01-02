@@ -123,7 +123,7 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
 ## Support Scripts
 
-The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server. If you start Chef-Zero using the scripts it will create the ```.chef``` folder and you can skip step 5.
+The repository's ```scripts``` folder contains a few useful scripts to manage starting and stopping a local Chef-Zero as well as scripts to manage a local [logstash](http://logstash.net/) rsyslogd sink that will stream logs to local a [logio](http://logio.org/) server. If you start Chef-Zero using the scripts it will create the ```.chef``` folder containing the knife configuration for Chef-Zero.
  
   * In order to use logio you need to install node.js. It is recommended you use [nvm](https://github.com/creationix/nvm) 
     to manage your node install rather than the [installable packages](http://nodejs.org/download/) distributed by Joyent.
@@ -188,8 +188,6 @@ The repository's ```scripts``` folder contains a few useful scripts to manage st
   $ scripts/reset_all.sh vagrant_kvm
   ```
 
- > Both steps 5. and 6. are relevant only if you plan to build the vagrant templates.
- 
 ### Building a stack
 
 1. Preparation
