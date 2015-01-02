@@ -150,8 +150,20 @@ The repository's ```scripts``` folder contains a few useful scripts to manage st
   services so you do not need to create a VM to host those services. In order to run these services locally you first need to
   install them into the local host and then make sure the system ```PATH``` variable is updated to include their ```bin```
   folders.
- > To use RabbitMQ and MySQL running in the host environment the template should build OpenStack in a way that 
- > the services connect to the local host. i.e. ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```
+ 
+ If you are using the teamplates ```stack_vbox_qemu.yml``` or ```stack_vmware_kvm.yml```, wich depend on MySQL on the host 
+ then you need to ensure the following is added to the MySQL configuration at ```/usr/local/mysql/my.cnf```.
+ 
+ ```
+ [mysqld]
+ 
+ collation-server = utf8_general_ci
+ init-connect='SET NAMES utf8'
+ character-set-server = utf8
+ .
+ .
+ .
+ ```
 
 When starting the log or ops services make sure you provide the chef environment to the scripts so that they can determine the correct ports to configure. You will also need to enable passwordless sudo for your user (if you are not root). 
 
