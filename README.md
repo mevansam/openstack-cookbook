@@ -1,4 +1,4 @@
-# OpenStack High-Availability Cookbook
+# OpenStack Cookbook
 
 This cookbook is an automation framework that can be used to setup enterprise grade highly available OpenStack
 environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in an
