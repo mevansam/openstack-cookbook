@@ -22,6 +22,8 @@ stack:
       echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list
       apt-get -y update
       apt-get install --force-yes -y lxc-docker
+    update: >
+      for i in $(docker ps -a | awk '/chef-init/ { print $1 }'); do docker rm -f $i; done
 
 # This node will build the services container and
 # apply the run-list to the target compute host
