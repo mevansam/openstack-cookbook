@@ -1,8 +1,8 @@
 # OpenStack Cookbook
 
-This cookbook is an automation framework that can be used to setup enterprise grade highly available OpenStack
-environments. The goal of this framework is to be able to describe a distributed OpenStack deployment in an
-executable template which can be shared with the community.
+This cookbook is an automation framework that can be used to setup enterprise grade highly available OpenStack environments.
+The goal of this framework is to be able to describe OpenStack deployments via executable templates which can be shared with
+the community.
 
 > This README assumes that you are familiar with the Chef automation
 > framework and the basics of using Knife to interact with a Chef Server.
