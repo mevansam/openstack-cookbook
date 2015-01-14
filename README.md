@@ -249,7 +249,7 @@ $ scripts/reset_all.sh vagrant_kvm
   To execute a stack simply determine which stack you want to build for a specific environment and run the following. If you have added a default knife configuration you can omit the -c argument. 
 
   ```
-  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack
+  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack -V
 
   Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
   Creating node resource 'openstack-proxy[0]'.
