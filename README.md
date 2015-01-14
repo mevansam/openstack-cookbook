@@ -70,7 +70,6 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
   ```
   $ gem install --no-document knife-stackbuilder
-  $ gem install --no-document berkshelf
   ```
   
 3. Clone this repository
