@@ -263,10 +263,10 @@ $ scripts/reset_all.sh vagrant_kvm
   $ scripts/start_chef_zero.sh
 
   # Load Chef-Zero
-  $ knife stack upload repo -c etc/chef-zero_knife.rb
+  $ knife stack upload repo
 
   # Build the stack
-  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack -V
   ```
 
   If the stack build completes successfully, horizon will be available at
@@ -279,7 +279,7 @@ $ scripts/reset_all.sh vagrant_kvm
 3. When you are done you can delete the entire cluster by running the following command:
 
   ```
-  $ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+  $ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack -V
   ```
 
 ### Inspecting the environment
@@ -292,7 +292,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   First upload the Chef environment to Chef server
 
   ```
-  $ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+  $ knife stack upload environments --environment=vagrant_kvm
 
   Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
   ```
@@ -319,7 +319,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   First upload the data bag for a specific environment to the Chef server
 
   ```
-  $ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+  $ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm
 
   Uploaded item 'ceilometer' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
   Uploaded item 'cinder' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
@@ -344,7 +344,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   Inspect a data bag item
 
   ```
-  $ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm -c etc/chef-zero_knife.rb
+  $ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm
 
   horizon: 0p3n5tack
   id:      horizon
@@ -356,7 +356,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   externalized variables resolved.
 
   ```
-  $ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+  $ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id mystack
 
   Stack file:
   ---
