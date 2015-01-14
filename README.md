@@ -287,9 +287,6 @@ $ scripts/reset_all.sh vagrant_kvm
 It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
 [Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
 
-> To run chef zero execute ```ruby run_zero.rb``` from within this repository's folder.
-> You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
-
 1. The Chef Environment
 
   First upload the Chef environment to Chef server
