@@ -1,17 +1,33 @@
 DEPENDENCIES
-  apt (= 2.4.0)
-  build-essential (= 1.4.2)
+  apt (~> 2.4.0)
+  build-essential (~> 1.4.2)
+  chef-client (~> 4.0.0)
+  cluster
+    git: https://github.com/mevansam/chef-cookbook-cluster.git
+    revision: 4c2dc28026facc568c98854fa8533e64293f1df0
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
+  cron (~> 1.2.0)
+  elasticsearch
+    git: https://github.com/racker/cookbook-elasticsearch
+    revision: fddc01b3afe778589b6363512e97d2bfebf953fb
+  firewall (~> 0.11.8)
   haproxy (~> 1.6.6)
   hostsfile (~> 2.4.5)
   keepalived (~> 1.2.0)
+  kibana
+    git: https://github.com/lusis/chef-kibana.git
+    revision: 569d020d2ddfad4fc6234d25d13eb8ad115172ab
+    branch: KIBANA3
+  logstash
+    git: https://github.com/racker/chef-logstash
+    revision: 3d7632612da325459242ea17ba02a2368a4e63a1
   network
     git: https://github.com/mevansam/chef-cookbook-network.git
-    revision: c77667f484f2e3f2b2e5b961d3478bb5677fba06
-  ntp (= 1.6.5)
-  ohai (= 2.0.1)
+    revision: f709d166845f12bdb403f8067a592dda00e0edb7
+  ntp (~> 1.6.5)
+  ohai (~> 2.0.1)
   openstack-block-storage
     git: https://github.com/mevansam/chef-cookbook-openstack-block-storage
     revision: e87c12ece9dcc55d556be2e5c941cc6927e20d43
@@ -57,8 +73,7 @@ DEPENDENCIES
     revision: 7f683b9f566939bcc23c64311652055a9594307b
     branch: stable/icehouse
   openstack-services
-    git: https://github.com/mevansam/chef-cookbook-openstack-services.git
-    revision: b30d3f0545dabfc88cd471fdeb56d00cc6ada200
+    path: ../chef/openstack-services
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e
@@ -66,37 +81,59 @@ DEPENDENCIES
   percona
     git: https://github.com/mevansam/chef-percona
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
+  python
+    git: https://github.com/racker/python
+    revision: 3da05f00b2a9d42b4a623ee473b013cc0119c6d8
   rabbitmq
     git: https://github.com/kennonkwok/rabbitmq.git
-    revision: 7901152258abe688fb0519650ed1cd06c5291194
-  selinux (= 0.8.0)
+    revision: d10fc82d5d07dd7ffd6f74bae258891f1c6f7be7
+  selinux (~> 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
     revision: d3298ae4ec4a6d8cc2ca166f0688a92753ced338
   storage
     git: https://github.com/mevansam/chef-cookbook-storage.git
     revision: 7057c632683bcc6a86b7a6a99f8d4c8fd04a807a
-  sudo (= 2.6.0)
+  sudo (~> 2.6.0)
   sysutils
     git: https://github.com/mevansam/chef-cookbook-sysutils.git
-    revision: a28f6eda6824ba793f89bb5ae29d6857c995d48e
-  xfs (= 1.1.0)
-  yum (= 3.2.2)
-  yum-epel (= 0.4.0)
+    revision: efd4989d3229e5bd34411824577ef074f77d9b7c
+  xfs (~> 1.1.0)
+  yum (~> 3.2.2)
+  yum-epel (~> 0.4.0)
 
 GRAPH
+  7-zip (1.0.2)
+    windows (>= 1.2.2)
+  ant (1.0.2)
+    ark (>= 0.0.0)
+    java (>= 0.0.0)
   apache2 (3.0.0)
     iptables (>= 0.0.0)
     logrotate (>= 0.0.0)
   apt (2.4.0)
+  ark (0.9.0)
+    7-zip (>= 0.0.0)
+    windows (>= 0.0.0)
   aws (2.5.0)
-  build-essential (1.4.2)
-  chef-sugar (2.4.1)
+  build-essential (1.4.4)
+  chef-client (4.0.0)
+    cron (>= 1.2.0)
+    logrotate (>= 1.2.0)
+    windows (~> 1.11)
+  chef-sugar (2.5.0)
   chef_handler (1.1.6)
+  cluster (1.0.0)
+    firewall (~> 0.11.8)
+    network (= 0.1.0)
+    percona (~> 0.15.5)
+    rabbitmq (>= 3.2.3)
+    sysutils (= 1.0.0)
   compute (0.1.0)
     network (= 0.1.0)
     sysutils (= 1.0.0)
   cpu (0.2.0)
+  cron (1.2.8)
   database (2.3.1)
     aws (>= 0.0.0)
     mysql (~> 5.0)
@@ -104,12 +141,19 @@ GRAPH
     postgresql (>= 1.0.0)
     xfs (>= 0.0.0)
   dmg (2.2.2)
+  elasticsearch (0.3.10)
+    ark (>= 0.2.4)
+    build-essential (>= 0.0.0)
+    java (>= 0.0.0)
+    monit (>= 0.0.0)
+    xml (>= 0.0.0)
   erlang (1.5.6)
     apt (>= 1.7.0)
     build-essential (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
     yum-erlang_solutions (>= 0.0.0)
+  firewall (0.11.8)
   git (4.1.0)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
@@ -121,14 +165,33 @@ GRAPH
     build-essential (>= 0.0.0)
     cpu (>= 0.2.0)
   hostsfile (2.4.5)
-  iptables (0.14.0)
+  iptables (0.14.1)
+  java (1.29.0)
   keepalived (1.2.0)
+  kibana (1.3.3)
+    apache2 (>= 0.0.0)
+    ark (>= 0.0.0)
+    git (>= 0.0.0)
+    libarchive (>= 0.0.0)
+    nginx (>= 0.0.0)
+  libarchive (0.3.0)
   logrotate (1.7.0)
+  logstash (0.10.0)
+    ant (>= 0.0.0)
+    apt (>= 0.0.0)
+    ark (>= 0.0.0)
+    build-essential (>= 0.0.0)
+    git (>= 0.0.0)
+    java (>= 0.0.0)
+    logrotate (>= 0.0.0)
+    python (>= 0.0.0)
+    runit (>= 0.0.0)
   memcached (1.7.2)
     runit (~> 1.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
   modules (0.2.0)
+  monit (0.7.5)
   mysql (5.3.6)
     yum-mysql-community (>= 0.0.0)
   mysql-chef_gem (0.0.5)
@@ -140,7 +203,13 @@ GRAPH
     sysutils (>= 0.0.0)
   network_interfaces (1.0.0)
     modules (>= 0.1.2)
-  ntp (1.6.5)
+  nginx (1.8.0)
+    apt (>= 0.0.0)
+    build-essential (>= 0.0.0)
+    ohai (>= 1.1.4)
+    runit (>= 0.0.0)
+    yum (>= 0.0.0)
+  ntp (1.6.8)
   ohai (2.0.1)
   openssl (2.0.2)
     chef-sugar (>= 0.0.0)
@@ -192,6 +261,7 @@ GRAPH
     openstack-common (~> 9.5)
     openstack-identity (~> 9.0)
   openstack-services (0.1.0)
+    cluster (= 1.0.0)
     compute (= 0.1.0)
     haproxy (~> 1.6.6)
     hostsfile (~> 2.4.5)
@@ -214,10 +284,10 @@ GRAPH
     apt (>= 1.9.0)
     build-essential (>= 0.0.0)
     openssl (>= 0.0.0)
-  python (1.4.6)
+  python (1.4.7)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.7.0)
+  rabbitmq (3.8.0)
     erlang (>= 0.9.0)
   runit (1.5.12)
     build-essential (>= 0.0.0)
@@ -232,6 +302,7 @@ GRAPH
   sudo (2.6.0)
   sysutils (1.0.0)
     apt (= 2.4.0)
+    cron (>= 1.2.0)
     hostsfile (~> 2.4.5)
     modules (>= 0.1.2)
     sudo (= 2.6.0)
@@ -239,6 +310,9 @@ GRAPH
   windows (1.36.1)
     chef_handler (>= 0.0.0)
   xfs (1.1.0)
+  xml (1.2.9)
+    build-essential (>= 0.0.0)
+    chef-sugar (>= 0.0.0)
   yum (3.2.2)
   yum-epel (0.4.0)
     yum (~> 3.0)

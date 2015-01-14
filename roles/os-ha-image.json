@@ -25,7 +25,13 @@
     "run_list": [
         "recipe[sysutils::default]",
         "recipe[openstack-services::ha-os-common]",
-        "role[os-image]"
+        "recipe[openstack-common::default]",
+        "recipe[openstack-common::logging]",
+        "recipe[openstack-common::set_endpoints_by_interface]",
+        "recipe[openstack-image::api]",
+        "recipe[openstack-image::registry]",
+        "recipe[openstack-services::ha-os-initialize]",
+        "recipe[openstack-services::monkey-patch]"
     ],
     "env_run_lists": { }
 }

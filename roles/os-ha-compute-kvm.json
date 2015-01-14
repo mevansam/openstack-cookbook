@@ -49,7 +49,8 @@
     "run_list": [
         "recipe[sysutils::default]",
         "recipe[openstack-services::ha-os-common]",
-        "role[os-compute-worker]"
+        "role[os-compute-worker]",
+        "recipe[openstack-services::monkey-patch]"
     ],
     "env_run_lists": { }
 }

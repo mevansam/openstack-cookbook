@@ -36,6 +36,9 @@ messaging:
   services_path: os_services
   compute_path: os_compute_kvm
 
+# Load balancing proxy
+proxy: { }
+
 openstack:
   region: kvm_vbox
 
@@ -52,7 +55,6 @@ openstack:
 
     openstack_services: 192.168.60.2
 
-    # Uses SSL for all end-points
     use_ssl: false
     is_insecure: true
 
@@ -99,10 +101,6 @@ logs:
     ports:
       http: 9081
       stream: 28777
-  syslog:
-    haproxy:
-      protocol: tcp
-      port: 51400
   loggers:
     horizon:
       level: INFO

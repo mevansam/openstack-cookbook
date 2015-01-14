@@ -4,7 +4,6 @@
     "json_class": "Chef::Role",
     "default_attributes": { 
         "rabbitmq": {
-            "cluster_role": "os-ha-messaging",
             "version": "3.3.5",
             "cluster": true,
             "ssl": true,
@@ -18,6 +17,6 @@
     "chef_type": "role",
     "run_list": [
         "recipe[sysutils::default]",
-        "recipe[openstack-services::ha-messaging]"
+        "recipe[cluster::rabbitmq]"
     ]
 }

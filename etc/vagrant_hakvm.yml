@@ -35,10 +35,11 @@ messaging:
   user: openstack
   password: 0p3n5tack
   cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
-  ampq_port: 5671
-  ampq_mgmt_port: 15671
+  ampq_port: &ampq_port 5671
+  ampq_mgmt_port: &ampq_mgmt_port 15671
   services_path: os_services
   compute_path: os_compute_kvm
+  use_ssl: true
 
 # Load balancing proxy
 proxy:
@@ -59,6 +60,59 @@ proxy:
   # address.
   backend_default_ip: 192.168.60.128
 
+  # The server pools to configure
+  server_pools:
+    db:
+      pool_cluster_name: compute-services
+      profile: mysql
+    mq:
+      pool_cluster_name: compute-services
+      port: *ampq_port
+      profile: rabbitmq
+    mq_admin:
+      pool_cluster_name: compute-services
+      port: *ampq_mgmt_port
+      profile: ssl
+    identity-api:
+      pool_cluster_name: compute-services
+      profile: http
+      bind_ssl: app_proxy
+    identity-admin:
+      pool_cluster_name: compute-services
+      profile: http
+      bind_ssl: app_proxy
+    image-api:
+      pool_cluster_name: compute-services
+      profile: http
+      bind_ssl: app_proxy
+    block-storage-api:
+      pool_cluster_name: compute-services
+      profile: http
+      bind_ssl: app_proxy
+    compute-api:
+      pool_cluster_name: compute-services
+      profile: http
+      bind_ssl: app_proxy
+    compute-ec2-api:
+      pool_cluster_name: compute-services
+      profile: http
+      bind_ssl: app_proxy
+    compute-novnc:
+      pool_cluster_name: compute-services
+      profile: tcp
+    network-api:
+      pool_cluster_name: compute-services
+      profile: http
+      bind_ssl: app_proxy
+    horizon_web:
+      pool_cluster_name: compute-services
+      port: 80
+      profile: http
+    horizon_web_ssl:
+      pool_cluster_name: compute-services
+      port: 443
+      profile: ssl
+
 openstack:
   region: kvm_vbox
 
@@ -73,9 +127,31 @@ openstack:
   # OpenStack endpoints
   endpoints:
 
-    # If this is a FQDN then it will be mapped to the 
-    # vip address using the configured DNS provider
-    openstack_ha_proxy: *vip_address
+    # Proxy end-point for OpenStack app services
+    openstack_app_proxy: *vip_address
+    # Proxy end-point for OpenStack ops services
+    openstack_ops_proxy: *vip_address
+
+    # Use SSL for all end-points
+    use_ssl: true
+    is_insecure: true
+
+    identity-api:
+      port: 5000
+    identity-admin:
+      port: 35357
+    image-api:
+      port: 9292
+    block-storage-api:
+      port: 8776
+    compute-api:
+      port: 8774
+    compute-ec2-api:
+      port: 8773
+    compute-novnc:
+      port: 6080
+    network-api:
+      port: 9696
 
   # OpenStack Neutron settings
   network:

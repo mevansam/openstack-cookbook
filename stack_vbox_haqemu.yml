@@ -1,7 +1,14 @@
 ---
 name: vbox_qemu
 
+# Determine IP of local host
+host_ip: &host_ip "#{require 'socket'; UDPSocket.open {|s| s.connect('8.8.8.8', 1); s.addr.last}}"
+
 environment: vagrant_hakvm
+
+chef:
+  knife_config:
+    ssl_verify_mode: verify_none
 
 vagrant:
   provider: virtualbox
@@ -11,13 +18,18 @@ vagrant:
 
 stack:
 
+
+#######################
+# HAProxy Load Balancer
+
 # The HAproxy load balancer that frontends all
 # the OpenStack services. When services are
 # scaled out the loadbalancer will discover the
 # added/deleted nodes via Chef Ohai.
 - node: openstack-proxy
+  scale: 2
   attributes:
-    pacemaker_cluster_name: openstack-proxy
+    cluster_name: proxy
     pacemaker_mcast_address: 239.255.42.1
     pacemaker_mcast_port: 5405
   knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_768M]
@@ -27,6 +39,8 @@ stack:
 # any VMs but it will replace the run list of
 # the target VMs with the one given.
 - node: openstack-proxy-cluster
+  depends_on:
+  - compute-services
   targets:
   - openstack-proxy
   attributes:
@@ -38,15 +52,31 @@ stack:
   - recipe[network]
   - role[os-ha-proxy]
 
-# This node install all the OpenStack services
-# including the database and queue.
+
+############################
+# OpenStack compute services
+
+# Node cluster that will host all compute services
 - node: compute-services
+  scale: 1
+  depends_on:
+  attributes:
+    cluster_name: services
+  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_1nic_4G]
+
+# This node install all the OpenStack services
+# including the database and queue on the compute
+# services cluster nodes
+- node: compute-services-cluster
   depends_on:
   - openstack-proxy-cluster
+  targets:
+  - compute-services
   attributes:
     # Override optimized settings in os-ha-database
     # so mysql will run in a much smaller environment
     percona:
+      haproxy_cluster_name: proxy
       server:
         key_buffer: 16M,
         max_allowed_packet: 64M,
@@ -58,9 +88,11 @@ stack:
     openstack:
       endpoints:
         db:
-          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
         mq:
-          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        rsyslog:
+          host: *host_ip
       compute:
         libvirt:
           virt_type: qemu
@@ -69,7 +101,6 @@ stack:
           create_volume_group: true
           create_volume_group_type: block_devices
           block_devices: /dev/sdb
-  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_1nic_4G]
   run_list:
   - recipe[ohai]
   - recipe[ntp]
@@ -80,34 +111,27 @@ stack:
   - role[os-ha-identity]
   - role[os-ha-image]
   - role[os-ha-block-storage-kvm-lvm]
+  - role[os-block-storage-volume]
   - role[os-ha-controller-kvm]
-  - recipe[openstack-services::monkey-patch]
   run_on_event:
     configure: <<+[./common/patches.yml][patch_neutron_nova_ssl_notification]
 
-# Reloads the haproxy configuration with
-# the correct names and backend-ips of
-# the controllers.
-- node: proxy-reload
-  depends_on:
-  - compute-services
-  targets:
-  - openstack-proxy
-  run_on_event:
-    configure: >
-      chef-client -l info
 
-# OpenStack Hypervisor node
+########################
+# OpenStack compute host
+
+# Hypervisor node
 - node: compute-host
+  scale: 2
   attributes:
     # Cluster every 2 instances. i.e. instance 0 and 1
     # will be put into a cluster named 'network-node-0'
     # and 2 and 3 into a cluster named 'network-node-1'
     # and so on.
-    pacemaker_cluster_name: <<!'network-node-'+(#{index}/2).to_s
+    cluster_name: <<!'network-node-'+(#{index}/2).to_s
     pacemaker_mcast_address: 239.255.42.2
     pacemaker_mcast_port: 5405
-  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_2G]
+  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_1G]
 
 # Sets up the nova compute and neutron network
 # cluster. The clusters are named such that every
@@ -116,7 +140,7 @@ stack:
 # that will run the Neutron L3 agents.
 - node: compute-network-cluster
   depends_on:
-  - compute-services
+  - compute-services-cluster
   targets:
   - compute-host
   attributes:
@@ -126,9 +150,11 @@ stack:
     openstack:
       endpoints:
         db:
-          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
         mq:
-          host: "#{env['openstack']['endpoints']['openstack_ha_proxy']}"
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        rsyslog:
+          host: *host_ip
       compute:
         libvirt:
           virt_type: qemu
@@ -141,4 +167,3 @@ stack:
   - recipe[network]
   - role[os-ha-compute-kvm]
   - role[os-ha-network-kvm]
-  - recipe[openstack-services::monkey-patch]

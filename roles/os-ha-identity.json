@@ -10,7 +10,12 @@
     "run_list": [
         "recipe[sysutils::default]",
         "recipe[openstack-services::ha-os-common]",
-        "role[os-identity]"
+        "recipe[openstack-common::default]",
+        "recipe[openstack-common::logging]",
+        "recipe[openstack-common::set_endpoints_by_interface]",
+        "recipe[openstack-identity::server]",
+        "recipe[openstack-services::ha-os-initialize]",
+        "recipe[openstack-services::monkey-patch]"
     ],
     "env_run_lists": { }
 }

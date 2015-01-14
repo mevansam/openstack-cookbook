@@ -8,9 +8,7 @@
                 "debian": [ "percona-xtradb-cluster-galera-2.x" ]
             }
         },
-        "percona": {
-            "cluster_role": "os-ha-database",
-            "haproxy_cluster_role": "os-ha-proxy",
+        "percona": {            
             "main_config_file": "/etc/mysql/my.cnf",
             "server": {
                 "bind_address": "0.0.0.0",
@@ -25,18 +23,6 @@
             "mysql": {
                 "ssl": false,
                 "config_path": "/etc/mysql" 
-            },
-            "openstack": {
-                "services": [
-                    "dashboard",
-                    "identity",
-                    "orchestration",
-                    "telemetry",
-                    "image",
-                    "block-storage",
-                    "compute",
-                    "network"
-                ]
             }
         }
     },
@@ -45,6 +31,6 @@
     "chef_type": "role",
     "run_list" : [
         "recipe[sysutils::default]",
-        "recipe[openstack-services::ha-database]"
+        "recipe[openstack-services::ha-os-database]"
     ]
 }
