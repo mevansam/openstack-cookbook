@@ -219,7 +219,11 @@ $ scripts/reset_all.sh vagrant_kvm
   Chef environment. This will also upload all the cookbooks specified in the Berkshelf file.
 
   ```
-  $ knife stack upload repo --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+  # Run Chef-Zero
+  $ scripts/start_chef_zero.sh
+  
+  # Upload the repo
+  $ knife stack upload repo --environment=vagrant_kvm
 
   Resolving cookbook dependencies...
   Fetching 'network' from source at ../chef/network
@@ -245,7 +249,7 @@ $ scripts/reset_all.sh vagrant_kvm
   To execute a stack simply determine which stack you want to build for a specific environment and run the following. If you have added a default knife configuration you can omit the -c argument. 
 
   ```
-  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack
 
   Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
   Creating node resource 'openstack-proxy[0]'.
@@ -257,17 +261,6 @@ $ scripts/reset_all.sh vagrant_kvm
   The ```stack-id``` is a unique identifier for the stack you are building. Knife uses this ID to locate all nodes
   belonging to the OpenStack cluster to determine current state. If one is not provided a uuid will be generated as
   the for the ID.
-
-  ```
-  # Run Chef-Zero
-  $ scripts/start_chef_zero.sh
-
-  # Load Chef-Zero
-  $ knife stack upload repo
-
-  # Build the stack
-  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack -V
-  ```
 
   If the stack build completes successfully, horizon will be available at
   [https://192.168.60.200](https://192.168.60.200), and you can login with the credentials ```admin/0p3n5tack```.
