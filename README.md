@@ -70,7 +70,6 @@ The Knife Stackbuilder plugin executes jobs asynchronously and makes extensive u
 
   ```
   $ gem install --no-document knife-stackbuilder
-  $ gem install --no-document berkshelf
   ```
   
 3. Clone this repository
@@ -220,7 +219,11 @@ $ scripts/reset_all.sh vagrant_kvm
   Chef environment. This will also upload all the cookbooks specified in the Berkshelf file.
 
   ```
-  $ knife stack upload repo --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+  # Run Chef-Zero
+  $ scripts/start_chef_zero.sh
+  
+  # Upload the repo
+  $ knife stack upload repo --environment=vagrant_kvm
 
   Resolving cookbook dependencies...
   Fetching 'network' from source at ../chef/network
@@ -246,7 +249,7 @@ $ scripts/reset_all.sh vagrant_kvm
   To execute a stack simply determine which stack you want to build for a specific environment and run the following. If you have added a default knife configuration you can omit the -c argument. 
 
   ```
-  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack -V
 
   Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
   Creating node resource 'openstack-proxy[0]'.
@@ -259,17 +262,6 @@ $ scripts/reset_all.sh vagrant_kvm
   belonging to the OpenStack cluster to determine current state. If one is not provided a uuid will be generated as
   the for the ID.
 
-  ```
-  # Run Chef-Zero
-  $ scripts/start_chef_zero.sh
-
-  # Load Chef-Zero
-  $ knife stack upload repo -c etc/chef-zero_knife.rb
-
-  # Build the stack
-  $ knife stack build stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
-  ```
-
   If the stack build completes successfully, horizon will be available at
   [https://192.168.60.200](https://192.168.60.200), and you can login with the credentials ```admin/0p3n5tack```.
 
@@ -280,7 +272,7 @@ $ scripts/reset_all.sh vagrant_kvm
 3. When you are done you can delete the entire cluster by running the following command:
 
   ```
-  $ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id msam -V -c etc/chef-zero_knife.rb
+  $ knife stack delete stack_vbox_qemu --environment=vagrant_kvm --stack-id mystack -V
   ```
 
 ### Inspecting the environment
@@ -288,15 +280,12 @@ $ scripts/reset_all.sh vagrant_kvm
 It is useful to inspect the environment when troubleshooting a deployment. The following snippets assume
 [Chef Zero](https://github.com/opscode/chef-zero) is running in the localhost.
 
-> To run chef zero execute ```ruby run_zero.rb``` from within this repository's folder.
-> You can then use the knife configuration at 'etc/chef-zero_knife.rb' to interact with it.
-
 1. The Chef Environment
 
   First upload the Chef environment to Chef server
 
   ```
-  $ knife stack upload environments --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+  $ knife stack upload environments --environment=vagrant_kvm
 
   Uploaded environment 'vagrant_kvm' to 'http://192.168.1.10:9999'.
   ```
@@ -323,7 +312,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   First upload the data bag for a specific environment to the Chef server
 
   ```
-  $ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm -c etc/chef-zero_knife.rb
+  $ knife stack upload data bags --data-bag=os_db_passwords --environment=vagrant_kvm
 
   Uploaded item 'ceilometer' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
   Uploaded item 'cinder' of data bag 'os_db_passwords-vagrant_kvm' to 'http://192.168.1.10:9999'.
@@ -348,7 +337,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   Inspect a data bag item
 
   ```
-  $ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm -c etc/chef-zero_knife.rb
+  $ knife data bag show os_db_passwords-vagrant_kvm horizon --secret-file=secrets/vagrant_kvm
 
   horizon: 0p3n5tack
   id:      horizon
@@ -360,7 +349,7 @@ It is useful to inspect the environment when troubleshooting a deployment. The f
   externalized variables resolved.
 
   ```
-  $ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id msam -c etc/chef-zero_knife.rb
+  $ knife stack build stack_vbox_qemu --show-stack-file --environment=vagrant_kvm --stack-id mystack
 
   Stack file:
   ---
