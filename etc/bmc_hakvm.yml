@@ -1,0 +1,146 @@
+---
+
+domain: pcf-services.com
+
+environment: bmc_hakvm
+
+disable_local_firewall: true
+
+# Root keys
+root:
+  password: ej343fa8f4038e4f
+
+services:
+  aws:
+    # AWS credentials used by knife-stackbuilder
+    aws_key: "<<AWS_ACCESS_KEY_ID$AWS Access Key ID: "
+    aws_secret: "<<AWS_SECRET_ACCESS_KEY*AWS Secret Access Key: "
+    # AWS credentials passed along to chef cookbooks via an encrypted data bag
+    aws_automation_key: "<<AWS_AUTOMATION_ACCESS_KEY_ID$AWS Access Key ID: "
+    aws_automation_secret: "<<AWS_AUTOMATION_SECRET_ACCESS_KEY*AWS Secret Access Key: "
+
+    # Instance specific
+    key_pair: pcf-services
+    security_group: openstack
+
+ntp:
+  sync_clock: true
+  servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+  - 2.pool.ntp.org
+  - 3.pool.ntp.org
+
+database:
+  backup_password: 0p3n5tack
+  replication_password: 0p3n5tack
+  port: 3306
+  role: cluster
+
+messaging:
+  user: openstack
+  password: 0p3n5tack
+  cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
+  ampq_port: 5671
+  ampq_mgmt_port: 15671
+  services_path: os_services
+  compute_path: os_compute_kvm
+  use_ssl: true
+
+# Load balancing proxy
+proxy: { }
+
+openstack:
+  region: bmc
+
+  passwords:
+    admin_password: 0p3n5tack
+    service_password: 0p3n5tack
+    service_token: 0c4a1365e0bbb7e2e02543a2b932cfed
+    metadata_token: ad1fb85ef72a61e91c23418b4bf908ce
+    # Password to use for openstack database users
+    database_password: 0p3n5tack
+
+  # OpenStack endpoints
+  endpoints:
+
+    # Proxy end-point for OpenStack app services
+    openstack_app_proxy: osbmc.pcf-services.com
+    # Proxy end-point for OpenStack ops services
+    openstack_ops_proxy: osbmc-ops.pcf-services.com
+
+    # Use SSL for all end-points
+    use_ssl: true
+    is_insecure: true
+
+    identity-api:
+      port: 5000
+    identity-admin:
+      port: 35357
+    image-api:
+      port: 9292
+    block-storage-api:
+      port: 8776
+    compute-api:
+      port: 8774
+    compute-ec2-api:
+      port: 8773
+    compute-novnc:
+      port: 6080
+    network-api:
+      port: 9696
+
+  # OpenStack Neutron settings
+  network:
+    ml2:
+      type_drivers: flat,vlan,vxlan
+      tenant_network_types: vlan,vxlan
+      tunnel_types: vxlan
+      mechanism_drivers: openvswitch
+    ovs:
+      physical_network_tag: physnet
+      vlan_ranges: 1:4094
+      # Applied only if using VXLAN tunnels
+      vni_ranges: 1:10000
+      vxlan_group: 239.1.1.1
+      # Applied only if using GRE tunnels
+      tunnel_id_ranges: 1:10000
+      # OVS specific configuration
+      external_bridge: br-eth2
+      external_interface: eth2
+
+# log configuration
+logs:
+  type: syslog
+  logio:
+    ports:
+      http: 9081
+      stream: 28777
+  syslog:
+    haproxy:
+      protocol: tcp
+      port: 51400
+  loggers:
+    horizon:
+      level: INFO
+    keystone:
+      level: INFO
+    glance:
+      level: INFO
+    cinder:
+      level: INFO
+    neutron:
+      level: INFO
+    nova:
+      level: INFO
+
+vagrant:
+  # x.x.x.x/25 subnet to attach to
+  # proxy, services and compute hosts
+  # to. IPs above 192.168.60.128 will
+  # be statically allocate.
+  management_network: 192.168.60.0
+
+  # The data network will be configured
+  # as the public network for OpenStack.
+  data_network: 192.168.61.0

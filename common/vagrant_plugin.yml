@@ -25,9 +25,6 @@ vagrant_ubuntu_1404:
       sudo: true
       vagrant_config: >
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['management_network']}"::
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
@@ -54,12 +51,10 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
-      # VBox: Create additional hard disk for Cinder volumes
       vb_customize: >
         'createhd', '--filename', './cinder_volume.vdi', '--size', 20 * 1024::
         "storagectl", :id, "--name", "SATA Controller", "--add", "sata"::
         'storageattach', :id, '--storagectl', "SATA Controller", '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './cinder_volume.vdi'
-      # VMWare: Create additional hard disk for Cinder volumes
       vmx_customize: >
         "numvcpus"="2"::
         "vhv.enable"="TRUE"::
@@ -67,9 +62,6 @@ vagrant_ubuntu_1404:
         "scsi0:1.fileName"="cinder_volume.vmdk"::
         "scsi0:1.fileSize"="20GB"
       vagrant_config: >
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
@@ -96,12 +88,10 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
-      # VBox: Create additional hard disk for Cinder volumes
       vb_customize: >
         'createhd', '--filename', './cinder_volume.vdi', '--size', 20 * 1024::
         "storagectl", :id, "--name", "SATA Controller", "--add", "sata"::
         'storageattach', :id, '--storagectl', "SATA Controller", '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './cinder_volume.vdi'
-      # VMWare: Create additional hard disk for Cinder volumes
       vmx_customize: >
         "numvcpus"="2"::
         "vhv.enable"="TRUE"::
@@ -109,9 +99,6 @@ vagrant_ubuntu_1404:
         "scsi0:1.fileName"="cinder_volume.vmdk"::
         "scsi0:1.fileSize"="20GB"
       vagrant_config: >
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
@@ -138,12 +125,10 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
-      # VBox: Create additional hard disk for Cinder volumes
       vb_customize: >
         'createhd', '--filename', './cinder_volume.vdi', '--size', 20 * 1024::
         "storagectl", :id, "--name", "SATA Controller", "--add", "sata"::
         'storageattach', :id, '--storagectl', "SATA Controller", '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './cinder_volume.vdi'
-      # VMWare: Create additional hard disk for Cinder volumes
       vmx_customize: >
         "numvcpus"="2"::
         "vhv.enable"="TRUE"::
@@ -151,9 +136,6 @@ vagrant_ubuntu_1404:
         "scsi0:1.fileName"="cinder_volume.vmdk"::
         "scsi0:1.fileSize"="20GB"
       vagrant_config: >
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
@@ -184,16 +166,11 @@ vagrant_ubuntu_1404:
       # enter promoscuous mode' under global network settings/preferences.
       vb_customize: >
         'modifyvm', :id, "--nicpromisc3", "allow-all"
-      # For VMware ensure authentication is not required to enter
-      # promiscuous mode via GUI settings.
       vmx_customize: >
         "numvcpus"="2"::
         "vhv.enable"="TRUE"
       vagrant_config: >
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"::
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
@@ -222,16 +199,11 @@ vagrant_ubuntu_1404:
       # enter promoscuous mode' under global network settings/preferences.
       vb_customize: >
         'modifyvm', :id, "--nicpromisc3", "allow-all"
-      # For VMware ensure authentication is not required to enter
-      # promiscuous mode via GUI settings.
       vmx_customize: >
         "numvcpus"="2"::
         "vhv.enable"="TRUE"
       vagrant_config: >
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"::
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
@@ -260,16 +232,11 @@ vagrant_ubuntu_1404:
       # enter promoscuous mode' under global network settings/preferences.
       vb_customize: >
         'modifyvm', :id, "--nicpromisc3", "allow-all"
-      # For VMware ensure authentication is not required to enter
-      # promiscuous mode via GUI settings.
       vmx_customize: >
         "numvcpus"="2"::
         "vhv.enable"="TRUE"
       vagrant_config: >
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"::
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]
@@ -293,13 +260,11 @@ vagrant_ubuntu_1404:
       ssh_user: vagrant
       ssh_port: 22
       sudo: true
-      # VBox: Create additional hard disk for Cinder volumes
       vb_customize: >
         'createhd', '--filename', './cinder_volume.vdi', '--size', 50 * 1024::
         "storagectl", :id, "--name", "SATA Controller", "--add", "sata"::
         'storageattach', :id, '--storagectl', "SATA Controller", '--port', 1, '--device', 0, '--type', 'hdd', '--medium', './cinder_volume.vdi'::
         'modifyvm', :id, "--nicpromisc3", "allow-all"
-      # VMWare: Create additional hard disk for Cinder volumes
       vmx_customize: >
         "numvcpus"="2"::
         "vhv.enable"="TRUE"::
@@ -308,9 +273,6 @@ vagrant_ubuntu_1404:
         "scsi0:1.fileSize"="50GB"
       vagrant_config: >
         config.vm.network "private_network", :auto_config => false, ip: "#{env['vagrant']['data_network']}"::
-        config.ohai.enable = true::
-        config.ohai.primary_nic = "eth1"::
-        config.vm.provision "shell", inline: "mkdir -p /etc/chef"::
         config.vm.provision "shell", inline: "apt-get update"
       run_list:
       - recipe[ohai]

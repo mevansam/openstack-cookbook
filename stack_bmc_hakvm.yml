@@ -1,0 +1,238 @@
+---
+name: bmc_hakvm
+
+environment: bmc_hakvm
+
+chef:
+  knife_config:
+    ssl_verify_mode: verify_none
+    aws_access_key_id: "#{env['services']['aws']['aws_key']}"
+    aws_secret_access_key: "#{env['services']['aws']['aws_secret']}"
+    aws_ssh_key_id: "#{env['services']['aws']['key_pair']}"
+    region: <<+[./common/aws.yml][regions][region_us_1][name]
+    image: <<+[./common/aws.yml][regions][region_us_1][ami]
+
+aws_ssh_options: &aws_ssh_options
+  identity_file: "#{Dir.home}/.ssh/#{env['services']['aws']['key_pair']}.pem"
+  host_key_verify: false
+  ip_attribute: ec2.public_ipv4
+  ssh_user: ubuntu
+  ssh_port: 22
+  sudo: true
+
+stack:
+
+################################################################################
+# Database Cluster
+# - node: os-database
+#   scale: 3
+#   attributes:
+#     cluster_name: database
+#   knife:
+#     placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
+#     options: *aws_ssh_options
+#     create: <<+[./common/aws.yml][instance][regular_large_50G]
+#     delete: <<+[./common/aws.yml][instance][delete]
+
+# - node: os-database-cluster
+#   depends_on:
+#   - os-backend-proxy
+#   targets:
+#   - os-database
+#   sync: all
+#   attributes:
+#     percona:
+#       haproxy_cluster_name: backend-proxy
+#       cluster:
+#         wsrep_sst_receive_interface: eth0
+#   run_list:
+#   - recipe[network]
+#   - role[os-ha-database]
+################################################################################
+
+################################################################################
+# AMPQ Cluster
+# - node: os-messaging
+#   scale: 2
+#   attributes:
+#     cluster_name: messaging
+#   knife:
+#     placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
+#     options: *aws_ssh_options
+#     create: <<+[./common/aws.yml][instance][regular_medium]
+#     delete: <<+[./common/aws.yml][instance][delete]
+
+# - node: os-messaging-cluster
+#   sync: all
+#   targets:
+#   - os-messaging
+#   run_list:
+#   - recipe[network]
+#   - role[os-ha-messaging]
+################################################################################
+
+################################################################################
+# Logging Cluster
+- node: os-logging
+  scale: 1
+  attributes:
+    cluster_name: logging
+  knife:
+    placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
+    options: *aws_ssh_options
+    create: <<+[./common/aws.yml][instance][regular_medium]
+    delete: <<+[./common/aws.yml][instance][delete]
+
+- node: os-logging-cluster
+  targets:
+  - os-logging
+  attributes:
+    elasticsearch:
+      discovery:
+        search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
+  run_list:
+  - recipe[network]
+  - role[os-ha-logging]
+################################################################################
+
+################################################################################
+# OpenStack Services
+# - node: os-services
+#   scale: 2
+#   attributes:
+#     cluster_name: services
+#     openstack:
+#       endpoints:
+#         db:
+#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+#         mq:
+#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+#         rsyslog:
+#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+#   knife:
+#     placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
+#     options: *aws_ssh_options
+#     create: <<+[./common/aws.yml][instance][regular_medium]
+#     delete: <<+[./common/aws.yml][instance][delete]
+#   run_list:
+#   - recipe[network]
+#   - role[os-services]
+#   - recipe[openstack-services::monkey-patch]
+#   # Service registration recipes
+#   - recipe[openstack-common::client]
+#   - recipe[openstack-common::openrc]
+#   - recipe[openstack-identity::registration]
+#   - recipe[openstack-image::identity_registration]
+#   - recipe[openstack-block-storage::identity_registration]
+#   - recipe[openstack-compute::identity_registration]
+#   - recipe[openstack-network::identity_registration]
+################################################################################
+
+################################################################################
+# Front-end HAproxy
+# - node: os-frontend-proxy
+#   scale: 2
+#   attributes:
+#     cluster_name: backend-proxy
+#   knife:
+#     placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
+#     options: *aws_ssh_options
+#     create: <<+[./common/aws.yml][instance][regular_medium]
+#     delete: <<+[./common/aws.yml][instance][delete]
+
+# - node: os-frontend-proxy-cluster
+#   depends_on:
+#   - os-services
+#   targets:
+#   - os-frontend-proxy
+#   attributes:
+#     haproxy:
+#       fqdn: "#{env['openstack']['endpoints']['openstack_app_proxy']}"
+#       virtual_ip_address: <<+[./common/aws.yml][regions][region_us_1][elastic_ips][front_end_proxy]
+#       is_aws_elastic_ip: true
+#       is_clustered: true
+#       server_pools:
+#         identity-api:
+#           pool_cluster_name: services
+#           profile: http
+#           bind_ssl: app_proxy
+#         identity-admin:
+#           pool_cluster_name: services
+#           profile: http
+#           bind_ssl: app_proxy
+#         image-api:
+#           pool_cluster_name: services
+#           profile: http
+#           bind_ssl: app_proxy
+#         block-storage-api:
+#           pool_cluster_name: services
+#           profile: http
+#           bind_ssl: app_proxy
+#         compute-api:
+#           pool_cluster_name: services
+#           profile: http
+#           bind_ssl: app_proxy
+#         compute-ec2-api:
+#           pool_cluster_name: services
+#           profile: http
+#           bind_ssl: app_proxy
+#         compute-novnc:
+#           pool_cluster_name: services
+#           profile: http
+#         network-api:
+#           pool_cluster_name: services
+#           profile: http
+#           bind_ssl: app_proxy
+#         horizon_web:
+#           pool_cluster_name: services
+#           port: 80
+#           profile: http
+#         horizon_web_ssl:
+#           pool_cluster_name: services
+#           port: 443
+#           profile: ssl
+#   run_list:
+#   - recipe[network]
+#   - role[os-ha-proxy]
+################################################################################
+
+################################################################################
+# Back-end HAproxy
+# - node: os-backend-proxy
+#   scale: 2
+#   attributes:
+#     cluster_name: backend-proxy
+#   knife:
+#     placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
+#     options: *aws_ssh_options
+#     create: <<+[./common/aws.yml][instance][regular_medium]
+#     delete: <<+[./common/aws.yml][instance][delete]
+
+# - node: os-backend-proxy-cluster
+#   depends_on:
+#   - os-database
+#   - os-messaging
+#   targets:
+#   - os-backend-proxy
+#   attributes:
+#     haproxy:
+#       fqdn: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+#       virtual_ip_address: <<+[./common/aws.yml][regions][region_us_1][elastic_ips][back_end_proxy]
+#       is_aws_elastic_ip: true
+#       is_clustered: true
+#       server_pools:
+#         db:
+#           pool_cluster_name: database
+#           profile: mysql
+#         mq:
+#           pool_cluster_name: messaging
+#           port: "#{env['messaging']['ampq_port']}"
+#           profile: rabbitmq
+#         mq_admin:
+#           pool_cluster_name: messaging
+#           port: "#{env['messaging']['ampq_mgmt_port']}"
+#           profile: ssl
+#   run_list:
+#   - recipe[network]
+#   - role[os-ha-proxy]
+################################################################################

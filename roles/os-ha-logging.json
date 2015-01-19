@@ -3,11 +3,22 @@
     "description": "Highly available ElasticSearch/LogStash/LogIO/Kibana role",
     "json_class": "Chef::Role",
     "default_attributes": { 
+        "env": {
+            "users": [ [ "logstash", "/opt/logstash", null, false ] ]
+        },
         "java": {
+            "ark_timeout": 1800,
             "install_flavor": "oracle",
             "jdk_version": "8",
             "oracle": {
                 "accept_oracle_download_terms": true
+            }
+        },
+        "logstash": {
+            "instance_default": {
+                "java_home": "/usr/lib/jvm/java-8-oracle-amd64",
+                "xms": "512M",
+                "xmx": "1024M"
             }
         }
     },
@@ -16,7 +27,6 @@
     "chef_type": "role",
     "run_list": [
         "recipe[sysutils::default]",
-        "recipe[java::default]",
         "recipe[openstack-services::ha-os-logging]"
     ]
 }

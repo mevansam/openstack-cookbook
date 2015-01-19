@@ -1,0 +1,148 @@
+---
+# AWS Configurations
+
+regions:
+
+  # US East (N. Virginia)
+  region_us_1:
+    name: us-east-1
+    # Ubuntu Server 14.04 (PV)
+    ami: ami-98aa1cf0
+    # Availability Zones
+    availability_zones:
+    - us-east-1b
+    - us-east-1c
+    - us-east-1d
+    - us-east-1e
+    elastic_ips:
+      front_end_proxy: "#{ENV['AWS_USEAST1_FE_EIP']}"
+      back_end_proxy: "#{ENV['AWS_USEAST1_BE_EIP']}"
+
+  # US West (N. California)
+  region_us_2:
+    name: us-west-1
+    # Ubuntu Server 14.04 (PV)
+    ami: ami-736e6536
+    # Availability Zones
+    availability_zones:
+    - us-west-1a
+    - us-west-1b
+    elastic_ips:
+      front_end_proxy: "#{ENV['AWS_USWEST1_FE_EIP']}"
+      back_end_proxy: "#{ENV['AWS_USWEST1_BE_EIP']}"
+
+   # US West (Oregon)
+  region_us_3:
+    name: us-west-2
+    # Ubuntu Server 14.04 (PV)
+    ami: ami-37501207
+    # Availability Zones
+    availability_zones:
+    - us-west-2a
+    - us-west-2b
+    - us-west-2c
+    elastic_ips:
+      front_end_proxy: "#{ENV['AWS_USWEST1_FE_EIP']}"
+      back_end_proxy: "#{ENV['AWS_USWEST1_BE_EIP']}"
+
+knife:
+  # This will setup chef-client to run at boot and 
+  # as a service which runs chef-client every 30 mins
+  first_boot_attributes: &first_boot_attributes >
+    {
+      "env": {
+        "cron_jobs": {
+          "chef_client": {
+            "predefined_value": "@reboot",
+            "command": "/usr/bin/chef-client -L /var/log/chef/client.log",
+            "user":"root"
+          }
+        }
+      }
+      "chef_client": {
+        "init_style": "upstart"
+      }
+    }
+  bootstrap_run_list: &bootstrap_run_list
+  - recipe[sysutils]
+  - recipe[chef-client]
+
+instance:
+
+  delete:
+    class: Chef::Knife::Ec2ServerDelete
+    name_key: chef_node_name
+
+  small:
+    class: Chef::Knife::Ec2ServerCreate
+    name_key: chef_node_name
+    pool_key: availability_zone
+    options:
+      flavor: t1.micro
+      security_groups: 
+      - "#{env['services']['aws']['security_group']}"
+      first_boot_attributes: *first_boot_attributes
+      run_list: *bootstrap_run_list
+
+  # 1 vCPU, 3.75G, moderate network performance
+  regular_medium:
+    class: Chef::Knife::Ec2ServerCreate
+    name_key: chef_node_name
+    pool_key: availability_zone
+    options:
+      flavor: m3.medium
+      security_groups: 
+      - "#{env['services']['aws']['security_group']}"
+      first_boot_attributes: *first_boot_attributes
+      run_list: *bootstrap_run_list
+
+  # 2 vCPU, 7.5G, moderate network performance
+  regular_large:
+    class: Chef::Knife::Ec2ServerCreate
+    name_key: chef_node_name
+    pool_key: availability_zone
+    options:
+      flavor: m3.large
+      security_groups: 
+      - "#{env['services']['aws']['security_group']}"
+      first_boot_attributes: *first_boot_attributes
+      run_list: *bootstrap_run_list
+
+  # 2 vCPU, 7.5G, moderate network performance with 50G EBS volume
+  regular_large_50G:
+    class: Chef::Knife::Ec2ServerCreate
+    name_key: chef_node_name
+    pool_key: availability_zone
+    options:
+      flavor: m3.large
+      ebs_size: 50
+      security_groups: 
+      - "#{env['services']['aws']['security_group']}"
+      first_boot_attributes: *first_boot_attributes
+      run_list: *bootstrap_run_list
+
+  # 5 vCPU, 15G, high network performance
+  optimized_large:
+    class: Chef::Knife::Ec2ServerCreate
+    name_key: chef_node_name
+    pool_key: availability_zone
+    options:
+      flavor: m3.xlarge
+      ebs_size: 50
+      security_groups: 
+      - "#{env['services']['aws']['security_group']}"
+      first_boot_attributes: *first_boot_attributes
+      run_list: *bootstrap_run_list
+
+  # 5 vCPU, 15G, high network performance with 50G EBS volume
+  optimized_large_50G:
+    class: Chef::Knife::Ec2ServerCreate
+    name_key: chef_node_name
+    pool_key: availability_zone
+    options:
+      flavor: m3.xlarge
+      ebs_size: 50
+      security_groups: 
+      - "#{env['services']['aws']['security_group']}"
+      first_boot_attributes: *first_boot_attributes
+      run_list: *bootstrap_run_list

@@ -8,13 +8,18 @@ cookbook 'sudo',             '~> 2.6.0'
 cookbook 'yum-epel',         '~> 0.4.0'
 cookbook 'build-essential',  '~> 1.4.2'
 cookbook 'selinux',          '~> 0.8.0'
+cookbook 'firewall',         '~> 0.11.8'
 cookbook 'xfs',              '~> 1.1.0'
 cookbook 'cron',             '~> 1.2.0'
-cookbook 'firewall',         '~> 0.11.8'
+cookbook 'java',             '~> 1.29.0'
 cookbook 'hostsfile',        '~> 2.4.5'
 cookbook 'keepalived',       '~> 1.2.0'
 cookbook 'haproxy',          '~> 1.6.6'
 cookbook 'chef-client',      '~> 4.0.0'
+cookbook 'kibana_lwrp',      '~> 2.0.0'
+cookbook 'elasticsearch',    '~> 0.3.13'
+cookbook 'logstash',         '~> 0.11.2'
+cookbook 'monit',            '~> 0.7.5'
 
 cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
 cookbook 'rabbitmq', git: 'https://github.com/kennonkwok/rabbitmq.git'
@@ -23,17 +28,6 @@ cookbook 'statsd',   git: 'https://github.com/att-cloud/cookbook-statsd'
 #cookbook 'chef-docker',
 #    git: 'https://github.com/bflad/chef-docker.git',
 #    branch: '0.36-stable'
-
-cookbook 'kibana', '~> 1.3',
-    git: 'https://github.com/lusis/chef-kibana.git', branch: 'KIBANA3'
-cookbook 'elasticsearch', '~> 0.3', 
-    git: 'https://github.com/racker/cookbook-elasticsearch'
-cookbook 'logstash', '~> 0.9',
-    git: 'https://github.com/racker/chef-logstash'
-cookbook 'python', 
-    git: 'https://github.com/racker/python'
-#cookbook 'elkstack', '~> 3.2.8',
-#    git: 'https://github.com/rackspace-cookbooks/elkstack.git'
 
 cookbook 'openstack-common',
     git: 'https://github.com/stackforge/cookbook-openstack-common',
@@ -82,7 +76,8 @@ cookbook 'network',
 cookbook 'storage',
     git: 'https://github.com/mevansam/chef-cookbook-storage.git'
 cookbook 'cluster',
-    git: 'https://github.com/mevansam/chef-cookbook-cluster.git'
+    path: '../chef/cluster'
+    #git: 'https://github.com/mevansam/chef-cookbook-cluster.git'
 cookbook 'openstack-services',
     path: '../chef/openstack-services'
     #git: 'https://github.com/mevansam/chef-cookbook-openstack-services.git'
