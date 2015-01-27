@@ -447,4 +447,3 @@ limitations under the License.
 Author | Email | Company
 -------|-------|--------
 Mevan Samaratunga | msamaratunga@pivotal.io | [Pivotal](http://www.pivotal.io)
-Josh Kruck | jkruck@pivotal.io | [Pivotal](http://www.pivotal.io)
