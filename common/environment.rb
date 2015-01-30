@@ -29,8 +29,10 @@ default_attributes(
     'rabbitmq' => {
         # Certificate data bag item containing rabbitmq certs
         'certificate_databag_item' => openstack_ops_proxy,
-        'ssl_port' => env['messaging']['ampq_port'],
-        'web_console_ssl_port' => env['messaging']['ampq_mgmt_port'],
+        'ssl' => env['messaging']['use_ssl'],
+        'ssl_port' => env['messaging']['use_ssl'] ? env['messaging']['ampq_port'] : nil, 
+        'web_console_ssl' => env['messaging']['use_ssl'],
+        'web_console_ssl_port' => env['messaging']['use_ssl'] ? env['messaging']['ampq_mgmt_port'] : nil,
         'virtualhosts' => [
             env['messaging']['services_path'],
             env['messaging']['compute_path'],
@@ -212,17 +214,7 @@ default_attributes(
         'certificate_databag_items' => {
             'app_proxy' => openstack_app_proxy,
             'ops_proxy' => openstack_ops_proxy
-        },
-        'virtual_ip_address' => env['proxy']['vip_address'],
-        'virtual_ip_cidr_netmask' => env['proxy']['vip_cidr_netmask'] || 24,
-        'virtual_ip_nic' => env['proxy']['vip_nic'],
-        'backend_default_ip' => env['proxy']['backend_default_ip'],
-        # Each pool name should match a corresponding OpenStack
-        # endpoint service as defined in the openstack-common. The
-        # os-ha-proxy cookbook looks up the corresponding service
-        # ports from the openstack configuration unless it is
-        # explicitly specified as for the horizon pools.
-        'server_pools' => env['proxy']['server_pools']
+        }
     }
 )
 

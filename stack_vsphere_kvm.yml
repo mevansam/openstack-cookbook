@@ -1,0 +1,156 @@
+--- 
+name: vsphere_kvm
+
+static_ips: "<<@#{env['vsphere']['managment_ips']}"
+
+chef:
+  knife_config:
+    ssl_verify_mode: verify_none
+    vsphere_host: "#{env['services']['vsphere']['vsphere_host']}"
+    vsphere_dc: "#{env['services']['vsphere']['vsphere_dc']}"
+    vsphere_user: "#{env['services']['vsphere']['vsphere_user']}"
+    vsphere_pass: "#{env['services']['vsphere']['vsphere_pass']}"
+    vsphere_insecure: true
+
+vsphere_options: &vsphere_options
+  identity_file: "#{Dir.home}/.ssh/#{env['services']['vsphere']['ssh_key_file']}.pem"
+  host_key_verify: false
+  ssh_user: ubuntu
+  ssh_port: 22
+  sudo: true
+
+stack:
+
+
+#############################
+# Logging
+
+# The logstash syslogd server and logio streaming interface
+- node: openstack-logger
+  attributes:
+    env:
+      alias: "#{env['openstack']['endpoints']['openstack_logging_service']}"
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[network]
+  - role[os-ha-logging]
+
+
+#############################
+# Database and Messaging
+
+# MySql datbases and RabbitMQ messaging services
+- node: openstack-ops-service
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[network]
+  - role[os-ha-database]
+  - role[os-ha-messaging]
+
+
+#############################
+# OpenStack Services
+
+- node: openstack-apps-service
+  depends_on:
+  - openstack-ops-service
+  attributes:
+    env:
+      alias: "#{env['openstack']['endpoints']['openstack_services']}"
+    openstack:
+      logging:
+        syslog_endpoints:
+        - host: nodes[openstack-logger][0][ipaddress]
+      endpoints:
+        db:
+          host: nodes[openstack-ops-service][0][ipaddress]
+        mq:
+          host: nodes[openstack-ops-service][0][ipaddress]
+      block-storage:
+        volume:
+          create_volume_group: true
+          create_volume_group_type: block_devices
+          block_devices: /dev/sdb
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    post_create:
+    - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk500G]
+    - <<+[./common/vsphere.yml][vsphere][instance][shutdown]
+    - <<+[./common/vsphere.yml][vsphere][instance][start]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ohai]
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-dashboard]
+  - role[os-ha-identity]
+  - role[os-ha-image]
+  - role[os-ha-block-storage-kvm-lvm]
+  - role[os-block-storage-volume]
+  - role[os-ha-controller-kvm]
+
+
+#############################
+# OpenStack Compute & Network 
+# Node Hypervisor node
+
+- node: compute-network
+  depends_on:
+  - openstack-apps-service
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth1
+    openstack:
+      logging:
+        syslog_endpoints:
+        - host: nodes[openstack-logger][0][ipaddress]
+      endpoints:
+        db:
+          host: nodes[openstack-ops-service][0][ipaddress]
+        mq:
+          host: nodes[openstack-ops-service][0][ipaddress]
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][kvm2448]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ohai]
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-compute-kvm]
+  - role[os-ha-network-kvm]
+
+- node: compute
+  max_scale: 3
+  depends_on:
+  - openstack-apps-service
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth1
+    openstack:
+      logging:
+        syslog_endpoints:
+        - host: nodes[openstack-logger][0][ipaddress]
+      endpoints:
+        db:
+          host: nodes[openstack-ops-service][0][ipaddress]
+        mq:
+          host: nodes[openstack-ops-service][0][ipaddress]
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][kvm2448]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ohai]
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-compute-kvm]

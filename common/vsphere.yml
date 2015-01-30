@@ -1,0 +1,205 @@
+---
+# Knife plugins for VM creation and bootstrapping
+
+knife:
+  # This will setup chef-client to run at boot and 
+  # as a service which runs chef-client every 30 mins
+  first_boot_attributes: &first_boot_attributes
+    env:
+      cron_jobs:
+        # Run chef client on reboot
+        chef_client:
+          predefined_value: "@reboot"
+          command: "/usr/bin/chef-client -L /var/log/chef/client.log"
+          user: root
+    chef_client:
+      init_style: upstart
+  bootstrap_run_list: &bootstrap_run_list recipe[sysutils],recipe[chef-client]
+
+vsphere:
+
+  folder: &folder "#{env['vsphere']['vm_folder']}"
+
+  network:
+
+  management:
+    vlan: &management_vlan "#{env['vsphere']['managment_vlan']}"
+    gateway: &management_gateway "#{env['vsphere']['managment_vlan_gateway']}"
+    dns: &management_dns "#{env['vsphere']['managment_vlan_dns']}"
+    dns_suffixes: &management_dns_suffixes "#{env['vsphere']['managment_vlan_dns_suffixes']}"
+
+  data: 
+    vlan: "#{env['vsphere']['data_vlan']}"
+
+  image:
+    ubuntu1204:
+      template: &ubuntu1204_image Ubuntu 12.04 Template
+      datastore: &ubuntu1204_datastore "#{env['vsphere']['vm_datastore']}"
+
+    ubuntu1404:
+      template: &ubuntu1404_image Ubuntu 14.04 Template
+      datastore: &ubuntu1404_datastore "#{env['vsphere']['vm_datastore']}"
+
+    ubuntu1404_2NIC:
+      template: &ubuntu1404_2NIC_image Ubuntu 14.04 Template (2NIC)
+      datastore: &ubuntu1404_2NIC_datastore "#{env['vsphere']['vm_datastore']}"
+
+  instance:
+
+    # Knife class to delete instances
+
+    delete:
+      class: Chef::Knife::VsphereVmDelete
+
+    shutdown:
+      class: Chef::Knife::VsphereVmState
+      options:
+        state: "off"
+        shutdown: true
+        recursive: true
+
+    start:
+      class: Chef::Knife::VsphereVmState
+      options:
+        state: "on"
+        wait_port: 22
+        recursive: true
+
+    storage:
+
+      vmdk500G:
+        class: Chef::Knife::VsphereVmVmdkAdd
+        args: 500
+        options:
+          vmdk_type: thin
+
+    # Knife classes configurations for VM creation
+
+    ubuntu1404:
+
+      small:
+        class: Chef::Knife::VsphereVmClone
+        static_ip_key: customization_ips
+        options:
+          dest_folder: *folder
+          source_vm: *ubuntu1404_image
+          datastore: *ubuntu1404_datastore
+          customization_domain: "#{env['domain']}"
+          customization_vlan: *management_vlan
+          customization_gw: *management_gateway
+          customization_dns_ips: *management_dns
+          customization_dns_suffixes: *management_dns_suffixes
+          customization_cpucount: 1
+          customization_memory: 2
+          power: true
+          distro: chef-full
+          bootstrap: true
+          first_boot_attributes: *first_boot_attributes
+          run_list: *bootstrap_run_list
+
+      medium:
+        class: Chef::Knife::VsphereVmClone
+        static_ip_key: customization_ips
+        options:
+          dest_folder: *folder
+          source_vm: *ubuntu1404_image
+          datastore: *ubuntu1404_datastore
+          customization_domain: "#{env['domain']}"
+          customization_vlan: *management_vlan
+          customization_gw: *management_gateway
+          customization_dns_ips: *management_dns
+          customization_dns_suffixes: *management_dns_suffixes
+          customization_cpucount: 2
+          customization_memory: 4
+          power: true
+          distro: chef-full
+          bootstrap: true
+          first_boot_attributes: *first_boot_attributes
+          run_list: *bootstrap_run_list
+
+      large:
+        class: Chef::Knife::VsphereVmClone
+        static_ip_key: customization_ips
+        options:
+          dest_folder: *folder
+          source_vm: *ubuntu1404_image
+          datastore: *ubuntu1404_datastore
+          customization_domain: "#{env['domain']}"
+          customization_vlan: *management_vlan
+          customization_gw: *management_gateway
+          customization_dns_ips: *management_dns
+          customization_dns_suffixes: *management_dns_suffixes
+          customization_cpucount: 2
+          customization_memory: 8
+          power: true
+          distro: chef-full
+          first_boot_attributes: *first_boot_attributes
+          run_list: *bootstrap_run_list
+
+      xlarge:
+        class: Chef::Knife::VsphereVmClone
+        static_ip_key: customization_ips
+        options:
+          dest_folder: *folder
+          source_vm: *ubuntu1404_image
+          datastore: *ubuntu1404_datastore
+          customization_domain: "#{env['domain']}"
+          customization_vlan: *management_vlan
+          customization_gw: *management_gateway
+          customization_dns_ips: *management_dns
+          customization_dns_suffixes: *management_dns_suffixes
+          customization_cpucount: 4
+          customization_memory: 16
+          power: true
+          distro: chef-full
+          bootstrap: true
+          first_boot_attributes: *first_boot_attributes
+          run_list: *bootstrap_run_list
+
+      kvm1224:
+        class: Chef::Knife::VsphereVmClone
+        static_ip_key: customization_ips
+        options:
+          dest_folder: *folder
+          source_vm: *ubuntu1404_2NIC_image
+          datastore: *ubuntu1404_2NIC_datastore
+          customization_domain: "#{env['domain']}"
+          customization_vlan: *management_vlan
+          customization_gw: *management_gateway
+          customization_dns_ips: *management_dns
+          customization_dns_suffixes: *management_dns_suffixes
+          # Additional IPs to ensure vsphere does not 
+          # throw an error that IPs do not match number
+          # of configured adapters
+          customization_ips: ",0.0.0.0/0"
+          customization_cpucount: 12
+          customization_memory: 24
+          power: true
+          distro: chef-full
+          bootstrap: true
+          first_boot_attributes: *first_boot_attributes
+          run_list: *bootstrap_run_list
+
+      kvm2448:
+        class: Chef::Knife::VsphereVmClone
+        static_ip_key: customization_ips
+        options:
+          dest_folder: *folder
+          source_vm: *ubuntu1404_2NIC_image
+          datastore: *ubuntu1404_2NIC_datastore
+          customization_domain: "#{env['domain']}"
+          customization_vlan: *management_vlan
+          customization_gw: *management_gateway
+          customization_dns_ips: *management_dns
+          customization_dns_suffixes: *management_dns_suffixes
+          # Additional IPs to ensure vsphere does not 
+          # throw an error that IPs do not match number
+          # of configured adapters
+          customization_ips: ",0.0.0.0/0"
+          customization_cpucount: 24
+          customization_memory: 48
+          power: true
+          distro: chef-full
+          bootstrap: true
+          first_boot_attributes: *first_boot_attributes
+          run_list: *bootstrap_run_list

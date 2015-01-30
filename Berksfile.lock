@@ -7,7 +7,7 @@ DEPENDENCIES
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
-  cron (~> 1.2.0)
+  cron (>= 1.2.0)
   elasticsearch (~> 0.3.13)
   firewall (~> 0.11.8)
   haproxy (~> 1.6.6)
@@ -18,8 +18,7 @@ DEPENDENCIES
   logstash (~> 0.11.2)
   monit (~> 0.7.5)
   network
-    git: https://github.com/mevansam/chef-cookbook-network.git
-    revision: f709d166845f12bdb403f8067a592dda00e0edb7
+    path: ../chef/network
   ntp (~> 1.6.5)
   ohai (~> 2.0.1)
   openstack-block-storage
@@ -77,7 +76,7 @@ DEPENDENCIES
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
     git: https://github.com/kennonkwok/rabbitmq.git
-    revision: d10fc82d5d07dd7ffd6f74bae258891f1c6f7be7
+    revision: 55042df026db3cf0fb9adb6efa955bcad9f309ee
   selinux (~> 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
@@ -127,7 +126,7 @@ GRAPH
     network (= 0.1.0)
     sysutils (= 1.0.0)
   cpu (0.2.0)
-  cron (1.2.8)
+  cron (1.6.1)
   curl (2.0.1)
   database (2.3.1)
     aws (>= 0.0.0)
@@ -173,7 +172,7 @@ GRAPH
     poise (>= 0.0.0)
     runit (>= 0.0.0)
   libarchive (0.3.0)
-  logrotate (1.7.0)
+  logrotate (1.8.0)
   logstash (0.11.2)
     ant (>= 0.0.0)
     apt (>= 0.0.0)
@@ -285,7 +284,7 @@ GRAPH
     apt (>= 1.9.0)
     openssl (>= 0.0.0)
     yum (~> 3.0)
-  poise (1.0.10)
+  poise (1.0.12)
   postgresql (3.4.14)
     apt (>= 1.9.0)
     build-essential (>= 0.0.0)
@@ -293,7 +292,7 @@ GRAPH
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.8.0)
+  rabbitmq (3.9.0)
     erlang (>= 0.9.0)
   runit (1.5.14)
     build-essential (>= 0.0.0)
@@ -324,5 +323,5 @@ GRAPH
     yum (~> 3.0)
   yum-erlang_solutions (0.2.0)
     yum (~> 3.0)
-  yum-mysql-community (0.1.11)
+  yum-mysql-community (0.1.12)
     yum (>= 3.0)

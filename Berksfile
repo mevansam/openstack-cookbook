@@ -10,7 +10,6 @@ cookbook 'build-essential',  '~> 1.4.2'
 cookbook 'selinux',          '~> 0.8.0'
 cookbook 'firewall',         '~> 0.11.8'
 cookbook 'xfs',              '~> 1.1.0'
-cookbook 'cron',             '~> 1.2.0'
 cookbook 'java',             '~> 1.29.0'
 cookbook 'hostsfile',        '~> 2.4.5'
 cookbook 'keepalived',       '~> 1.2.0'
@@ -20,6 +19,7 @@ cookbook 'kibana_lwrp',      '~> 2.0.0'
 cookbook 'elasticsearch',    '~> 0.3.13'
 cookbook 'logstash',         '~> 0.11.2'
 cookbook 'monit',            '~> 0.7.5'
+cookbook 'cron',             '>= 1.2.0'
 
 cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
 cookbook 'rabbitmq', git: 'https://github.com/kennonkwok/rabbitmq.git'
@@ -72,7 +72,8 @@ cookbook 'sysutils',
 cookbook 'compute',
     git: 'https://github.com/mevansam/chef-cookbook-compute.git'
 cookbook 'network',
-    git: 'https://github.com/mevansam/chef-cookbook-network.git'
+    path: '../chef/network'
+    #git: 'https://github.com/mevansam/chef-cookbook-network.git'
 cookbook 'storage',
     git: 'https://github.com/mevansam/chef-cookbook-storage.git'
 cookbook 'cluster',

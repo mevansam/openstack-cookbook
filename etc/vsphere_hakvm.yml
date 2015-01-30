@@ -2,6 +2,8 @@
 
 domain: mydomain.org
 
+disable_local_firewall: true
+
 # Root keys
 root:
   password: ej343fa8f4038e4f
@@ -25,23 +27,88 @@ ntp:
   - 3.pool.ntp.org
 
 database:
+  backup_password: 0p3n5tack
+  replication_password: 0p3n5tack
   port: 3306
-  use_ssl: false
 
 messaging:
   user: openstack
   password: 0p3n5tack
-  use_ssl: false
-  ampq_port: 5672
-  ampq_mgmt_port: 15672
+  cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
+  use_ssl: true
+  ampq_port: &ampq_port 5671
+  ampq_mgmt_port: &ampq_mgmt_port 15671
   services_path: os_services
   compute_path: os_compute_kvm
 
 # Load balancing proxy
-proxy: { }
+proxy:
+
+  backend_vip_address: 10.103.43.10
+  backend_vip_cidr_netmask: 23
+  backend_vip_nic: eth1
+
+  backend_server_pools:
+    db:
+      pool_cluster_name: database
+      profile: mysql
+    mq:
+      pool_cluster_name: messaging
+      port: *ampq_port
+      profile: rabbitmq
+    mq_admin:
+      pool_cluster_name: messaging
+      port: *ampq_mgmt_port
+      profile: ssl
+
+  frontend_vip_address: 10.103.43.11
+  frontend_vip_cidr_netmask: 23
+  frontend_vip_nic: eth1
+
+  frontend_server_pools:
+     server_pools:
+       identity-api:
+         pool_cluster_name: services
+         profile: http
+         bind_ssl: app_proxy
+       identity-admin:
+         pool_cluster_name: services
+         profile: http
+         bind_ssl: app_proxy
+       image-api:
+         pool_cluster_name: services
+         profile: http
+         bind_ssl: app_proxy
+       block-storage-api:
+         pool_cluster_name: services
+         profile: http
+         bind_ssl: app_proxy
+       compute-api:
+         pool_cluster_name: services
+         profile: http
+         bind_ssl: app_proxy
+       compute-ec2-api:
+         pool_cluster_name: services
+         profile: http
+         bind_ssl: app_proxy
+       compute-novnc:
+         pool_cluster_name: services
+         profile: http
+       network-api:
+         pool_cluster_name: services
+         profile: http
+         bind_ssl: app_proxy
+       horizon_web:
+         pool_cluster_name: services
+         port: 80
+         profile: http
+       horizon_web_ssl:
+         pool_cluster_name: services
+         port: 443
+         profile: ssl
 
 openstack:
-  region: kvm_vbox
+  region: durham
 
   passwords:
     admin_password: 0p3n5tack
@@ -54,9 +121,13 @@ openstack:
   # OpenStack endpoints
   endpoints:
 
-    openstack_services: 192.168.60.2
+    # Proxy end-point for OpenStack app services
+    openstack_app_proxy: os.pcf-services.com
+    # Proxy end-point for OpenStack ops services
+    openstack_ops_proxy: osops.pcf-services.com
 
-    use_ssl: false
+    # Use SSL for all end-points
+    use_ssl: true
     is_insecure: true
 
     identity-api:
@@ -102,6 +173,10 @@ logs:
     ports:
       http: 9081
       stream: 28777
+  syslog:
+    haproxy:
+      protocol: tcp
+      port: 51400
   loggers:
     horizon:
       level: INFO
@@ -116,13 +191,3 @@ logs:
     nova:
       level: INFO
 
-vagrant:
-  # x.x.x.x/25 subnet to attach to
-  # proxy, services and compute hosts
-  # to. IPs above 192.168.60.128 will
-  # be statically allocate.
-  management_network: 192.168.60.0
-
-  # The data network will be configured
-  # as the public network for OpenStack.
-  data_network: 192.168.61.0

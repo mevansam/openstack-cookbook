@@ -23,6 +23,30 @@ aws_ssh_options: &aws_ssh_options
 stack:
 
 ################################################################################
+# Logging Cluster
+- node: os-logging
+  scale: 1
+  attributes:
+    cluster_name: logging
+  knife:
+    placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
+    options: *aws_ssh_options
+    create: <<+[./common/aws.yml][instance][regular_medium]
+    delete: <<+[./common/aws.yml][instance][delete]
+
+- node: os-logging-cluster
+  targets:
+  - os-logging
+  attributes:
+    elasticsearch:
+      discovery:
+        search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
+  run_list:
+  - recipe[network]
+  - role[os-ha-logging]
+################################################################################
+
+################################################################################
 # Database Cluster
 # - node: os-database
 #   scale: 3
@@ -69,30 +93,6 @@ stack:
 #   run_list:
 #   - recipe[network]
 #   - role[os-ha-messaging]
-################################################################################
-
-################################################################################
-# Logging Cluster
-- node: os-logging
-  scale: 1
-  attributes:
-    cluster_name: logging
-  knife:
-    placement_pools: <<+[./common/aws.yml][regions][region_us_1][availability_zones]
-    options: *aws_ssh_options
-    create: <<+[./common/aws.yml][instance][regular_medium]
-    delete: <<+[./common/aws.yml][instance][delete]
-
-- node: os-logging-cluster
-  targets:
-  - os-logging
-  attributes:
-    elasticsearch:
-      discovery:
-        search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
-  run_list:
-  - recipe[network]
-  - role[os-ha-logging]
 ################################################################################
 
 ################################################################################

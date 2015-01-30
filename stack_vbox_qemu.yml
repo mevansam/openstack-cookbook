@@ -10,13 +10,12 @@ vagrant:
   provider: virtualbox
   box_name: chef/ubuntu-14.04
   box_url: https://vagrantcloud.com/chef/boxes/ubuntu-14.04
-  key_file: "#{Dir.home}/.vagrant/insecure_key"
 
 stack:
 
 # OpenStack Nova/Neutron controller & Hypervisor node
 - node: compute
-  knife: <<+[./common/vagrant_plugin.yml][vagrant_ubuntu_1404][create_2nic_10G]
+  knife: <<+[./common/vagrant.yml][vagrant_ubuntu_1404][create_2nic_10G]
   run_on_event:
     install: |
       echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list
@@ -41,7 +40,7 @@ stack:
         mq:
           host: *host_ip
         rsyslog:
-          host: *host_ip
+        - host: *host_ip
       compute:
         libvirt:
           virt_type: qemu

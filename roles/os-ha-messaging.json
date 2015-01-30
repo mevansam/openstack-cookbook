@@ -5,9 +5,6 @@
     "default_attributes": { 
         "rabbitmq": {
             "version": "3.3.5",
-            "cluster": true,
-            "ssl": true,
-            "web_console_ssl": true,
             "disabled_policies": [ "ha-two" ],
             "enabled_users": [ ]
         }

@@ -13,5 +13,6 @@
 tmp/
 target
 *.swp
+*.iml
 
 openstack-cli/

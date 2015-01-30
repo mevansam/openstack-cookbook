@@ -1,0 +1,184 @@
+--- 
+name: vmware_kvm
+
+static_ips: "<<@#{env['vsphere']['managment_ips']}"
+
+chef:
+  knife_config:
+    ssl_verify_mode: verify_none
+    vsphere_host: "#{env['services']['vsphere']['vsphere_host']}"
+    vsphere_dc: "#{env['services']['vsphere']['vsphere_dc']}"
+    vsphere_user: "#{env['services']['vsphere']['vsphere_user']}"
+    vsphere_pass: "#{env['services']['vsphere']['vsphere_pass']}"
+    vsphere_insecure: true
+
+vsphere_options: &vsphere_options
+  identity_file: "#{Dir.home}/.ssh/#{env['services']['vsphere']['ssh_key_file']}.pem"
+  host_key_verify: false
+  ssh_user: ubuntu
+  ssh_port: 22
+  sudo: true
+
+stack:
+
+
+################################################################################
+# Logging Cluster
+- node: os-logging
+  scale: 1
+  attributes:
+    cluster_name: logging
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-logging-cluster
+  targets:
+  - os-logging
+  attributes:
+    elasticsearch:
+      discovery:
+        search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
+  run_list:
+  - recipe[network]
+  - role[os-ha-logging]
+################################################################################
+
+################################################################################
+# Database Cluster
+- node: os-database
+  scale: 3
+  attributes:
+    cluster_name: database
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-database-cluster
+  depends_on:
+  - os-backend-proxy
+  targets:
+  - os-database
+  sync: all
+  attributes:
+    percona:
+      haproxy_cluster_name: backend-proxy
+      cluster:
+        wsrep_sst_receive_interface: eth0
+  run_list:
+  - recipe[network]
+  - role[os-ha-database]
+################################################################################
+
+################################################################################
+# AMPQ Cluster
+- node: os-messaging
+  scale: 2
+  attributes:
+    cluster_name: messaging
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-messaging-cluster
+  sync: all
+  targets:
+  - os-messaging
+  run_list:
+  - recipe[network]
+  - role[os-ha-messaging]
+################################################################################
+
+################################################################################
+# OpenStack Services
+# - node: os-services
+#   scale: 2
+#   attributes:
+#     cluster_name: services
+#     openstack:
+#       endpoints:
+#         db:
+#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+#         mq:
+#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+#         rsyslog:
+#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+#   knife:
+#     options: *vsphere_options
+#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+#   run_list:
+#   - recipe[network]
+#   - role[os-services]
+#   - recipe[openstack-services::monkey-patch]
+#   # Service registration recipes
+#   - recipe[openstack-common::client]
+#   - recipe[openstack-common::openrc]
+#   - recipe[openstack-identity::registration]
+#   - recipe[openstack-image::identity_registration]
+#   - recipe[openstack-block-storage::identity_registration]
+#   - recipe[openstack-compute::identity_registration]
+#   - recipe[openstack-network::identity_registration]
+################################################################################
+
+################################################################################
+# Front-end HAproxy
+# - node: os-frontend-proxy
+#   scale: 2
+#   attributes:
+#     cluster_name: backend-proxy
+#   knife:
+#     options: *vsphere_options
+#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+# - node: os-frontend-proxy-cluster
+#   depends_on:
+#   - os-services
+#   targets:
+#   - os-frontend-proxy
+#   attributes:
+#     haproxy:
+#       fqdn: "#{env['openstack']['endpoints']['openstack_app_proxy']}"
+#       virtual_ip_address: "#{env['proxy']['frontend_vip_address']}"
+#       virtual_ip_cidr_netmask: "#{env['proxy']['frontend_vip_address']}"
+#       virtual_ip_nic: "#{env['proxy']['frontend_vip_address']}"
+#       is_clustered: true
+#       server_pools: <<+env[proxy][frontend_server_pools]
+#   run_list:
+#   - recipe[network]
+#   - role[os-ha-proxy]
+################################################################################
+
+################################################################################
+# Back-end HAproxy
+- node: os-backend-proxy
+  scale: 2
+  attributes:
+    cluster_name: backend-proxy
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-backend-proxy-cluster
+  depends_on:
+  - os-database
+  - os-messaging
+  targets:
+  - os-backend-proxy
+  attributes:
+    haproxy:
+      fqdn: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+      virtual_ip_address: "#{env['proxy']['backend_vip_address']}"
+      virtual_ip_cidr_netmask: "#{env['proxy']['backend_vip_address']}"
+      virtual_ip_nic: "#{env['proxy']['backend_vip_address']}"
+      is_clustered: true
+      server_pools: <<+env[proxy][backend_server_pools]
+  run_list:
+  - recipe[network]
+  - role[os-ha-proxy]
+################################################################################

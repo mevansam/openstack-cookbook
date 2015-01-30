@@ -35,18 +35,18 @@ messaging:
   user: openstack
   password: 0p3n5tack
   cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
+  use_ssl: true
   ampq_port: &ampq_port 5671
   ampq_mgmt_port: &ampq_mgmt_port 15671
   services_path: os_services
   compute_path: os_compute_kvm
-  use_ssl: true
 
 # Load balancing proxy
 proxy:
 
-  vip_address: &vip_address 192.168.60.200
-  vip_cidr_netmask: 24
-  vip_nic: eth2
+  virtual_ip_address: &virtual_ip_address 192.168.60.200
+  virtual_ip_cidr_netmask: 24
+  virtual_ip_nic: eth2
 
   # Initially all backend pools will
   # point to this IP. This creates
@@ -128,9 +128,9 @@ openstack:
   endpoints:
 
     # Proxy end-point for OpenStack app services
-    openstack_app_proxy: *vip_address
+    openstack_app_proxy: *virtual_ip_address
     # Proxy end-point for OpenStack ops services
-    openstack_ops_proxy: *vip_address
+    openstack_ops_proxy: *virtual_ip_address
 
     # Use SSL for all end-points
     use_ssl: true

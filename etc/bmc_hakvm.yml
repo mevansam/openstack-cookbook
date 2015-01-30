@@ -41,11 +41,11 @@ messaging:
   user: openstack
   password: 0p3n5tack
   cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
+  use_ssl: true
   ampq_port: 5671
   ampq_mgmt_port: 15671
   services_path: os_services
   compute_path: os_compute_kvm
-  use_ssl: true
 
 # Load balancing proxy
 proxy: { }
@@ -133,14 +133,3 @@ logs:
       level: INFO
     nova:
       level: INFO
-
-vagrant:
-  # x.x.x.x/25 subnet to attach to
-  # proxy, services and compute hosts
-  # to. IPs above 192.168.60.128 will
-  # be statically allocate.
-  management_network: 192.168.60.0
-
-  # The data network will be configured
-  # as the public network for OpenStack.
-  data_network: 192.168.61.0
