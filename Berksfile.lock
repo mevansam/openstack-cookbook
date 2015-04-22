@@ -3,7 +3,8 @@ DEPENDENCIES
   build-essential (~> 1.4.2)
   chef-client (~> 4.0.0)
   cluster
-    path: ../chef/cluster
+    git: https://github.com/mevansam/chef-cookbook-cluster.git
+    revision: 83f571278129bad0a1ab1bd1aed366992e8a74ac
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
@@ -18,7 +19,8 @@ DEPENDENCIES
   logstash (~> 0.11.2)
   monit (~> 0.7.5)
   network
-    path: ../chef/network
+    git: https://github.com/mevansam/chef-cookbook-network.git
+    revision: 66aac7b35d9ab84d3febff24539f7c48c3b63992
   ntp (~> 1.6.5)
   ohai (~> 2.0.1)
   openstack-block-storage
@@ -66,7 +68,8 @@ DEPENDENCIES
     revision: 7f683b9f566939bcc23c64311652055a9594307b
     branch: stable/icehouse
   openstack-services
-    path: ../chef/openstack-services
+    git: https://github.com/mevansam/chef-cookbook-openstack-services.git
+    revision: c8531590616568b1ea2370a2d41492ffd9d16d81
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e
@@ -75,8 +78,8 @@ DEPENDENCIES
     git: https://github.com/mevansam/chef-percona
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
-    git: https://github.com/kennonkwok/rabbitmq.git
-    revision: 55042df026db3cf0fb9adb6efa955bcad9f309ee
+    git: https://github.com/jjasghar/rabbitmq.git
+    revision: 0c07eb813f85242f5bcfc46067c433518f2821e2
   selinux (~> 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
@@ -98,14 +101,14 @@ GRAPH
   ant (1.0.2)
     ark (>= 0.0.0)
     java (>= 0.0.0)
-  apache2 (3.0.0)
+  apache2 (3.0.1)
     iptables (>= 0.0.0)
     logrotate (>= 0.0.0)
   apt (2.4.0)
   ark (0.9.0)
     7-zip (>= 0.0.0)
     windows (>= 0.0.0)
-  aws (2.5.0)
+  aws (2.7.0)
   beaver (1.4.0)
     apt (>= 0.0.0)
     python (>= 0.0.0)
@@ -114,7 +117,7 @@ GRAPH
     cron (>= 1.2.0)
     logrotate (>= 1.2.0)
     windows (~> 1.11)
-  chef-sugar (2.5.0)
+  chef-sugar (3.1.0)
   chef_handler (1.1.6)
   cluster (1.0.0)
     firewall (~> 0.11.8)
@@ -141,28 +144,26 @@ GRAPH
     java (>= 0.0.0)
     monit (>= 0.0.0)
     xml (>= 0.0.0)
-  erlang (1.5.6)
+  erlang (1.5.8)
     apt (>= 1.7.0)
     build-essential (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
     yum-erlang_solutions (>= 0.0.0)
   firewall (0.11.8)
-  git (4.1.0)
+  git (4.2.1)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
-    runit (>= 1.0)
     windows (>= 0.0.0)
-    yum (~> 3.0)
     yum-epel (>= 0.0.0)
   haproxy (1.6.6)
     build-essential (>= 0.0.0)
     cpu (>= 0.2.0)
   hostsfile (2.4.5)
-  iptables (0.14.1)
+  iptables (1.0.0)
   java (1.29.0)
   keepalived (1.2.0)
-  kibana_lwrp (2.0.0)
+  kibana_lwrp (2.0.4)
     apache2 (>= 0.0.0)
     ark (>= 0.0.0)
     git (>= 0.0.0)
@@ -172,8 +173,8 @@ GRAPH
     poise (>= 0.0.0)
     runit (>= 0.0.0)
   libarchive (0.3.0)
-  logrotate (1.8.0)
-  logstash (0.11.2)
+  logrotate (1.9.1)
+  logstash (0.11.4)
     ant (>= 0.0.0)
     apt (>= 0.0.0)
     ark (>= 0.0.0)
@@ -211,7 +212,7 @@ GRAPH
     yum (>= 0.0.0)
   ntp (1.6.8)
   ohai (2.0.1)
-  openssl (2.0.2)
+  openssl (4.0.0)
     chef-sugar (>= 0.0.0)
   openstack-block-storage (9.4.1)
     apt (>= 2.3.8)
@@ -280,24 +281,25 @@ GRAPH
     openstack-common (~> 9.5)
     openstack-compute (~> 9.0)
     openstack-identity (~> 9.0)
+  packagecloud (0.0.17)
   percona (0.15.5)
     apt (>= 1.9.0)
     openssl (>= 0.0.0)
     yum (~> 3.0)
   poise (1.0.12)
-  postgresql (3.4.14)
+  postgresql (3.4.18)
     apt (>= 1.9.0)
     build-essential (>= 0.0.0)
-    openssl (>= 0.0.0)
+    openssl (~> 4.0.0)
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.9.0)
+  rabbitmq (3.12.0)
     erlang (>= 0.9.0)
-  runit (1.5.14)
-    build-essential (>= 0.0.0)
-    yum (~> 3.0)
     yum-epel (>= 0.0.0)
+    yum-erlang_solutions (>= 0.0.0)
+  runit (1.6.0)
+    packagecloud (>= 0.0.0)
   selinux (0.8.0)
   statsd (0.1.6)
     build-essential (>= 0.0.0)
@@ -312,10 +314,10 @@ GRAPH
     modules (>= 0.1.2)
     sudo (= 2.6.0)
     yum (= 3.2.2)
-  windows (1.36.1)
+  windows (1.36.6)
     chef_handler (>= 0.0.0)
   xfs (1.1.0)
-  xml (1.2.9)
+  xml (1.2.13)
     build-essential (>= 0.0.0)
     chef-sugar (>= 0.0.0)
   yum (3.2.2)
@@ -323,5 +325,5 @@ GRAPH
     yum (~> 3.0)
   yum-erlang_solutions (0.2.0)
     yum (~> 3.0)
-  yum-mysql-community (0.1.12)
+  yum-mysql-community (0.1.17)
     yum (>= 3.0)

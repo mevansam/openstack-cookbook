@@ -12,8 +12,6 @@
         },
         "openstack": {
             "compute": {
-                "debug": "False",
-                "verbose": "False",
                 "config": {
                     "flat_injected": "False"
                 },

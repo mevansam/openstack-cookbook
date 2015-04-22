@@ -153,6 +153,14 @@ openstack:
     network-api:
       port: 9696
 
+  compute:
+    rate_limits:
+      generic-post-limit: 500
+      create-servers-limit: 500
+      generic-put-limit: 500
+      changes-since-limit: 500
+      generic-delete-limit: 500
+
   # OpenStack Neutron settings
   network:
     ml2:

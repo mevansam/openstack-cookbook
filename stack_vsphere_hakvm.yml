@@ -1,7 +1,7 @@
 --- 
 name: vmware_kvm
 
-static_ips: "<<@#{env['vsphere']['managment_ips']}"
+static_ips: "<<@#{env['vsphere']['public_ips']}"
 
 chef:
   knife_config:
@@ -20,7 +20,6 @@ vsphere_options: &vsphere_options
   sudo: true
 
 stack:
-
 
 ################################################################################
 # Logging Cluster
@@ -41,6 +40,7 @@ stack:
       discovery:
         search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
   run_list:
+  - recipe[ntp]
   - recipe[network]
   - role[os-ha-logging]
 ################################################################################
@@ -68,6 +68,7 @@ stack:
       cluster:
         wsrep_sst_receive_interface: eth0
   run_list:
+  - recipe[ntp]
   - recipe[network]
   - role[os-ha-database]
 ################################################################################
@@ -88,69 +89,9 @@ stack:
   targets:
   - os-messaging
   run_list:
+  - recipe[ntp]
   - recipe[network]
   - role[os-ha-messaging]
-################################################################################
-
-################################################################################
-# OpenStack Services
-# - node: os-services
-#   scale: 2
-#   attributes:
-#     cluster_name: services
-#     openstack:
-#       endpoints:
-#         db:
-#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
-#         mq:
-#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
-#         rsyslog:
-#           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
-#   knife:
-#     options: *vsphere_options
-#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
-#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-#   run_list:
-#   - recipe[network]
-#   - role[os-services]
-#   - recipe[openstack-services::monkey-patch]
-#   # Service registration recipes
-#   - recipe[openstack-common::client]
-#   - recipe[openstack-common::openrc]
-#   - recipe[openstack-identity::registration]
-#   - recipe[openstack-image::identity_registration]
-#   - recipe[openstack-block-storage::identity_registration]
-#   - recipe[openstack-compute::identity_registration]
-#   - recipe[openstack-network::identity_registration]
-################################################################################
-
-################################################################################
-# Front-end HAproxy
-# - node: os-frontend-proxy
-#   scale: 2
-#   attributes:
-#     cluster_name: backend-proxy
-#   knife:
-#     options: *vsphere_options
-#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-
-# - node: os-frontend-proxy-cluster
-#   depends_on:
-#   - os-services
-#   targets:
-#   - os-frontend-proxy
-#   attributes:
-#     haproxy:
-#       fqdn: "#{env['openstack']['endpoints']['openstack_app_proxy']}"
-#       virtual_ip_address: "#{env['proxy']['frontend_vip_address']}"
-#       virtual_ip_cidr_netmask: "#{env['proxy']['frontend_vip_address']}"
-#       virtual_ip_nic: "#{env['proxy']['frontend_vip_address']}"
-#       is_clustered: true
-#       server_pools: <<+env[proxy][frontend_server_pools]
-#   run_list:
-#   - recipe[network]
-#   - role[os-ha-proxy]
 ################################################################################
 
 ################################################################################
@@ -159,6 +100,8 @@ stack:
   scale: 2
   attributes:
     cluster_name: backend-proxy
+    pacemaker_mcast_address: 239.255.42.1
+    pacemaker_mcast_port: 5405
   knife:
     options: *vsphere_options
     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
@@ -174,11 +117,181 @@ stack:
     haproxy:
       fqdn: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
       virtual_ip_address: "#{env['proxy']['backend_vip_address']}"
-      virtual_ip_cidr_netmask: "#{env['proxy']['backend_vip_address']}"
-      virtual_ip_nic: "#{env['proxy']['backend_vip_address']}"
+      virtual_ip_cidr_netmask: "#{env['proxy']['backend_vip_cidr_netmask']}"
+      virtual_ip_nic: "#{env['proxy']['backend_vip_nic']}"
       is_clustered: true
       server_pools: <<+env[proxy][backend_server_pools]
   run_list:
+  - recipe[ntp]
   - recipe[network]
   - role[os-ha-proxy]
+################################################################################
+
+################################################################################
+# OpenStack Services
+- node: os-services
+  scale: 2
+  attributes:
+    cluster_name: services
+    env:
+      network_interfaces:
+      - device: eth2
+        target: <<!'192.168.0.'+(#{index}+10).to_s
+    openstack:
+      logging:
+        syslog_endpoint:
+          protocol: udp
+          hosts: nodes[os-logging][*][ipaddress]
+      endpoints:
+        db:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        mq:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        rsyslog:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+      block-storage:
+        volume:
+          iscsi_ip_address: 192.168.0.1
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-services]
+  - recipe[openstack-services::monkey-patch]
+  # Service registration recipes
+  - recipe[openstack-common::client]
+  - recipe[openstack-common::openrc]
+  - recipe[openstack-identity::registration]
+  - recipe[openstack-image::identity_registration]
+  - recipe[openstack-block-storage::identity_registration]
+  - recipe[openstack-compute::identity_registration]
+  - recipe[openstack-network::identity_registration]
+################################################################################
+
+################################################################################
+# OpenStack Block Storage
+- node: os-storage
+  scale: 1
+  depends_on:
+  - os-services
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth2
+        target: 192.168.0.1
+    openstack:
+      logging:
+        syslog_endpoint:
+          protocol: udp
+          hosts: nodes[os-logging][*][ipaddress]
+      endpoints:
+        db:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        mq:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        rsyslog:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+      block-storage:
+        volume:
+          iscsi_ip_address: 192.168.0.1
+          create_volume_group: true
+          create_volume_group_type: block_devices
+          block_devices: /dev/sdb
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    post_create:
+    - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk1TB]
+    - <<+[./common/vsphere.yml][vsphere][instance][shutdown]
+    - <<+[./common/vsphere.yml][vsphere][instance][start]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-block-storage-volume]
+  - recipe[openstack-services::monkey-patch]
+################################################################################
+
+################################################################################
+# Front-end HAproxy
+- node: os-frontend-proxy
+  scale: 2
+  attributes:
+    cluster_name: backend-proxy
+    pacemaker_mcast_address: 239.255.42.2
+    pacemaker_mcast_port: 5405
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-frontend-proxy-cluster
+  depends_on:
+  - os-services
+  targets:
+  - os-frontend-proxy
+  attributes:
+    haproxy:
+      fqdn: "#{env['openstack']['endpoints']['openstack_app_proxy']}"
+      virtual_ip_address: "#{env['proxy']['frontend_vip_address']}"
+      virtual_ip_cidr_netmask: "#{env['proxy']['frontend_vip_cidr_netmask']}"
+      virtual_ip_nic: "#{env['proxy']['frontend_vip_nic']}"
+      is_clustered: true
+      server_pools: <<+env[proxy][frontend_server_pools]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-proxy]
+################################################################################
+
+################################################################################
+# Compute Nodes
+- node: os-compute
+  scale: 2
+  attributes:
+    # Cluster every 2 instances. i.e. instance 0 and 1
+    # will be put into a cluster named 'network-node-0'
+    # and 2 and 3 into a cluster named 'network-node-1'
+    # and so on.
+    cluster_name: <<!'network-node-'+(#{index}/2).to_s
+    pacemaker_mcast_address: 239.255.42.3
+    pacemaker_mcast_port: 5405
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][kvm1224]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-compute-cluster
+  depends_on:
+  - os-services
+  targets:
+  - os-compute
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth1
+      - device: eth2
+        target: <<!'192.168.0.'+(#{index}+20).to_s
+    openstack:
+      logging:
+        syslog_endpoint:
+          protocol: udp
+          hosts: nodes[os-logging][*][ipaddress]
+      endpoints:
+        db:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        mq:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+        rsyslog:
+          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+      network:
+        l3:
+          is_clustered: true
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-compute-kvm]
 ################################################################################

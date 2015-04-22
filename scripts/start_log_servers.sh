@@ -65,6 +65,7 @@ if [ ! -e "$LOGSTASH" ]; then
 fi
 cp -f $DIR/logging_support_files/extra-grok-patterns $(dirname $LOGSTASH)/../patterns
 cp -f $DIR/logging_support_files/logio.rb $(dirname $LOGSTASH)/../lib/logstash/codecs/
+cp -f $DIR/logging_support_files/cfapp.rb $(dirname $LOGSTASH)/../lib/logstash/filters/
 
 cat << ---END > $RUNDIR/logstash-syslog.conf
 input {
@@ -109,8 +110,18 @@ filter {
     }
   } else {
     grok {
-      match => { "message" => "<%{POSINT:syslog_pri}>%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}((:\[%{POSINT:syslog_pid}\])?:?)? %{GREEDYDATA:syslog_message}" }
+      match => [ 
+          "message", "<%{POSINT:syslog_pri}>%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}((:\[%{POSINT:syslog_pid}\])?:?)? %{GREEDYDATA:syslog_message}", 
+          "message", "(?<appguid>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})" 
+        ]
     }
+  }
+  cfapp {
+    cfapi => "https://api.10.244.0.34.xip.io"
+    cfuser => "admin"
+    cfpassword => "admin"
+    default_org => "test_org_1"
+    default_space => "dev"
   }
   syslog_pri {
   }
@@ -130,6 +141,7 @@ output {
   tcp {
     codec => logio {
       debug_output => "false"
+      standard_message_format => "cf:/%{orgname}/%{spacename}/%{appname} : %{message}"
     }
     host => "127.0.0.1"
     port => $logs_logio_ports_stream
@@ -146,6 +158,6 @@ then
   sudo rm $RUNDIR/logstash.pid
 fi
 
-nohup sudo $LOGSTASH --config $RUNDIR/logstash-syslog.conf --log $LOGDIR/logstash.log > $LOGDIR/logstash-startup.log 2>&1 &
+nohup sudo $LOGSTASH --config $RUNDIR/logstash-syslog.conf --verbose --log $LOGDIR/logstash.log > $LOGDIR/logstash-startup.log 2>&1 &
 echo $! > $RUNDIR/logstash.pid
 echo "Logstash started."

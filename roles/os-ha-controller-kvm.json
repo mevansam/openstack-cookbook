@@ -26,8 +26,6 @@
                 }
             },
             "network": {
-                "debug": "False",
-                "verbose": "False",
                 "service_plugins": [
                     "neutron.services.l3_router.l3_router_plugin.L3RouterPlugin"
                 ],

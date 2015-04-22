@@ -2,6 +2,18 @@
 
 begin
 
+logging = {
+    'use_syslog' => true,
+    # Work around for bug https://bugs.launchpad.net/openstack-chef/+bug/1365677
+    'ignore' => {
+        'null' => 'NOTSET',
+    },
+    'loggers' => env['logs']['loggers']
+
+} if env['logs']['type']=='syslog'
+
+# Set Chef environment
+
 default_attributes(
     'ntp' => env['ntp'],
     'env' => {
@@ -30,7 +42,7 @@ default_attributes(
         # Certificate data bag item containing rabbitmq certs
         'certificate_databag_item' => openstack_ops_proxy,
         'ssl' => env['messaging']['use_ssl'],
-        'ssl_port' => env['messaging']['use_ssl'] ? env['messaging']['ampq_port'] : nil, 
+        'ssl_port' => env['messaging']['use_ssl'] ? env['messaging']['ampq_port'] : nil,
         'web_console_ssl' => env['messaging']['use_ssl'],
         'web_console_ssl_port' => env['messaging']['use_ssl'] ? env['messaging']['ampq_mgmt_port'] : nil,
         'virtualhosts' => [
@@ -53,7 +65,28 @@ default_attributes(
                 'params' => { 'ha-mode' => 'all' },
                 'vhost' => env['messaging']['compute_path']
             }
-        }
+        },
+        'enabled_users' => [
+            {
+                'name' => env['messaging']['user'],
+                'password' => env['messaging']['password'],
+                'tag' => 'administrator',
+                'rights' => [
+                    {
+                        'vhost' => env['messaging']['services_path'],
+                        'conf' => '.*',
+                        'write' => '.*',
+                        'read' => '.*'
+                    },
+                    {
+                        'vhost' => env['messaging']['compute_path'],
+                        'conf' => '.*',
+                        'write' => '.*',
+                        'read' => '.*'
+                    }
+                ]
+            }
+        ]
     },
     'openstack' => {
 
@@ -62,13 +95,7 @@ default_attributes(
         'openstack_app_proxy' => openstack_app_services,
         'openstack_ops_proxy' => openstack_ops_services,
 
-        'logging' => {
-            # Work around for bug https://bugs.launchpad.net/openstack-chef/+bug/1365677
-            'ignore' => {
-                'null' => 'NOTSET',
-            },
-            'loggers' => env['logs']['loggers']
-        },
+        'logging' => logging,
         'region' => env['openstack']['region'],
         'apt' => {
             'live_updates_enabled' => false
@@ -81,9 +108,6 @@ default_attributes(
             },
             'mq' => {
                 'port' => env['messaging']['ampq_port']
-            },
-            'rsyslog' => {
-                'protocol' => 'tcp'
             },
             'identity-api' => {
                 'scheme' => env['openstack']['endpoints']['use_ssl'] ? 'https' : 'http',
@@ -169,11 +193,46 @@ default_attributes(
             }
         },
         'identity' => {
+            'verbose' => env['logs']['loggers']['keystone']['level']=='DEBUG' ? 'True' : 'False',
+            'debug' => env['logs']['loggers']['keystone']['level']=='DEBUG' ? 'True' : 'False',
             'registration' => {
                 'insecure' => true
             }
         },
+        'image' => {
+            'verbose' => env['logs']['loggers']['glance']['level']=='DEBUG' ? 'True' : 'False',
+            'debug' => env['logs']['loggers']['glance']['level']=='DEBUG' ? 'True' : 'False'
+        },
+        'block-storage' => {
+            'verbose' => env['logs']['loggers']['cinder']['level']=='DEBUG' ? 'True' : 'False',
+            'debug' => env['logs']['loggers']['cinder']['level']=='DEBUG' ? 'True' : 'False'
+        },
+        'compute' => {
+            'verbose' => env['logs']['loggers']['nova']['level']=='DEBUG' ? 'True' : 'False',
+            'debug' => env['logs']['loggers']['nova']['level']=='DEBUG' ? 'True' : 'False',
+            'ratelimit' => {
+                'settings' => {
+                    'generic-post-limit' => {
+                        'limit' => env['openstack']['compute']['rate_limits']['generic-post-limit'] || '10'
+                    },
+                    'create-servers-limit' => {
+                        'limit' => env['openstack']['compute']['rate_limits']['create-servers-limit'] || '50'
+                    },
+                    'generic-put-limit' => {
+                        'limit' => env['openstack']['compute']['rate_limits']['generic-put-limit'] || '10'
+                    },
+                    'changes-since-limit' => {
+                        'limit' => env['openstack']['compute']['rate_limits']['changes-since-limit'] || '3'
+                    },
+                    'generic-delete-limit' => {
+                        'limit' => env['openstack']['compute']['rate_limits']['generic-delete-limit'] || '100'
+                    }
+                }
+            }
+        },
         'network' => {
+            'verbose' => env['logs']['loggers']['neutron']['level']=='DEBUG' ? 'True' : 'False',
+            'debug' => env['logs']['loggers']['neutron']['level']=='DEBUG' ? 'True' : 'False',
             'ml2' => {
                 'type_drivers' =>
                     openstack_network['ml2']['type_drivers'],

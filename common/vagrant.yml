@@ -8,7 +8,6 @@ vagrant_ubuntu_1404:
   create_2nic_768M:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"
@@ -32,15 +31,11 @@ vagrant_ubuntu_1404:
   create_1nic_2G:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"
       memsize: 2048
       subnet: "#{env['vagrant']['management_network']}/25"
-      # The '+' at the end of the IP indicates that the last octet
-      # is incremented by the created node instance's index value.
-      ip_address: "#{env['proxy']['backend_default_ip']}+"
       port_forward: {}
       share_folders: []
       use_cachier: false
@@ -68,7 +63,6 @@ vagrant_ubuntu_1404:
   create_1nic_3G:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"
@@ -104,7 +98,6 @@ vagrant_ubuntu_1404:
   create_1nic_4G:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"
@@ -142,7 +135,6 @@ vagrant_ubuntu_1404:
   create_2nic_1G:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"
@@ -174,7 +166,6 @@ vagrant_ubuntu_1404:
   create_2nic_2G:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"
@@ -206,7 +197,6 @@ vagrant_ubuntu_1404:
   create_2nic_4G:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"
@@ -238,7 +228,6 @@ vagrant_ubuntu_1404:
   create_2nic_10G:
     plugin: vagrant
     options:
-      vagrant_dir: ~/.vagrant
       provider: "#{my['vagrant']['provider']}"
       box: "#{my['vagrant']['box_name']}"
       box_url: "#{my['vagrant']['box_url']}"

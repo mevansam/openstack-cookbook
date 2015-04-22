@@ -1,4 +1,4 @@
---- 
+---
 name: vmware_kvm
 
 # Determine IP of local host
@@ -85,8 +85,10 @@ stack:
         innodb_buffer_pool_size: 128M
     openstack:
       logging:
-        syslog_endpoints:
-        - host: *host_ip
+        syslog_endpoint:
+          protocol: udp
+          hosts:
+          - *host_ip
       endpoints:
         db:
           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
@@ -145,8 +147,10 @@ stack:
       - device: eth2
     openstack:
       logging:
-        syslog_endpoints:
-        - host: *host_ip
+        syslog_endpoint:
+          protocol: udp
+          hosts:
+          - *host_ip
       endpoints:
         db:
           host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"

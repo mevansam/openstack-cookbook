@@ -1,6 +1,6 @@
 ---
 
-domain: mydomain.org
+domain: pcf-services.com
 
 disable_local_firewall: true
 
@@ -8,15 +8,19 @@ disable_local_firewall: true
 root:
   password: ej343fa8f4038e4f
 
-# services:
-#   # This is used to give your local IPs DNS names
-#   # that are resolved via the AWS route53 service.
-#   # If AWS_KEY/AWS_SECRET are set as empty environment
-#   # variables or entered as empty strings then names
-#   # will not be routable to your local ips.
-#   aws:
-#     aws_key: "<<AWS_KEY$AWS Access Key ID: "
-#     aws_secret: "<<AWS_SECRET*AWS Secret Access Key: "
+services:
+
+  aws:
+    # AWS credentials passed along to chef cookbooks via an encrypted data bag
+    aws_automation_key: "<<AWS_AUTOMATION_ACCESS_KEY_ID$AWS Access Key ID: "
+    aws_automation_secret: "<<AWS_AUTOMATION_SECRET_ACCESS_KEY*AWS Secret Access Key: "
+
+  vsphere:
+    vsphere_host: "<<VSPHERE_HOST$VSphere host: "
+    vsphere_dc: "<<VSPHERE_DC$VSphere data center: "
+    vsphere_user: "<<VSPHERE_USER$VSphere automation user name: "
+    vsphere_pass: "<<VSPHERE_PASS*VSphere automation user password: "
+    ssh_key_file: pivotal-tech
 
 ntp:
   sync_clock: true
@@ -44,7 +48,7 @@ messaging:
 # Load balancing proxy
 proxy:
 
-  backend_vip_address: 10.103.43.10
+  backend_vip_address: 10.103.43.21
   backend_vip_cidr_netmask: 23
   backend_vip_nic: eth1
 
@@ -61,51 +65,50 @@ proxy:
       port: *ampq_mgmt_port
       profile: ssl
 
-  frontend_vip_address: 10.103.43.11
+  frontend_vip_address: 10.103.43.22
   frontend_vip_cidr_netmask: 23
   frontend_vip_nic: eth1
 
   frontend_server_pools:
-     server_pools:
-       identity-api:
-         pool_cluster_name: services
-         profile: http
-         bind_ssl: app_proxy
-       identity-admin:
-         pool_cluster_name: services
-         profile: http
-         bind_ssl: app_proxy
-       image-api:
-         pool_cluster_name: services
-         profile: http
-         bind_ssl: app_proxy
-       block-storage-api:
-         pool_cluster_name: services
-         profile: http
-         bind_ssl: app_proxy
-       compute-api:
-         pool_cluster_name: services
-         profile: http
-         bind_ssl: app_proxy
-       compute-ec2-api:
-         pool_cluster_name: services
-         profile: http
-         bind_ssl: app_proxy
-       compute-novnc:
-         pool_cluster_name: services
-         profile: http
-       network-api:
-         pool_cluster_name: services
-         profile: http
-         bind_ssl: app_proxy
-       horizon_web:
-         pool_cluster_name: services
-         port: 80
-         profile: http
-       horizon_web_ssl:
-         pool_cluster_name: services
-         port: 443
-         profile: ssl
+   identity-api:
+     pool_cluster_name: services
+     profile: http
+     bind_ssl: app_proxy
+   identity-admin:
+     pool_cluster_name: services
+     profile: http
+     bind_ssl: app_proxy
+   image-api:
+     pool_cluster_name: services
+     profile: http
+     bind_ssl: app_proxy
+   block-storage-api:
+     pool_cluster_name: services
+     profile: http
+     bind_ssl: app_proxy
+   compute-api:
+     pool_cluster_name: services
+     profile: http
+     bind_ssl: app_proxy
+   compute-ec2-api:
+     pool_cluster_name: services
+     profile: http
+     bind_ssl: app_proxy
+   compute-novnc:
+     pool_cluster_name: services
+     profile: http
+   network-api:
+     pool_cluster_name: services
+     profile: http
+     bind_ssl: app_proxy
+   horizon_web:
+     pool_cluster_name: services
+     port: 80
+     profile: http
+   horizon_web_ssl:
+     pool_cluster_name: services
+     port: 443
+     profile: ssl
 
 openstack:
   region: durham
@@ -147,6 +150,14 @@ openstack:
     network-api:
       port: 9696
 
+  compute:
+    rate_limits:
+      generic-post-limit: 500
+      create-servers-limit: 500
+      generic-put-limit: 500
+      changes-since-limit: 500
+      generic-delete-limit: 500
+
   # OpenStack Neutron settings
   network:
     ml2:
@@ -163,8 +174,8 @@ openstack:
       # Applied only if using GRE tunnels
       tunnel_id_ranges: 1:10000
       # OVS specific configuration
-      external_bridge: br-eth2
-      external_interface: eth2
+      external_bridge: br-eth1
+      external_interface: eth1
 
 # log configuration
 logs:
@@ -191,3 +202,15 @@ logs:
     nova:
       level: INFO
 
+vsphere:
+
+  public_vlan: VM Network
+  public_vlan_gateway: 10.103.42.1
+  public_vlan_dns: 10.103.42.135
+  public_vlan_dns_suffixes: fe.gopivotal.com
+  public_ips: 10.103.43.5:20/23
+
+  private_vlan: Data Network
+
+  vm_folder: OpenStack
+  vm_datastore: datastore36

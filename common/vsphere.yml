@@ -22,27 +22,16 @@ vsphere:
 
   network:
 
-  management:
-    vlan: &management_vlan "#{env['vsphere']['managment_vlan']}"
-    gateway: &management_gateway "#{env['vsphere']['managment_vlan_gateway']}"
-    dns: &management_dns "#{env['vsphere']['managment_vlan_dns']}"
-    dns_suffixes: &management_dns_suffixes "#{env['vsphere']['managment_vlan_dns_suffixes']}"
+    gateway: &gateway "#{env['vsphere']['public_vlan_gateway']}"
+    dns: &dns "#{env['vsphere']['public_vlan_dns']}"
+    dns_suffixes: &dns_suffixes "#{env['vsphere']['public_vlan_dns_suffixes']}"
+    vlans: &vlans "#{env['vsphere']['public_vlan']},#{env['vsphere']['public_vlan']},#{env['vsphere']['private_vlan']},#{env['vsphere']['private_vlan']}"
 
-  data: 
-    vlan: "#{env['vsphere']['data_vlan']}"
+  images:
+    ubuntu1404: &ubuntu1404 ubuntu1404_4NIC
 
-  image:
-    ubuntu1204:
-      template: &ubuntu1204_image Ubuntu 12.04 Template
-      datastore: &ubuntu1204_datastore "#{env['vsphere']['vm_datastore']}"
-
-    ubuntu1404:
-      template: &ubuntu1404_image Ubuntu 14.04 Template
-      datastore: &ubuntu1404_datastore "#{env['vsphere']['vm_datastore']}"
-
-    ubuntu1404_2NIC:
-      template: &ubuntu1404_2NIC_image Ubuntu 14.04 Template (2NIC)
-      datastore: &ubuntu1404_2NIC_datastore "#{env['vsphere']['vm_datastore']}"
+  datastore: 
+    datastore_1: &datastore_1 "#{env['vsphere']['vm_datastore']}"
 
   instance:
 
@@ -67,11 +56,11 @@ vsphere:
 
     storage:
 
-      vmdk500G:
+      vmdk1TB:
         class: Chef::Knife::VsphereVmVmdkAdd
-        args: 500
+        args: 1000
         options:
-          vmdk_type: thin
+          vmdk_type: thick
 
     # Knife classes configurations for VM creation
 
@@ -82,13 +71,17 @@ vsphere:
         static_ip_key: customization_ips
         options:
           dest_folder: *folder
-          source_vm: *ubuntu1404_image
-          datastore: *ubuntu1404_datastore
+          source_vm: *ubuntu1404
+          datastore: *datastore_1
           customization_domain: "#{env['domain']}"
-          customization_vlan: *management_vlan
-          customization_gw: *management_gateway
-          customization_dns_ips: *management_dns
-          customization_dns_suffixes: *management_dns_suffixes
+          customization_vlan: *vlans
+          customization_gw: *gateway
+          customization_dns_ips: *dns
+          customization_dns_suffixes: *dns_suffixes
+          # Additional IPs to ensure vsphere does not 
+          # throw an error that IPs do not match number
+          # of configured adapters
+          customization_ips: ",0.0.0.0/0,0.0.0.0/0,0.0.0.0/0"
           customization_cpucount: 1
           customization_memory: 2
           power: true
@@ -102,13 +95,17 @@ vsphere:
         static_ip_key: customization_ips
         options:
           dest_folder: *folder
-          source_vm: *ubuntu1404_image
-          datastore: *ubuntu1404_datastore
+          source_vm: *ubuntu1404
+          datastore: *datastore_1
           customization_domain: "#{env['domain']}"
-          customization_vlan: *management_vlan
-          customization_gw: *management_gateway
-          customization_dns_ips: *management_dns
-          customization_dns_suffixes: *management_dns_suffixes
+          customization_vlan: *vlans
+          customization_gw: *gateway
+          customization_dns_ips: *dns
+          customization_dns_suffixes: *dns_suffixes
+          # Additional IPs to ensure vsphere does not 
+          # throw an error that IPs do not match number
+          # of configured adapters
+          customization_ips: ",0.0.0.0/0,0.0.0.0/0,0.0.0.0/0"
           customization_cpucount: 2
           customization_memory: 4
           power: true
@@ -122,13 +119,17 @@ vsphere:
         static_ip_key: customization_ips
         options:
           dest_folder: *folder
-          source_vm: *ubuntu1404_image
-          datastore: *ubuntu1404_datastore
+          source_vm: *ubuntu1404
+          datastore: *datastore_1
           customization_domain: "#{env['domain']}"
-          customization_vlan: *management_vlan
-          customization_gw: *management_gateway
-          customization_dns_ips: *management_dns
-          customization_dns_suffixes: *management_dns_suffixes
+          customization_vlan: *vlans
+          customization_gw: *gateway
+          customization_dns_ips: *dns
+          customization_dns_suffixes: *dns_suffixes
+          # Additional IPs to ensure vsphere does not 
+          # throw an error that IPs do not match number
+          # of configured adapters
+          customization_ips: ",0.0.0.0/0,0.0.0.0/0,0.0.0.0/0"
           customization_cpucount: 2
           customization_memory: 8
           power: true
@@ -141,13 +142,17 @@ vsphere:
         static_ip_key: customization_ips
         options:
           dest_folder: *folder
-          source_vm: *ubuntu1404_image
-          datastore: *ubuntu1404_datastore
+          source_vm: *ubuntu1404
+          datastore: *datastore_1
           customization_domain: "#{env['domain']}"
-          customization_vlan: *management_vlan
-          customization_gw: *management_gateway
-          customization_dns_ips: *management_dns
-          customization_dns_suffixes: *management_dns_suffixes
+          customization_vlan: *vlans
+          customization_gw: *gateway
+          customization_dns_ips: *dns
+          customization_dns_suffixes: *dns_suffixes
+          # Additional IPs to ensure vsphere does not 
+          # throw an error that IPs do not match number
+          # of configured adapters
+          customization_ips: ",0.0.0.0/0,0.0.0.0/0,0.0.0.0/0"
           customization_cpucount: 4
           customization_memory: 16
           power: true
@@ -161,17 +166,17 @@ vsphere:
         static_ip_key: customization_ips
         options:
           dest_folder: *folder
-          source_vm: *ubuntu1404_2NIC_image
-          datastore: *ubuntu1404_2NIC_datastore
+          source_vm: *ubuntu1404
+          datastore: *datastore_1
           customization_domain: "#{env['domain']}"
-          customization_vlan: *management_vlan
-          customization_gw: *management_gateway
-          customization_dns_ips: *management_dns
-          customization_dns_suffixes: *management_dns_suffixes
+          customization_vlan: *vlans
+          customization_gw: *gateway
+          customization_dns_ips: *dns
+          customization_dns_suffixes: *dns_suffixes
           # Additional IPs to ensure vsphere does not 
           # throw an error that IPs do not match number
           # of configured adapters
-          customization_ips: ",0.0.0.0/0"
+          customization_ips: ",0.0.0.0/0,0.0.0.0/0,0.0.0.0/0"
           customization_cpucount: 12
           customization_memory: 24
           power: true
@@ -185,17 +190,17 @@ vsphere:
         static_ip_key: customization_ips
         options:
           dest_folder: *folder
-          source_vm: *ubuntu1404_2NIC_image
-          datastore: *ubuntu1404_2NIC_datastore
+          source_vm: *ubuntu1404
+          datastore: *datastore_1
           customization_domain: "#{env['domain']}"
-          customization_vlan: *management_vlan
-          customization_gw: *management_gateway
-          customization_dns_ips: *management_dns
-          customization_dns_suffixes: *management_dns_suffixes
+          customization_vlan: *vlans
+          customization_gw: *gateway
+          customization_dns_ips: *dns
+          customization_dns_suffixes: *dns_suffixes
           # Additional IPs to ensure vsphere does not 
           # throw an error that IPs do not match number
           # of configured adapters
-          customization_ips: ",0.0.0.0/0"
+          customization_ips: ",0.0.0.0/0,0.0.0.0/0,0.0.0.0/0"
           customization_cpucount: 24
           customization_memory: 48
           power: true

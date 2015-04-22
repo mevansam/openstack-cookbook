@@ -24,8 +24,6 @@
         },
         "openstack": {
             "compute": {
-                "debug": "False",
-                "verbose": "False",
                 "driver": "xenapi.XenAPIDriver",
                 "config": {
                     "flat_injected": "False"

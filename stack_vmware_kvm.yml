@@ -89,24 +89,24 @@ stack:
   # The compute host runs the nova computer, neutron
   # agents and cinder volume services natively on
   # the target host.
-  run_list:
-  - recipe[ohai]
-  - recipe[ntp]
-  - recipe[network]
-  # Service registration recipes
-  - recipe[openstack-common::client]
-  - recipe[openstack-common::openrc]
-  - recipe[openstack-identity::registration]
-  - recipe[openstack-image::identity_registration]
-  - recipe[openstack-block-storage::identity_registration]
-  - recipe[openstack-compute::identity_registration]
-  - recipe[openstack-network::identity_registration]
-  # Block storage volume role
-  - role[os-block-storage-volume]
-  # Compute and Network node roles
-  - role[os-ha-compute-kvm]
-  - role[os-ha-network-kvm]
-  # Monkey patch upstart services
-  - recipe[openstack-services::monkey-patch]
-  run_on_event:
-    configure: <<+[./common/openstack.yml][reconfigure-containers]
+  # run_list:
+  # - recipe[ohai]
+  # - recipe[ntp]
+  # - recipe[network]
+  # # Service registration recipes
+  # - recipe[openstack-common::client]
+  # - recipe[openstack-common::openrc]
+  # - recipe[openstack-identity::registration]
+  # - recipe[openstack-image::identity_registration]
+  # - recipe[openstack-block-storage::identity_registration]
+  # - recipe[openstack-compute::identity_registration]
+  # - recipe[openstack-network::identity_registration]
+  # # Block storage volume role
+  # - role[os-block-storage-volume]
+  # # Compute and Network node roles
+  # - role[os-ha-compute-kvm]
+  # - role[os-ha-network-kvm]
+  # # Monkey patch upstart services
+  # - recipe[openstack-services::monkey-patch]
+  # run_on_event:
+  #   configure: <<+[./common/openstack.yml][reconfigure-containers]
