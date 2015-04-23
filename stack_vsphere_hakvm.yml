@@ -109,8 +109,8 @@ stack:
 
 - node: os-backend-proxy-cluster
   depends_on:
-  - os-database
-  - os-messaging
+  - os-database-cluster
+  - os-messaging-cluster
   targets:
   - os-backend-proxy
   attributes:
@@ -131,6 +131,9 @@ stack:
 # OpenStack Services
 - node: os-services
   scale: 2
+  sync: first
+  depends_on:
+  - os-backend-proxy-cluster
   attributes:
     cluster_name: services
     env:
@@ -220,7 +223,7 @@ stack:
 - node: os-frontend-proxy
   scale: 2
   attributes:
-    cluster_name: backend-proxy
+    cluster_name: frontend-proxy
     pacemaker_mcast_address: 239.255.42.2
     pacemaker_mcast_port: 5405
   knife:
