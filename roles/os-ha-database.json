@@ -18,7 +18,8 @@
                 "thread_cache_size": "512",
                 "query_cache_size": "128M",
                 "query_cache_limit": "2048M",
-                "innodb_buffer_pool_size": "2048M"
+                "innodb_buffer_pool_size": "2048M",
+                "max_connections": "200"
             },
             "mysql": {
                 "ssl": false,

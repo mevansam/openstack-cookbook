@@ -48,7 +48,7 @@ messaging:
 # Load balancing proxy
 proxy:
 
-  backend_vip_address: 10.103.43.21
+  backend_vip_address: 10.103.43.25
   backend_vip_cidr_netmask: 23
   backend_vip_nic: eth1
 
@@ -65,7 +65,7 @@ proxy:
       port: *ampq_mgmt_port
       profile: ssl
 
-  frontend_vip_address: 10.103.43.22
+  frontend_vip_address: 10.103.43.24
   frontend_vip_cidr_netmask: 23
   frontend_vip_nic: eth1
 
@@ -206,7 +206,7 @@ vsphere:
 
   public_vlan: VM Network
   public_vlan_gateway: 10.103.42.1
-  public_vlan_dns: 10.103.42.135
+  public_vlan_dns: 10.103.42.135,8.8.8.8
   public_vlan_dns_suffixes: fe.gopivotal.com
   public_ips: 10.103.43.5:20/23
 
