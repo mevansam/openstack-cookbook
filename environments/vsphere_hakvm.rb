@@ -7,8 +7,11 @@ env = YAML.load_file(File.expand_path("../../etc/#{env_name}.yml", __FILE__))
 
 ## Pre-process environment variables
 
-openstack_app_services = openstack_app_proxy = env['openstack']['endpoints']['openstack_app_proxy']
-openstack_ops_services = openstack_ops_proxy = env['openstack']['endpoints']['openstack_ops_proxy']
+openstack_app_services = env['openstack']['endpoints']['openstack_app_proxy']
+openstack_ops_services = env['openstack']['endpoints']['openstack_ops_proxy']
+
+openstack_app_proxy = env['proxy']['frontend_fqdn']
+openstack_ops_proxy = env['proxy']['backend_fqdn']
 
 # Create a self-signed cert for ssl end-points
 openstack_app_proxy = (openstack_app_proxy=~/\d+\.\d+\.\d+\.\d+/ ? "#{env_name}.#{env['domain']}" : openstack_app_proxy)

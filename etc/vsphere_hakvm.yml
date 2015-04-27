@@ -48,7 +48,8 @@ messaging:
 # Load balancing proxy
 proxy:
 
-  backend_vip_address: 10.103.43.25
+  backend_fqdn: osops.pcf-services.com
+  backend_vip_address: &backend_vip_address 10.103.43.25
   backend_vip_cidr_netmask: 23
   backend_vip_nic: eth1
 
@@ -65,7 +66,8 @@ proxy:
       port: *ampq_mgmt_port
       profile: ssl
 
-  frontend_vip_address: 10.103.43.24
+  frontend_fqdn: os.pcf-services.com
+  frontend_vip_address: &frontend_vip_address 10.103.43.24
   frontend_vip_cidr_netmask: 23
   frontend_vip_nic: eth1
 
@@ -125,9 +127,9 @@ openstack:
   endpoints:
 
     # Proxy end-point for OpenStack app services
-    openstack_app_proxy: os.pcf-services.com
+    openstack_app_proxy: *frontend_vip_address
     # Proxy end-point for OpenStack ops services
-    openstack_ops_proxy: osops.pcf-services.com
+    openstack_ops_proxy: *backend_vip_address
 
     # Use SSL for all end-points
     use_ssl: true
@@ -190,23 +192,23 @@ logs:
       port: 51400
   loggers:
     horizon:
-      level: INFO
+      level: DEBUG
     keystone:
-      level: INFO
+      level: DEBUG
     glance:
-      level: INFO
+      level: DEBUG
     cinder:
-      level: INFO
+      level: DEBUG
     neutron:
-      level: INFO
+      level: DEBUG
     nova:
-      level: INFO
+      level: DEBUG
 
 vsphere:
 
   public_vlan: VM Network
   public_vlan_gateway: 10.103.42.1
-  public_vlan_dns: 10.103.42.135,8.8.8.8
+  public_vlan_dns: 10.103.42.135
   public_vlan_dns_suffixes: fe.gopivotal.com
   public_ips: 10.103.43.5:20/23
 

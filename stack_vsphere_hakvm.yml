@@ -115,7 +115,7 @@ stack:
   - os-backend-proxy
   attributes:
     haproxy:
-      fqdn: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+      fqdn: "#{env['proxy']['backend_fqdn']}"
       virtual_ip_address: "#{env['proxy']['backend_vip_address']}"
       virtual_ip_cidr_netmask: "#{env['proxy']['backend_vip_cidr_netmask']}"
       virtual_ip_nic: "#{env['proxy']['backend_vip_nic']}"
@@ -130,12 +130,22 @@ stack:
 ################################################################################
 # OpenStack Services
 - node: os-services
-  scale: 2
+  scale: 1
+  attributes:
+    cluster_name: services
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-services-cluster
   sync: first
   depends_on:
   - os-backend-proxy-cluster
+  - os-frontend-proxy-cluster
+  targets:
+  - os-services
   attributes:
-    cluster_name: services
     env:
       network_interfaces:
       - device: eth2
@@ -147,18 +157,12 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+          host: "#{env['proxy']['backend_vip_address']}"
         mq:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
-        rsyslog:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+          host: "#{env['proxy']['backend_vip_address']}"
       block-storage:
         volume:
           iscsi_ip_address: 192.168.0.1
-  knife:
-    options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
-    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
   run_list:
   - recipe[ntp]
   - recipe[network]
@@ -179,7 +183,7 @@ stack:
 - node: os-storage
   scale: 1
   depends_on:
-  - os-services
+  - os-services-cluster
   attributes:
     env:
       network_interfaces:
@@ -192,11 +196,9 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+          host: "#{env['proxy']['backend_vip_address']}"
         mq:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
-        rsyslog:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+          host: "#{env['proxy']['backend_vip_address']}"
       block-storage:
         volume:
           iscsi_ip_address: 192.168.0.1
@@ -238,7 +240,7 @@ stack:
   - os-frontend-proxy
   attributes:
     haproxy:
-      fqdn: "#{env['openstack']['endpoints']['openstack_app_proxy']}"
+      fqdn: "#{env['proxy']['frontend_fqdn']}"
       virtual_ip_address: "#{env['proxy']['frontend_vip_address']}"
       virtual_ip_cidr_netmask: "#{env['proxy']['frontend_vip_cidr_netmask']}"
       virtual_ip_nic: "#{env['proxy']['frontend_vip_nic']}"
@@ -269,7 +271,7 @@ stack:
 
 - node: os-compute-cluster
   depends_on:
-  - os-services
+  - os-services-cluster
   targets:
   - os-compute
   attributes:
@@ -285,11 +287,9 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+          host: "#{env['proxy']['backend_vip_address']}"
         mq:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
-        rsyslog:
-          host: "#{env['openstack']['endpoints']['openstack_ops_proxy']}"
+          host: "#{env['proxy']['backend_vip_address']}"
       network:
         l3:
           is_clustered: true
