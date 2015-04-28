@@ -168,14 +168,6 @@ stack:
   - recipe[network]
   - role[os-services]
   - recipe[openstack-services::monkey-patch]
-  # Service registration recipes
-  - recipe[openstack-common::client]
-  - recipe[openstack-common::openrc]
-  - recipe[openstack-identity::registration]
-  - recipe[openstack-image::identity_registration]
-  - recipe[openstack-block-storage::identity_registration]
-  - recipe[openstack-compute::identity_registration]
-  - recipe[openstack-network::identity_registration]
 ################################################################################
 
 ################################################################################
@@ -218,38 +210,6 @@ stack:
   - recipe[network]
   - role[os-block-storage-volume]
   - recipe[openstack-services::monkey-patch]
-################################################################################
-
-################################################################################
-# Front-end HAproxy
-- node: os-frontend-proxy
-  scale: 2
-  attributes:
-    cluster_name: frontend-proxy
-    pacemaker_mcast_address: 239.255.42.2
-    pacemaker_mcast_port: 5405
-  knife:
-    options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-
-- node: os-frontend-proxy-cluster
-  depends_on:
-  - os-services
-  targets:
-  - os-frontend-proxy
-  attributes:
-    haproxy:
-      fqdn: "#{env['proxy']['frontend_fqdn']}"
-      virtual_ip_address: "#{env['proxy']['frontend_vip_address']}"
-      virtual_ip_cidr_netmask: "#{env['proxy']['frontend_vip_cidr_netmask']}"
-      virtual_ip_nic: "#{env['proxy']['frontend_vip_nic']}"
-      is_clustered: true
-      server_pools: <<+env[proxy][frontend_server_pools]
-  run_list:
-  - recipe[ntp]
-  - recipe[network]
-  - role[os-ha-proxy]
 ################################################################################
 
 ################################################################################
@@ -297,4 +257,59 @@ stack:
   - recipe[ntp]
   - recipe[network]
   - role[os-ha-compute-kvm]
+################################################################################
+
+################################################################################
+# Front-end HAproxy
+- node: os-frontend-proxy
+  scale: 2
+  attributes:
+    cluster_name: frontend-proxy
+    pacemaker_mcast_address: 239.255.42.2
+    pacemaker_mcast_port: 5405
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-frontend-proxy-cluster
+  depends_on:
+  - os-services
+  targets:
+  - os-frontend-proxy
+  attributes:
+    haproxy:
+      fqdn: "#{env['proxy']['frontend_fqdn']}"
+      virtual_ip_address: "#{env['proxy']['frontend_vip_address']}"
+      virtual_ip_cidr_netmask: "#{env['proxy']['frontend_vip_cidr_netmask']}"
+      virtual_ip_nic: "#{env['proxy']['frontend_vip_nic']}"
+      is_clustered: true
+      server_pools: <<+env[proxy][frontend_server_pools]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-proxy]
+################################################################################
+
+################################################################################
+# OpenStack Configuration Jumpbox
+- node: os-jumpbox
+  scale: 1
+  depends_on:
+  - os-services-cluster
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - recipe[openstack-services::ha-os-common]
+  - recipe[openstack-common::client]
+  - recipe[openstack-common::openrc]
+  - recipe[openstack-identity::registration]
+  - recipe[openstack-image::identity_registration]
+  - recipe[openstack-block-storage::identity_registration]
+  - recipe[openstack-compute::identity_registration]
+  - recipe[openstack-network::identity_registration]
 ################################################################################
