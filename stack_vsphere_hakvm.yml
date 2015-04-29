@@ -166,9 +166,21 @@ stack:
         cluster_name: services
       endpoints:
         db:
-          host: "#{env['proxy']['backend_vip_address']}"
+          #host: "#{env['proxy']['backend_vip_address']}"
+
+          #
+          # Explcitely use first node of HAProxy cluster due
+          # to ARP issues in lab that cause VIP to be unreachable
+          #
+          hosts: nodes[os-backend-proxy][0][ipaddress]
         mq:
-          host: "#{env['proxy']['backend_vip_address']}"
+          #host: "#{env['proxy']['backend_vip_address']}"
+
+          #
+          # Explcitely use first node of HAProxy cluster due
+          # to ARP issues in lab that cause VIP to be unreachable
+          #
+          hosts: nodes[os-backend-proxy][0][ipaddress]
       image:
         filesystem_store_datadir: /var/data/glance/images
       block-storage:
@@ -216,9 +228,21 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          host: "#{env['proxy']['backend_vip_address']}"
+          #host: "#{env['proxy']['backend_vip_address']}"
+
+          #
+          # Explcitely use first node of HAProxy cluster due
+          # to ARP issues in lab that cause VIP to be unreachable
+          #
+          hosts: nodes[os-backend-proxy][0][ipaddress]
         mq:
-          host: "#{env['proxy']['backend_vip_address']}"
+          #host: "#{env['proxy']['backend_vip_address']}"
+
+          #
+          # Explcitely use first node of HAProxy cluster due
+          # to ARP issues in lab that cause VIP to be unreachable
+          #
+          hosts: nodes[os-backend-proxy][0][ipaddress]
       block-storage:
         volume:
           iscsi_ip_address: 192.168.0.1
@@ -276,9 +300,21 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          host: "#{env['proxy']['backend_vip_address']}"
+          #host: "#{env['proxy']['backend_vip_address']}"
+
+          #
+          # Explcitely use first node of HAProxy cluster due
+          # to ARP issues in lab that cause VIP to be unreachable
+          #
+          hosts: nodes[os-backend-proxy][0][ipaddress]
         mq:
-          host: "#{env['proxy']['backend_vip_address']}"
+          #host: "#{env['proxy']['backend_vip_address']}"
+
+          #
+          # Explcitely use first node of HAProxy cluster due
+          # to ARP issues in lab that cause VIP to be unreachable
+          #
+          hosts: nodes[os-backend-proxy][0][ipaddress]
       network:
         l3:
           is_clustered: true
