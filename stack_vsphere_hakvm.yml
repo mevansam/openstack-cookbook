@@ -143,6 +143,7 @@ stack:
   depends_on:
   - os-backend-proxy-cluster
   - os-frontend-proxy-cluster
+  - os-storage
   targets:
   - os-services
   attributes:
@@ -168,6 +169,8 @@ stack:
           host: "#{env['proxy']['backend_vip_address']}"
         mq:
           host: "#{env['proxy']['backend_vip_address']}"
+      image:
+        filesystem_store_datadir: /var/data/glance/images
       block-storage:
         volume:
           iscsi_ip_address: 192.168.0.1
@@ -189,7 +192,7 @@ stack:
 ################################################################################
 
 ################################################################################
-# OpenStack Block Storage
+# OpenStack Storage Node (glance images and cinder volumes)
 - node: os-storage
   scale: 1
   depends_on:
@@ -232,8 +235,8 @@ stack:
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
   run_list:
   - recipe[ntp]
-  - recipe[sysutils]
   - recipe[network]
+  - recipe[sysutils]
   - role[os-block-storage-volume]
   - recipe[openstack-services::monkey-patch]
 ################################################################################

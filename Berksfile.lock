@@ -16,6 +16,7 @@ DEPENDENCIES
   java (~> 1.29.0)
   keepalived (~> 1.2.0)
   kibana_lwrp (~> 2.0.0)
+  line (~> 0.6.1)
   logstash (~> 0.11.2)
   memcached (>= 1.7.2)
   monit (~> 0.7.5)
@@ -92,7 +93,7 @@ DEPENDENCIES
   sudo (~> 2.6.0)
   sysutils
     git: https://github.com/mevansam/chef-cookbook-sysutils.git
-    revision: 2323d3cce71d9e861285336d7b8b0dcfb05bfb38
+    revision: db4de64141c95e4c4a023d8b8209ab09c400c0f3
   xfs (~> 1.1.0)
   yum (~> 3.2.2)
   yum-epel (~> 0.4.0)
@@ -317,6 +318,7 @@ GRAPH
     cron (>= 1.2.0)
     hostsfile (~> 2.4.5)
     modules (>= 0.1.2)
+    nfs (>= 2.1.0)
     sudo (= 2.6.0)
     yum (= 3.2.2)
   windows (1.36.6)
