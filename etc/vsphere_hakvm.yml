@@ -48,7 +48,7 @@ messaging:
 # Load balancing proxy
 proxy:
 
-  backend_fqdn: osops.pcf-services.com
+  backend_fqdn: &backend_fqdn osops.pcf-services.com
   backend_vip_address: &backend_vip_address 10.103.43.25
   backend_vip_cidr_netmask: 23
   backend_vip_nic: eth1
@@ -66,7 +66,7 @@ proxy:
       port: *ampq_mgmt_port
       profile: ssl
 
-  frontend_fqdn: os.pcf-services.com
+  frontend_fqdn: &frontend_fqdn os.pcf-services.com
   frontend_vip_address: &frontend_vip_address 10.103.43.24
   frontend_vip_cidr_netmask: 23
   frontend_vip_nic: eth1
@@ -192,17 +192,17 @@ logs:
       port: 51400
   loggers:
     horizon:
-      level: DEBUG
+      level: INFO
     keystone:
-      level: DEBUG
+      level: INFO
     glance:
-      level: DEBUG
+      level: INFO
     cinder:
-      level: DEBUG
+      level: INFO
     neutron:
-      level: DEBUG
+      level: INFO
     nova:
-      level: DEBUG
+      level: INFO
 
 vsphere:
 

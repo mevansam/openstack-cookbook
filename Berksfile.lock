@@ -17,6 +17,7 @@ DEPENDENCIES
   keepalived (~> 1.2.0)
   kibana_lwrp (~> 2.0.0)
   logstash (~> 0.11.2)
+  memcached (>= 1.7.2)
   monit (~> 0.7.5)
   network
     git: https://github.com/mevansam/chef-cookbook-network.git
@@ -69,7 +70,7 @@ DEPENDENCIES
     branch: stable/icehouse
   openstack-services
     git: https://github.com/mevansam/chef-cookbook-openstack-services.git
-    revision: c8531590616568b1ea2370a2d41492ffd9d16d81
+    revision: 0b572d31030190ba81bd02d76b85cd8b9b62c101
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e
@@ -79,7 +80,7 @@ DEPENDENCIES
     revision: 12dc7f2aab3f39a4a9aa1686f52cfa2a1c08ca41
   rabbitmq
     git: https://github.com/jjasghar/rabbitmq.git
-    revision: 0c07eb813f85242f5bcfc46067c433518f2821e2
+    revision: 32776556509e58f3eeae78aa81f7368d5033daf2
   selinux (~> 0.8.0)
   statsd
     git: https://github.com/att-cloud/cookbook-statsd
@@ -151,7 +152,7 @@ GRAPH
     yum-epel (>= 0.0.0)
     yum-erlang_solutions (>= 0.0.0)
   firewall (0.11.8)
-  git (4.2.1)
+  git (4.2.2)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
     windows (>= 0.0.0)
@@ -294,8 +295,8 @@ GRAPH
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  rabbitmq (3.12.0)
-    erlang (>= 0.9.0)
+  rabbitmq (4.0.0)
+    erlang (~> 1.5.0)
     yum-epel (>= 0.0.0)
     yum-erlang_solutions (>= 0.0.0)
   runit (1.6.0)

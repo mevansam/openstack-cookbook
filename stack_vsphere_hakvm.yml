@@ -130,7 +130,7 @@ stack:
 ################################################################################
 # OpenStack Services
 - node: os-services
-  scale: 1
+  scale: 2
   attributes:
     cluster_name: services
   knife:
@@ -155,6 +155,8 @@ stack:
         syslog_endpoint:
           protocol: udp
           hosts: nodes[os-logging][*][ipaddress]
+      memcached:
+        cluster_name: services
       endpoints:
         db:
           host: "#{env['proxy']['backend_vip_address']}"
@@ -168,6 +170,14 @@ stack:
   - recipe[network]
   - role[os-services]
   - recipe[openstack-services::monkey-patch]
+  # Service registration recipes
+  - recipe[openstack-common::client]
+  - recipe[openstack-common::openrc]
+  - recipe[openstack-identity::registration]
+  - recipe[openstack-image::identity_registration]
+  - recipe[openstack-block-storage::identity_registration]
+  - recipe[openstack-compute::identity_registration]
+  - recipe[openstack-network::identity_registration]
 ################################################################################
 
 ################################################################################
@@ -289,27 +299,4 @@ stack:
   - recipe[ntp]
   - recipe[network]
   - role[os-ha-proxy]
-################################################################################
-
-################################################################################
-# OpenStack Configuration Jumpbox
-- node: os-jumpbox
-  scale: 1
-  depends_on:
-  - os-services-cluster
-  knife:
-    options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-  run_list:
-  - recipe[ntp]
-  - recipe[network]
-  - recipe[openstack-services::ha-os-common]
-  - recipe[openstack-common::client]
-  - recipe[openstack-common::openrc]
-  - recipe[openstack-identity::registration]
-  - recipe[openstack-image::identity_registration]
-  - recipe[openstack-block-storage::identity_registration]
-  - recipe[openstack-compute::identity_registration]
-  - recipe[openstack-network::identity_registration]
 ################################################################################

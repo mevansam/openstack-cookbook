@@ -192,6 +192,9 @@ default_attributes(
                 }
             }
         },
+        'auth' => {
+            'strategy' => 'uuid'
+        },
         'identity' => {
             'verbose' => env['logs']['loggers']['keystone']['level']=='DEBUG' ? 'True' : 'False',
             'debug' => env['logs']['loggers']['keystone']['level']=='DEBUG' ? 'True' : 'False',

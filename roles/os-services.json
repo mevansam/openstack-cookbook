@@ -8,6 +8,9 @@
                 [ "www-data", "/var/lib/www", null, false ]
             ]
         },
+        "memcached": {
+            "memory": "128"
+        },
         "openstack": {
             "endpoints": {
                 "image-registry-bind": {
@@ -61,7 +64,9 @@
     "chef_type": "role",
     "run_list": [
         "recipe[sysutils::default]",
+        "recipe[memcached]",
         "recipe[openstack-services::ha-os-common]",
+        "recipe[openstack-services::ha-os-cache]",
         "recipe[openstack-common::default]",
         "recipe[openstack-common::logging]",
         "recipe[openstack-common::set_endpoints_by_interface]",
