@@ -95,24 +95,12 @@ stack:
 ################################################################################
 
 ################################################################################
-# Back-end HAproxy
+# Unclustered back-end HAproxy, as environment cannot handle VIP failover
 - node: os-backend-proxy
-  scale: 2
-  attributes:
-    cluster_name: backend-proxy
-    pacemaker_mcast_address: 239.255.42.1
-    pacemaker_mcast_port: 5405
-  knife:
-    options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-
-- node: os-backend-proxy-cluster
+  scale: 1
   depends_on:
   - os-database-cluster
   - os-messaging-cluster
-  targets:
-  - os-backend-proxy
   attributes:
     haproxy:
       fqdn: "#{env['proxy']['backend_fqdn']}"
@@ -121,6 +109,10 @@ stack:
       virtual_ip_nic: "#{env['proxy']['backend_vip_nic']}"
       is_clustered: true
       server_pools: <<+env[proxy][backend_server_pools]
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
   run_list:
   - recipe[ntp]
   - recipe[network]
@@ -141,8 +133,8 @@ stack:
 - node: os-services-cluster
   sync: first
   depends_on:
-  - os-backend-proxy-cluster
-  - os-frontend-proxy-cluster
+  - os-backend-proxy
+  - os-frontend-proxy
   - os-storage
   targets:
   - os-services
@@ -157,12 +149,6 @@ stack:
         host: 192.168.0.1
         path: /exports/glance/images
         options: rw
-      cron_jobs:
-        # Delete VIP cache to get around unreacheable VIP issues
-        delete_vip_cache:
-          command: "arp -d #{env['proxy']['backend_vip_address']} && arp -d #{env['proxy']['frontend_vip_address']}"
-          minute: 1
-          user: root
     openstack:
       logging:
         syslog_endpoint:
@@ -202,7 +188,7 @@ stack:
 - node: os-storage
   scale: 1
   depends_on:
-  - os-backend-proxy-cluster
+  - os-backend-proxy
   attributes:
     env:
       network_interfaces:
@@ -215,12 +201,6 @@ stack:
         sync: true
         options:
         - no_root_squash
-      cron_jobs:
-        # Delete VIP cache to get around unreacheable VIP issues
-        delete_vip_cache:
-          command: "arp -d #{env['proxy']['backend_vip_address']} && arp -d #{env['proxy']['frontend_vip_address']}"
-          minute: 1
-          user: root
     openstack:
       logging:
         syslog_endpoint:
@@ -257,6 +237,7 @@ stack:
 # Compute Nodes
 - node: os-compute
   scale: 2
+  max_scale: 4
   attributes:
     # Cluster every 2 instances. i.e. instance 0 and 1
     # will be put into a cluster named 'network-node-0'
@@ -281,12 +262,6 @@ stack:
       - device: eth1
       - device: eth2
         target: <<!'192.168.0.'+(#{index}+20).to_s
-      cron_jobs:
-        # Delete VIP cache to get around unreacheable VIP issues
-        delete_vip_cache:
-          command: "arp -d #{env['proxy']['backend_vip_address']} && arp -d #{env['proxy']['frontend_vip_address']}"
-          minute: 1
-          user: root
     openstack:
       logging:
         syslog_endpoint:
@@ -310,23 +285,11 @@ stack:
 ################################################################################
 
 ################################################################################
-# Front-end HAproxy
+# Unclustered front-end HAproxy, as environment cannot handle VIP failover
 - node: os-frontend-proxy
-  scale: 2
-  attributes:
-    cluster_name: frontend-proxy
-    pacemaker_mcast_address: 239.255.42.2
-    pacemaker_mcast_port: 5405
-  knife:
-    options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-
-- node: os-frontend-proxy-cluster
+  scale: 1
   depends_on:
   - os-services
-  targets:
-  - os-frontend-proxy
   attributes:
     haproxy:
       fqdn: "#{env['proxy']['frontend_fqdn']}"
@@ -335,6 +298,10 @@ stack:
       virtual_ip_nic: "#{env['proxy']['frontend_vip_nic']}"
       is_clustered: true
       server_pools: <<+env[proxy][frontend_server_pools]
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
   run_list:
   - recipe[ntp]
   - recipe[network]
