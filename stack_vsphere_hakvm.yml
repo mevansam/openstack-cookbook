@@ -157,6 +157,12 @@ stack:
         host: 192.168.0.1
         path: /exports/glance/images
         options: rw
+      cron_jobs:
+        # Delete VIP cache to get around unreacheable VIP issues
+        delete_vip_cache:
+          command: "arp -d #{env['proxy']['backend_vip_address']} && arp -d #{env['proxy']['frontend_vip_address']}"
+          minute: 1
+          user: root
     openstack:
       logging:
         syslog_endpoint:
@@ -166,21 +172,9 @@ stack:
         cluster_name: services
       endpoints:
         db:
-          #host: "#{env['proxy']['backend_vip_address']}"
-
-          #
-          # Explcitely use first node of HAProxy cluster due
-          # to ARP issues in lab that cause VIP to be unreachable
-          #
-          hosts: nodes[os-backend-proxy][0][ipaddress]
+          host: "#{env['proxy']['backend_vip_address']}"
         mq:
-          #host: "#{env['proxy']['backend_vip_address']}"
-
-          #
-          # Explcitely use first node of HAProxy cluster due
-          # to ARP issues in lab that cause VIP to be unreachable
-          #
-          hosts: nodes[os-backend-proxy][0][ipaddress]
+          host: "#{env['proxy']['backend_vip_address']}"
       image:
         filesystem_store_datadir: /var/data/glance/images
       block-storage:
@@ -221,6 +215,12 @@ stack:
         sync: true
         options:
         - no_root_squash
+      cron_jobs:
+        # Delete VIP cache to get around unreacheable VIP issues
+        delete_vip_cache:
+          command: "arp -d #{env['proxy']['backend_vip_address']} && arp -d #{env['proxy']['frontend_vip_address']}"
+          minute: 1
+          user: root
     openstack:
       logging:
         syslog_endpoint:
@@ -228,21 +228,9 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          #host: "#{env['proxy']['backend_vip_address']}"
-
-          #
-          # Explcitely use first node of HAProxy cluster due
-          # to ARP issues in lab that cause VIP to be unreachable
-          #
-          hosts: nodes[os-backend-proxy][0][ipaddress]
+          host: "#{env['proxy']['backend_vip_address']}"
         mq:
-          #host: "#{env['proxy']['backend_vip_address']}"
-
-          #
-          # Explcitely use first node of HAProxy cluster due
-          # to ARP issues in lab that cause VIP to be unreachable
-          #
-          hosts: nodes[os-backend-proxy][0][ipaddress]
+          host: "#{env['proxy']['backend_vip_address']}"
       block-storage:
         volume:
           iscsi_ip_address: 192.168.0.1
@@ -293,6 +281,12 @@ stack:
       - device: eth1
       - device: eth2
         target: <<!'192.168.0.'+(#{index}+20).to_s
+      cron_jobs:
+        # Delete VIP cache to get around unreacheable VIP issues
+        delete_vip_cache:
+          command: "arp -d #{env['proxy']['backend_vip_address']} && arp -d #{env['proxy']['frontend_vip_address']}"
+          minute: 1
+          user: root
     openstack:
       logging:
         syslog_endpoint:
@@ -300,21 +294,9 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          #host: "#{env['proxy']['backend_vip_address']}"
-
-          #
-          # Explcitely use first node of HAProxy cluster due
-          # to ARP issues in lab that cause VIP to be unreachable
-          #
-          hosts: nodes[os-backend-proxy][0][ipaddress]
+          host: "#{env['proxy']['backend_vip_address']}"
         mq:
-          #host: "#{env['proxy']['backend_vip_address']}"
-
-          #
-          # Explcitely use first node of HAProxy cluster due
-          # to ARP issues in lab that cause VIP to be unreachable
-          #
-          hosts: nodes[os-backend-proxy][0][ipaddress]
+          host: "#{env['proxy']['backend_vip_address']}"
       network:
         l3:
           is_clustered: true
