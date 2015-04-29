@@ -150,6 +150,12 @@ stack:
       network_interfaces:
       - device: eth2
         target: <<!'192.168.0.'+(#{index}+10).to_s
+      imports:
+      - mount_path: /var/data/glance/images
+        owner: glance
+        host: 192.168.0.1
+        path: /exports/glance/images
+        options: rw
     openstack:
       logging:
         syslog_endpoint:
@@ -178,6 +184,8 @@ stack:
   - recipe[openstack-block-storage::identity_registration]
   - recipe[openstack-compute::identity_registration]
   - recipe[openstack-network::identity_registration]
+  run_on_event:
+    configure: <<+[./common/patches.yml][patch_neutron_nova_ssl_notification]
 ################################################################################
 
 ################################################################################
@@ -185,12 +193,19 @@ stack:
 - node: os-storage
   scale: 1
   depends_on:
-  - os-services-cluster
+  - os-backend-proxy-cluster
   attributes:
     env:
       network_interfaces:
       - device: eth2
         target: 192.168.0.1
+      exports:
+      - path: /exports/glance/images
+        network: 192.168.0.0/24
+        writeable: true
+        sync: true
+        options:
+        - no_root_squash
     openstack:
       logging:
         syslog_endpoint:
@@ -217,6 +232,7 @@ stack:
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
   run_list:
   - recipe[ntp]
+  - recipe[sysutils]
   - recipe[network]
   - role[os-block-storage-volume]
   - recipe[openstack-services::monkey-patch]
@@ -267,6 +283,9 @@ stack:
   - recipe[ntp]
   - recipe[network]
   - role[os-ha-compute-kvm]
+  - role[os-ha-network-kvm]
+  run_on_event:
+    configure: <<+[./common/patches.yml][patch_nova_compute_libvirt_permissions]
 ################################################################################
 
 ################################################################################

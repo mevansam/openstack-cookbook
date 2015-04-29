@@ -22,6 +22,7 @@ DEPENDENCIES
   network
     git: https://github.com/mevansam/chef-cookbook-network.git
     revision: 66aac7b35d9ab84d3febff24539f7c48c3b63992
+  nfs (>= 2.1.0)
   ntp (~> 1.6.5)
   ohai (~> 2.0.1)
   openstack-block-storage
@@ -174,6 +175,7 @@ GRAPH
     poise (>= 0.0.0)
     runit (>= 0.0.0)
   libarchive (0.3.0)
+  line (0.6.1)
   logrotate (1.9.1)
   logstash (0.11.4)
     ant (>= 0.0.0)
@@ -205,6 +207,8 @@ GRAPH
     sysutils (>= 0.0.0)
   network_interfaces (1.0.0)
     modules (>= 0.1.2)
+  nfs (2.1.0)
+    line (>= 0.0.0)
   nginx (1.8.0)
     apt (>= 0.0.0)
     build-essential (>= 0.0.0)

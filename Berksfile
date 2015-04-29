@@ -21,6 +21,7 @@ cookbook 'logstash',         '~> 0.11.2'
 cookbook 'monit',            '~> 0.7.5'
 cookbook 'cron',             '>= 1.2.0'
 cookbook 'memcached',        '>= 1.7.2'
+cookbook 'nfs',              '>= 2.1.0'
 
 cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
 cookbook 'rabbitmq', git: 'https://github.com/jjasghar/rabbitmq.git'

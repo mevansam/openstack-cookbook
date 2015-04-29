@@ -192,17 +192,17 @@ logs:
       port: 51400
   loggers:
     horizon:
-      level: INFO
+      level: DEBUG
     keystone:
-      level: INFO
+      level: DEBUG
     glance:
-      level: INFO
+      level: DEBUG
     cinder:
-      level: INFO
+      level: DEBUG
     neutron:
-      level: INFO
+      level: DEBUG
     nova:
-      level: INFO
+      level: DEBUG
 
 vsphere:
 

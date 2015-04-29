@@ -5,7 +5,8 @@
     "default_attributes": { 
         "env": {
             "users": [ 
-                [ "www-data", "/var/lib/www", null, false ]
+                [ "www-data", "/var/lib/www", null, false ],
+                [ "glance", "/var/lib/glance", null, true ]
             ]
         },
         "memcached": {
