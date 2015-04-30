@@ -57,6 +57,7 @@
                     "balance": "roundrobin",
                     "params": [
                         "option tcplog",
+                        "option clitcpka",
                         "option tcpka",
                         "option mysql-check user haproxy",
                         "timeout client 12h",
@@ -75,6 +76,7 @@
                     "balance": "roundrobin",
                     "params": [
                         "option tcplog",
+                        "option clitcpka",
                         "option tcpka",
                         "option tcp-check",
                         "timeout client 12h",
