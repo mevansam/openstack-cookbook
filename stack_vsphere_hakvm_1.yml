@@ -99,9 +99,10 @@ stack:
 - node: os-backend-proxy
   scale: 1
   depends_on:
-  - os-database-cluster
-  - os-messaging-cluster
+  - os-database
+  - os-messaging
   attributes:
+    cluster_name: backend-proxy
     env:
       alias: "#{env['proxy']['backend_fqdn']}"
     haproxy:
@@ -116,188 +117,189 @@ stack:
   - role[os-ha-proxy]
 ################################################################################
 
-# ################################################################################
-# # OpenStack Services
-# - node: os-services
-#   scale: 2
-#   attributes:
-#     cluster_name: services
-#   knife:
-#     options: *vsphere_options
-#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
-#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+################################################################################
+# OpenStack Services
+- node: os-services
+  scale: 2
+  attributes:
+    cluster_name: services
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
 
-# - node: os-services-cluster
-#   sync: first
-#   depends_on:
-#   - os-backend-proxy
-#   - os-frontend-proxy
-#   - os-storage
-#   targets:
-#   - os-services
-#   attributes:
-#     env:
-#       network_interfaces:
-#       - device: eth2
-#         target: <<!'192.168.0.'+(#{index}+10).to_s
-#       imports:
-#       - mount_path: /var/data/glance/images
-#         owner: glance
-#         host: 192.168.0.1
-#         path: /exports/glance/images
-#         options: rw
-#     openstack:
-#       logging:
-#         syslog_endpoint:
-#           protocol: udp
-#           hosts: nodes[os-logging][*][ipaddress]
-#       memcached:
-#         cluster_name: services
-#       endpoints:
-#         db:
-#           host: nodes[os-backend-proxy][0][ipaddress]
-#         mq:
-#           host: nodes[os-backend-proxy][0][ipaddress]
-#       image:
-#         filesystem_store_datadir: /var/data/glance/images
-#       block-storage:
-#         volume:
-#           iscsi_ip_address: 192.168.0.1
-#   run_list:
-#   - recipe[ntp]
-#   - recipe[network]
-#   - role[os-services]
-#   - recipe[openstack-services::monkey-patch]
-#   # Service registration recipes
-#   - recipe[openstack-common::client]
-#   - recipe[openstack-common::openrc]
-#   - recipe[openstack-identity::registration]
-#   - recipe[openstack-image::identity_registration]
-#   - recipe[openstack-block-storage::identity_registration]
-#   - recipe[openstack-compute::identity_registration]
-#   - recipe[openstack-network::identity_registration]
-#   run_on_event:
-#     configure: <<+[./common/patches.yml][patch_neutron_nova_ssl_notification]
-# ################################################################################
+- node: os-services-cluster
+  sync: first
+  depends_on:
+  - os-backend-proxy
+  - os-frontend-proxy
+  - os-storage
+  targets:
+  - os-services
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth2
+        target: <<!'192.168.0.'+(#{index}+10).to_s
+      imports:
+      - mount_path: /var/data/glance/images
+        owner: glance
+        host: 192.168.0.1
+        path: /exports/glance/images
+        options: rw
+    openstack:
+      logging:
+        syslog_endpoint:
+          protocol: udp
+          hosts: nodes[os-logging][*][ipaddress]
+      memcached:
+        cluster_name: services
+      endpoints:
+        db:
+          host: nodes[os-backend-proxy][0][ipaddress]
+        mq:
+          host: nodes[os-backend-proxy][0][ipaddress]
+      image:
+        filesystem_store_datadir: /var/data/glance/images
+      block-storage:
+        volume:
+          iscsi_ip_address: 192.168.0.1
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-services]
+  - recipe[openstack-services::monkey-patch]
+  # Service registration recipes
+  - recipe[openstack-common::client]
+  - recipe[openstack-common::openrc]
+  - recipe[openstack-identity::registration]
+  - recipe[openstack-image::identity_registration]
+  - recipe[openstack-block-storage::identity_registration]
+  - recipe[openstack-compute::identity_registration]
+  - recipe[openstack-network::identity_registration]
+  run_on_event:
+    configure: <<+[./common/patches.yml][patch_neutron_nova_ssl_notification]
+################################################################################
 
-# ################################################################################
-# # OpenStack Storage Node (glance images and cinder volumes)
-# - node: os-storage
-#   scale: 1
-#   depends_on:
-#   - os-backend-proxy
-#   attributes:
-#     env:
-#       network_interfaces:
-#       - device: eth2
-#         target: 192.168.0.1
-#       exports:
-#       - path: /exports/glance/images
-#         network: 192.168.0.0/24
-#         writeable: true
-#         sync: true
-#         options:
-#         - no_root_squash
-#     openstack:
-#       logging:
-#         syslog_endpoint:
-#           protocol: udp
-#           hosts: nodes[os-logging][*][ipaddress]
-#       endpoints:
-#         db:
-#           host: nodes[os-backend-proxy][0][ipaddress]
-#         mq:
-#           host: nodes[os-backend-proxy][0][ipaddress]
-#       block-storage:
-#         volume:
-#           iscsi_ip_address: 192.168.0.1
-#           create_volume_group: true
-#           create_volume_group_type: block_devices
-#           block_devices: /dev/sdb
-#   knife:
-#     options: *vsphere_options
-#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-#     post_create:
-#     - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk1TB]
-#     - <<+[./common/vsphere.yml][vsphere][instance][shutdown]
-#     - <<+[./common/vsphere.yml][vsphere][instance][start]
-#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-#   run_list:
-#   - recipe[ntp]
-#   - recipe[network]
-#   - recipe[sysutils]
-#   - role[os-block-storage-volume]
-#   - recipe[openstack-services::monkey-patch]
-# ################################################################################
+################################################################################
+# OpenStack Storage Node (glance images and cinder volumes)
+- node: os-storage
+  scale: 1
+  depends_on:
+  - os-backend-proxy
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth2
+        target: 192.168.0.1
+      exports:
+      - path: /exports/glance/images
+        network: 192.168.0.0/24
+        writeable: true
+        sync: true
+        options:
+        - no_root_squash
+    openstack:
+      logging:
+        syslog_endpoint:
+          protocol: udp
+          hosts: nodes[os-logging][*][ipaddress]
+      endpoints:
+        db:
+          host: nodes[os-backend-proxy][0][ipaddress]
+        mq:
+          host: nodes[os-backend-proxy][0][ipaddress]
+      block-storage:
+        volume:
+          iscsi_ip_address: 192.168.0.1
+          create_volume_group: true
+          create_volume_group_type: block_devices
+          block_devices: /dev/sdb
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    post_create:
+    - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk1TB]
+    - <<+[./common/vsphere.yml][vsphere][instance][shutdown]
+    - <<+[./common/vsphere.yml][vsphere][instance][start]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - recipe[sysutils]
+  - role[os-block-storage-volume]
+  - recipe[openstack-services::monkey-patch]
+################################################################################
 
-# ################################################################################
-# # Compute Nodes
-# - node: os-compute
-#   scale: 2
-#   max_scale: 4
-#   attributes:
-#     # Cluster every 2 instances. i.e. instance 0 and 1
-#     # will be put into a cluster named 'network-node-0'
-#     # and 2 and 3 into a cluster named 'network-node-1'
-#     # and so on.
-#     cluster_name: <<!'network-node-'+(#{index}/2).to_s
-#     pacemaker_mcast_address: 239.255.42.3
-#     pacemaker_mcast_port: 5405
-#   knife:
-#     options: *vsphere_options
-#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][kvm1224]
-#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+################################################################################
+# Compute Nodes
+- node: os-compute
+  scale: 2
+  max_scale: 4
+  attributes:
+    # Cluster every 2 instances. i.e. instance 0 and 1
+    # will be put into a cluster named 'network-node-0'
+    # and 2 and 3 into a cluster named 'network-node-1'
+    # and so on.
+    cluster_name: <<!'network-node-'+(#{index}/2).to_s
+    pacemaker_mcast_address: 239.255.42.3
+    pacemaker_mcast_port: 5405
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][kvm1224]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
 
-# - node: os-compute-cluster
-#   depends_on:
-#   - os-services-cluster
-#   targets:
-#   - os-compute
-#   attributes:
-#     env:
-#       network_interfaces:
-#       - device: eth1
-#       - device: eth2
-#         target: <<!'192.168.0.'+(#{index}+20).to_s
-#     openstack:
-#       logging:
-#         syslog_endpoint:
-#           protocol: udp
-#           hosts: nodes[os-logging][*][ipaddress]
-#       endpoints:
-#         db:
-#           host: nodes[os-backend-proxy][0][ipaddress]
-#         mq:
-#           host: nodes[os-backend-proxy][0][ipaddress]
-#       network:
-#         l3:
-#           is_clustered: true
-#   run_list:
-#   - recipe[ntp]
-#   - recipe[network]
-#   - role[os-ha-compute-kvm]
-#   - role[os-ha-network-kvm]
-#   run_on_event:
-#     configure: <<+[./common/patches.yml][patch_nova_compute_libvirt_permissions]
-# ################################################################################
+- node: os-compute-cluster
+  depends_on:
+  - os-services-cluster
+  targets:
+  - os-compute
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth1
+      - device: eth2
+        target: <<!'192.168.0.'+(#{index}+20).to_s
+    openstack:
+      logging:
+        syslog_endpoint:
+          protocol: udp
+          hosts: nodes[os-logging][*][ipaddress]
+      endpoints:
+        db:
+          host: nodes[os-backend-proxy][0][ipaddress]
+        mq:
+          host: nodes[os-backend-proxy][0][ipaddress]
+      network:
+        l3:
+          is_clustered: true
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-compute-kvm]
+  - role[os-ha-network-kvm]
+  run_on_event:
+    configure: <<+[./common/patches.yml][patch_nova_compute_libvirt_permissions]
+################################################################################
 
-# ################################################################################
-# # Unclustered front-end HAproxy, as environment cannot handle VIP failover
-# - node: os-frontend-proxy
-#   scale: 1
-#   depends_on:
-#   - os-services
-#   attributes:
-#     env:
-#       alias: "#{env['proxy']['frontend_fqdn']}"
-#     haproxy:
-#       server_pools: <<+env[proxy][frontend_server_pools]
-#   knife:
-#     options: *vsphere_options
-#     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-#     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-#   run_list:
-#   - recipe[ntp]
-#   - recipe[network]
-#   - role[os-ha-proxy]
-# ################################################################################
+################################################################################
+# Unclustered front-end HAproxy, as environment cannot handle VIP failover
+- node: os-frontend-proxy
+  scale: 1
+  depends_on:
+  - os-services
+  attributes:
+    cluster_name: frontend-proxy
+    env:
+      alias: "#{env['proxy']['frontend_fqdn']}"
+    haproxy:
+      server_pools: <<+env[proxy][frontend_server_pools]
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - role[os-ha-proxy]
+################################################################################
