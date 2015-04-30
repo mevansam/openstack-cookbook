@@ -99,15 +99,12 @@ stack:
 - node: os-backend-proxy
   scale: 1
   depends_on:
-  - os-database-cluster
-  - os-messaging-cluster
+  - os-database
+  - os-messaging
   attributes:
+    env:
+      alias: "#{env['proxy']['backend_fqdn']}"
     haproxy:
-      fqdn: "#{env['proxy']['backend_fqdn']}"
-      virtual_ip_address: "#{env['proxy']['backend_vip_address']}"
-      virtual_ip_cidr_netmask: "#{env['proxy']['backend_vip_cidr_netmask']}"
-      virtual_ip_nic: "#{env['proxy']['backend_vip_nic']}"
-      is_clustered: true
       server_pools: <<+env[proxy][backend_server_pools]
   knife:
     options: *vsphere_options
@@ -291,12 +288,9 @@ stack:
   depends_on:
   - os-services
   attributes:
+    env:
+      alias: "#{env['proxy']['frontend_fqdn']}"
     haproxy:
-      fqdn: "#{env['proxy']['frontend_fqdn']}"
-      virtual_ip_address: "#{env['proxy']['frontend_vip_address']}"
-      virtual_ip_cidr_netmask: "#{env['proxy']['frontend_vip_cidr_netmask']}"
-      virtual_ip_nic: "#{env['proxy']['frontend_vip_nic']}"
-      is_clustered: true
       server_pools: <<+env[proxy][frontend_server_pools]
   knife:
     options: *vsphere_options
