@@ -4,7 +4,7 @@ DEPENDENCIES
   chef-client (~> 4.0.0)
   cluster
     git: https://github.com/mevansam/chef-cookbook-cluster.git
-    revision: 83f571278129bad0a1ab1bd1aed366992e8a74ac
+    revision: 32537cca89b5bb77a65bf43fe6a4839d015472a7
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
