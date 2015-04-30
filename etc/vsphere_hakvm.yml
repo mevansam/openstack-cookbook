@@ -127,9 +127,9 @@ openstack:
   endpoints:
 
     # Proxy end-point for OpenStack app services
-    openstack_app_proxy: *frontend_vip_address
+    openstack_app_proxy: *frontend_fqdn
     # Proxy end-point for OpenStack ops services
-    openstack_ops_proxy: *backend_vip_address
+    openstack_ops_proxy: *backend_fqdn
 
     # Use SSL for all end-points
     use_ssl: true
