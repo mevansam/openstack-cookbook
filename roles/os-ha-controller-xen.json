@@ -8,6 +8,11 @@
                 "debian": [ "python-pip" ],
                 "pip": [ "xenapi" ]
             },
+            "sysctl_add": [
+                [ "net.ipv4.tcp_keepalive_time", "5" ],
+                [ "net.ipv4.tcp_keepalive_probes", "5" ],
+                [ "net.ipv4.tcp_keepalive_intvl", "1" ]
+            ],
             "users": [ 
                 [ "nova", "/var/lib/neutron", null, true ],
                 [ "neutron", "/var/lib/neutron", null, true ]

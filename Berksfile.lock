@@ -36,7 +36,7 @@ DEPENDENCIES
     branch: stable/icehouse
   openstack-compute
     git: https://github.com/mevansam/chef-cookbook-openstack-compute.git
-    revision: 142f5f5f546bcb367bfbfc40496650aeff39571d
+    revision: 0e82fe0bcb8eb3c42fdb76b3f1c4c5335763197d
     branch: stable/icehouse
   openstack-dashboard
     git: https://github.com/mevansam/chef-cookbook-openstack-dashboard
@@ -52,7 +52,7 @@ DEPENDENCIES
     branch: stable/icehouse
   openstack-network
     git: https://github.com/mevansam/chef-cookbook-openstack-network.git
-    revision: abceb8a3a55e6193a0a45e831c651f376b116dca
+    revision: 35b68de78351d00f836d974d792fd3cbecf1cc38
     branch: stable/icehouse
   openstack-object-storage
     git: https://github.com/stackforge/cookbook-openstack-object-storage

@@ -155,40 +155,49 @@ default_attributes(
         },
         'mq' => {
             'user' => env['messaging']['user'],
+            'server_role' => 'os-ha-messaging',
+            'durable_queues' => env['messaging']['ha'] ? true : false,
             'orchestration' => {
                 'rabbit' => {
-                    'vhost' => env['messaging']['services_path'],
-                    'use_ssl' => env['messaging']['use_ssl']
+                    'ha' => env['messaging']['ha'] ? true :false,
+                    'use_ssl' => env['messaging']['use_ssl'],
+                    'vhost' => env['messaging']['services_path']
                 }
             },
             'telemetry' => {
                 'rabbit' => {
-                    'vhost' => env['messaging']['services_path'],
-                    'use_ssl' => env['messaging']['use_ssl']
+                    'ha' => env['messaging']['ha'] ? true :false,
+                    'use_ssl' => env['messaging']['use_ssl'],
+                    'vhost' => env['messaging']['services_path']
                 }
             },
             'image' => {
+                'notifier_strategy' => 'rabbit',
                 'rabbit' => {
-                    'vhost' => env['messaging']['services_path'],
-                    'use_ssl' => env['messaging']['use_ssl']
+                    'ha' => env['messaging']['ha'] ? true :false,
+                    'use_ssl' => env['messaging']['use_ssl'],
+                    'vhost' => env['messaging']['services_path']
                 }
             },
             'block-storage' => {
                 'rabbit' => {
-                    'vhost' => env['messaging']['compute_path'],
-                    'use_ssl' => env['messaging']['use_ssl']
+                    'ha' => env['messaging']['ha'] ? true :false,
+                    'use_ssl' => env['messaging']['use_ssl'],
+                    'vhost' => env['messaging']['compute_path']
                 }
             },
             'compute' => {
                 'rabbit' => {
-                    'vhost' => env['messaging']['compute_path'],
-                    'use_ssl' => env['messaging']['use_ssl']
+                    'ha' => env['messaging']['ha'] ? true :false,
+                    'use_ssl' => env['messaging']['use_ssl'],
+                    'vhost' => env['messaging']['compute_path']
                 }
             },
             'network' => {
                 'rabbit' => {
-                    'vhost' => env['messaging']['compute_path'],
-                    'use_ssl' => env['messaging']['use_ssl']
+                    'ha' => env['messaging']['ha'] ? true :false,
+                    'use_ssl' => env['messaging']['use_ssl'],
+                    'vhost' => env['messaging']['compute_path']
                 }
             }
         },
@@ -204,8 +213,9 @@ default_attributes(
         },
         'image' => {
             'verbose' => env['logs']['loggers']['glance']['level']=='DEBUG' ? 'True' : 'False',
-            'debug' => env['logs']['loggers']['glance']['level']=='DEBUG' ? 'True' : 'False'
-        },
+            'debug' => env['logs']['loggers']['glance']['level']=='DEBUG' ? 'True' : 'False',
+            'notification_driver' => 'messaging'
+         },
         'block-storage' => {
             'verbose' => env['logs']['loggers']['cinder']['level']=='DEBUG' ? 'True' : 'False',
             'debug' => env['logs']['loggers']['cinder']['level']=='DEBUG' ? 'True' : 'False'

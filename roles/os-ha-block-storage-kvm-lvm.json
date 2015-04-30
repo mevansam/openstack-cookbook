@@ -3,6 +3,13 @@
     "description": "Highly available Cinder role for KVM using LVM",
     "json_class": "Chef::Role",
     "default_attributes": { 
+        "env": {
+            "sysctl_add": [
+                [ "net.ipv4.tcp_keepalive_time", "5" ],
+                [ "net.ipv4.tcp_keepalive_probes", "5" ],
+                [ "net.ipv4.tcp_keepalive_intvl", "1" ]
+            ]
+        }
     },
     "override_attributes": {
     },

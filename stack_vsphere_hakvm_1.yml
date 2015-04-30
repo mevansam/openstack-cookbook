@@ -159,6 +159,8 @@ stack:
           host: nodes[os-backend-proxy][0][ipaddress]
         mq:
           host: nodes[os-backend-proxy][0][ipaddress]
+      mq:
+        servers: nodes[os-messaging][*][ipaddress]
       image:
         filesystem_store_datadir: /var/data/glance/images
       block-storage:
@@ -207,8 +209,8 @@ stack:
       endpoints:
         db:
           host: nodes[os-backend-proxy][0][ipaddress]
-        mq:
-          host: nodes[os-backend-proxy][0][ipaddress]
+      mq:
+        servers: nodes[os-messaging][*][ipaddress]
       block-storage:
         volume:
           iscsi_ip_address: 192.168.0.1
@@ -268,8 +270,8 @@ stack:
       endpoints:
         db:
           host: nodes[os-backend-proxy][0][ipaddress]
-        mq:
-          host: nodes[os-backend-proxy][0][ipaddress]
+      mq:
+        servers: nodes[os-messaging][*][ipaddress]
       network:
         l3:
           is_clustered: true
