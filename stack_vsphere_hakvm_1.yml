@@ -99,8 +99,8 @@ stack:
 - node: os-backend-proxy
   scale: 1
   depends_on:
-  - os-database
-  - os-messaging
+  - os-database-cluster
+  - os-messaging-cluster
   attributes:
     env:
       alias: "#{env['proxy']['backend_fqdn']}"
