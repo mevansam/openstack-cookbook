@@ -22,27 +22,36 @@ vsphere_options: &vsphere_options
 stack:
 
 ################################################################################
-# Logging Cluster
-- node: os-logging
-  scale: 1
+# HAproxy
+- node: os-proxy-loadbalancer
+  scale: 2
   attributes:
-    cluster_name: logging
+    cluster_name: proxy-loadbalancer
+    pacemaker_mcast_address: 239.255.42.2
+    pacemaker_mcast_port: 5405
   knife:
     options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
 
-- node: os-logging-cluster
+- node: os-proxy-loadbalancer-cluster
+  depends_on:
+  - os-database
+  - os-services
   targets:
-  - os-logging
+  - os-proxy-loadbalancer
   attributes:
-    elasticsearch:
-      discovery:
-        search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
+    haproxy:
+      fqdn: &proxylb "#{env['proxy']['fqdn']}"
+      virtual_ip_address: "#{env['proxy']['vip_address']}"
+      virtual_ip_cidr_netmask: "#{env['proxy']['vip_cidr_netmask']}"
+      virtual_ip_nic: "#{env['proxy']['vip_nic']}"
+      is_clustered: true
+      server_pools: <<+env[proxy][server_pools]
   run_list:
   - recipe[ntp]
   - recipe[network]
-  - role[os-ha-logging]
+  - role[os-ha-proxy]
 ################################################################################
 
 ################################################################################
@@ -58,13 +67,13 @@ stack:
 
 - node: os-database-cluster
   depends_on:
-  - os-backend-proxy
+  - os-proxy-loadbalancer
   targets:
   - os-database
   sync: all
   attributes:
     percona:
-      haproxy_cluster_name: backend-proxy
+      haproxy_cluster_name: proxy-loadbalancer
       cluster:
         wsrep_sst_receive_interface: eth0
   run_list:
@@ -95,29 +104,6 @@ stack:
 ################################################################################
 
 ################################################################################
-# Unclustered back-end HAproxy, as environment cannot handle VIP failover
-- node: os-backend-proxy
-  scale: 1
-  depends_on:
-  - os-database
-  #- os-messaging
-  attributes:
-    cluster_name: backend-proxy
-    env:
-      alias: "#{env['proxy']['backend_fqdn']}"
-    haproxy:
-      server_pools: <<+env[proxy][backend_server_pools]
-  knife:
-    options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
-    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
-  run_list:
-  - recipe[ntp]
-  - recipe[network]
-  - role[os-ha-proxy]
-################################################################################
-
-################################################################################
 # OpenStack Services
 - node: os-services
   scale: 2
@@ -131,11 +117,9 @@ stack:
 - node: os-services-cluster
   sync: first
   depends_on:
-  - os-backend-proxy
-  - os-frontend-proxy
+  - os-proxy-loadbalancer-cluster
   - os-database-cluster
   - os-messaging-cluster
-  - os-storage
   targets:
   - os-services
   attributes:
@@ -158,9 +142,9 @@ stack:
         cluster_name: services
       endpoints:
         db:
-          host: nodes[os-backend-proxy][0][ipaddress]
+          host: *proxylb
         #mq:
-        #  host: nodes[os-backend-proxy][0][ipaddress]
+        #  host: *proxylb
       mq:
         servers: nodes[os-messaging][*][ipaddress]
       image:
@@ -190,7 +174,9 @@ stack:
 - node: os-storage
   scale: 1
   depends_on:
-  - os-backend-proxy
+  - os-proxy-loadbalancer-cluster
+  - os-database-cluster
+  - os-messaging-cluster
   attributes:
     env:
       network_interfaces:
@@ -210,9 +196,9 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          host: nodes[os-backend-proxy][0][ipaddress]
+          host: *proxylb
         #mq:
-        #  host: nodes[os-backend-proxy][0][ipaddress]
+        #  host: *proxylb
       mq:
         servers: nodes[os-messaging][*][ipaddress]
       block-storage:
@@ -261,7 +247,9 @@ stack:
 
 - node: os-compute-cluster
   depends_on:
-  - os-services-cluster
+  - os-proxy-loadbalancer-cluster
+  - os-database-cluster
+  - os-messaging-cluster
   targets:
   - os-compute
   attributes:
@@ -277,9 +265,9 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
-          host: nodes[os-backend-proxy][0][ipaddress]
+          host: *proxylb
         #mq:
-        #  host: nodes[os-backend-proxy][0][ipaddress]
+        #  host: *proxylb
       mq:
         servers: nodes[os-messaging][*][ipaddress]
       network:
@@ -295,23 +283,25 @@ stack:
 ################################################################################
 
 ################################################################################
-# Unclustered front-end HAproxy, as environment cannot handle VIP failover
-- node: os-frontend-proxy
+# Logging Cluster
+- node: os-logging
   scale: 1
-  depends_on:
-  - os-services
   attributes:
-    cluster_name: frontend-proxy
-    env:
-      alias: "#{env['proxy']['frontend_fqdn']}"
-    haproxy:
-      server_pools: <<+env[proxy][frontend_server_pools]
+    cluster_name: logging
   knife:
     options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+
+- node: os-logging-cluster
+  targets:
+  - os-logging
+  attributes:
+    elasticsearch:
+      discovery:
+        search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
   run_list:
   - recipe[ntp]
   - recipe[network]
-  - role[os-ha-proxy]
+  - role[os-ha-logging]
 ################################################################################

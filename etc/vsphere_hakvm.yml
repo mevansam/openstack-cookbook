@@ -49,12 +49,15 @@ messaging:
 # Load balancing proxy
 proxy:
 
-  backend_fqdn: &backend_fqdn osops.pcf-services.com
-  backend_vip_address: &backend_vip_address 10.103.43.25
-  backend_vip_cidr_netmask: 23
-  backend_vip_nic: eth1
+  fqdn: &proxy_fqdn os.pcf-services.com
+  vip_address: &frontend_vip_address 10.103.43.25
+  vip_cidr_netmask: 23
+  vip_nic: eth1
 
-  backend_server_pools:
+  frontend_fqdn: *proxy_fqdn
+  backend_fqdn: *proxy_fqdn
+
+  server_pools:
     db:
       pool_cluster_name: database
       profile: mysql
@@ -62,56 +65,49 @@ proxy:
     #  pool_cluster_name: messaging
     #  port: *ampq_port
     #  profile: rabbitmq
-    #mq_admin:
-    #  pool_cluster_name: messaging
-    #  port: *ampq_mgmt_port
-    #  profile: ssl
-
-  frontend_fqdn: &frontend_fqdn os.pcf-services.com
-  frontend_vip_address: &frontend_vip_address 10.103.43.24
-  frontend_vip_cidr_netmask: 23
-  frontend_vip_nic: eth1
-
-  frontend_server_pools:
-   identity-api:
-     pool_cluster_name: services
-     profile: http
-     bind_ssl: app_proxy
-   identity-admin:
-     pool_cluster_name: services
-     profile: http
-     bind_ssl: app_proxy
-   image-api:
-     pool_cluster_name: services
-     profile: http
-     bind_ssl: app_proxy
-   block-storage-api:
-     pool_cluster_name: services
-     profile: http
-     bind_ssl: app_proxy
-   compute-api:
-     pool_cluster_name: services
-     profile: http
-     bind_ssl: app_proxy
-   compute-ec2-api:
-     pool_cluster_name: services
-     profile: http
-     bind_ssl: app_proxy
-   compute-novnc:
-     pool_cluster_name: services
-     profile: http
-   network-api:
-     pool_cluster_name: services
-     profile: http
-     bind_ssl: app_proxy
-   horizon_web:
-     pool_cluster_name: services
-     port: 80
-     profile: http
-   horizon_web_ssl:
-     pool_cluster_name: services
-     port: 443
-     profile: ssl
+    mq_admin:
+      pool_cluster_name: messaging
+      port: *ampq_mgmt_port
+      profile: ssl
+    identity-api:
+      pool_cluster_name: services
+      profile: http
+      bind_ssl: app_proxy
+    identity-admin:
+      pool_cluster_name: services
+      profile: http
+      bind_ssl: app_proxy
+    image-api:
+      pool_cluster_name: services
+      profile: http
+      bind_ssl: app_proxy
+    block-storage-api:
+      pool_cluster_name: services
+      profile: http
+      bind_ssl: app_proxy
+    compute-api:
+      pool_cluster_name: services
+      profile: http
+      bind_ssl: app_proxy
+    compute-ec2-api:
+      pool_cluster_name: services
+      profile: http
+      bind_ssl: app_proxy
+    compute-novnc:
+      pool_cluster_name: services
+      profile: http
+    network-api:
+      pool_cluster_name: services
+      profile: http
+      bind_ssl: app_proxy
+    horizon_web:
+      pool_cluster_name: services
+      port: 80
+      profile: http
+    horizon_web_ssl:
+      pool_cluster_name: services
+      port: 443
+      profile: ssl
 
 openstack:
   region: durham
@@ -128,9 +124,9 @@ openstack:
   endpoints:
 
     # Proxy end-point for OpenStack app services
-    openstack_app_proxy: *frontend_fqdn
+    openstack_app_proxy: *proxy_fqdn
     # Proxy end-point for OpenStack ops services
-    openstack_ops_proxy: *backend_fqdn
+    openstack_ops_proxy: *proxy_fqdn
 
     # Use SSL for all end-points
     use_ssl: true
