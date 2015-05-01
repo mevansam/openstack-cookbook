@@ -156,17 +156,17 @@ default_attributes(
         'mq' => {
             'user' => env['messaging']['user'],
             'server_role' => 'os-ha-messaging',
-            'durable_queues' => env['messaging']['ha'] ? true : false,
+            'durable_queues' => true,
             'orchestration' => {
                 'rabbit' => {
-                    'ha' => env['messaging']['ha'] ? true :false,
+                    'ha' => env['messaging']['use_openstack_ha'] ? true :false,
                     'use_ssl' => env['messaging']['use_ssl'],
                     'vhost' => env['messaging']['services_path']
                 }
             },
             'telemetry' => {
                 'rabbit' => {
-                    'ha' => env['messaging']['ha'] ? true :false,
+                    'ha' => env['messaging']['use_openstack_ha'] ? true :false,
                     'use_ssl' => env['messaging']['use_ssl'],
                     'vhost' => env['messaging']['services_path']
                 }
@@ -174,28 +174,28 @@ default_attributes(
             'image' => {
                 'notifier_strategy' => 'rabbit',
                 'rabbit' => {
-                    'ha' => env['messaging']['ha'] ? true :false,
+                    'ha' => env['messaging']['use_openstack_ha'] ? true :false,
                     'use_ssl' => env['messaging']['use_ssl'],
                     'vhost' => env['messaging']['services_path']
                 }
             },
             'block-storage' => {
                 'rabbit' => {
-                    'ha' => env['messaging']['ha'] ? true :false,
+                    'ha' => env['messaging']['use_openstack_ha'] ? true :false,
                     'use_ssl' => env['messaging']['use_ssl'],
                     'vhost' => env['messaging']['compute_path']
                 }
             },
             'compute' => {
                 'rabbit' => {
-                    'ha' => env['messaging']['ha'] ? true :false,
+                    'ha' => env['messaging']['use_openstack_ha'] ? true :false,
                     'use_ssl' => env['messaging']['use_ssl'],
                     'vhost' => env['messaging']['compute_path']
                 }
             },
             'network' => {
                 'rabbit' => {
-                    'ha' => env['messaging']['ha'] ? true :false,
+                    'ha' => env['messaging']['use_openstack_ha'] ? true :false,
                     'use_ssl' => env['messaging']['use_ssl'],
                     'vhost' => env['messaging']['compute_path']
                 }

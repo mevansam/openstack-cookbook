@@ -209,6 +209,8 @@ stack:
       endpoints:
         db:
           host: nodes[os-backend-proxy][0][ipaddress]
+        mq:
+          host: nodes[os-backend-proxy][0][ipaddress]
       mq:
         servers: nodes[os-messaging][*][ipaddress]
       block-storage:
@@ -269,6 +271,8 @@ stack:
           hosts: nodes[os-logging][*][ipaddress]
       endpoints:
         db:
+          host: nodes[os-backend-proxy][0][ipaddress]
+        mq:
           host: nodes[os-backend-proxy][0][ipaddress]
       mq:
         servers: nodes[os-messaging][*][ipaddress]

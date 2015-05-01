@@ -39,12 +39,12 @@ messaging:
   user: openstack
   password: 0p3n5tack
   cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
-  ha: true
   use_ssl: true
   ampq_port: &ampq_port 5671
   ampq_mgmt_port: &ampq_mgmt_port 15671
   services_path: os_services
   compute_path: os_compute_kvm
+  use_openstack_ha: true
 
 # Load balancing proxy
 proxy:
