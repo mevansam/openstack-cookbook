@@ -4,7 +4,7 @@ DEPENDENCIES
   chef-client (~> 4.0.0)
   cluster
     git: https://github.com/mevansam/chef-cookbook-cluster.git
-    revision: 32537cca89b5bb77a65bf43fe6a4839d015472a7
+    revision: e189f2cdef8fcba6f15db694f724ff4a27d3d486
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
@@ -72,7 +72,7 @@ DEPENDENCIES
     branch: stable/icehouse
   openstack-services
     git: https://github.com/mevansam/chef-cookbook-openstack-services.git
-    revision: 0b572d31030190ba81bd02d76b85cd8b9b62c101
+    revision: c607a60ee9f80fd8147a75fe432078e7955316d2
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e

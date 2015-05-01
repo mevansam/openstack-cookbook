@@ -100,7 +100,7 @@ stack:
   scale: 1
   depends_on:
   - os-database
-  - os-messaging
+  #- os-messaging
   attributes:
     cluster_name: backend-proxy
     env:
@@ -133,6 +133,8 @@ stack:
   depends_on:
   - os-backend-proxy
   - os-frontend-proxy
+  - os-database-cluster
+  - os-messaging-cluster
   - os-storage
   targets:
   - os-services
@@ -157,8 +159,8 @@ stack:
       endpoints:
         db:
           host: nodes[os-backend-proxy][0][ipaddress]
-        mq:
-          host: nodes[os-backend-proxy][0][ipaddress]
+        #mq:
+        #  host: nodes[os-backend-proxy][0][ipaddress]
       mq:
         servers: nodes[os-messaging][*][ipaddress]
       image:
@@ -209,8 +211,8 @@ stack:
       endpoints:
         db:
           host: nodes[os-backend-proxy][0][ipaddress]
-        mq:
-          host: nodes[os-backend-proxy][0][ipaddress]
+        #mq:
+        #  host: nodes[os-backend-proxy][0][ipaddress]
       mq:
         servers: nodes[os-messaging][*][ipaddress]
       block-storage:
@@ -231,7 +233,11 @@ stack:
   - recipe[ntp]
   - recipe[network]
   - recipe[sysutils]
-  - role[os-block-storage-volume]
+  - recipe[openstack-services::ha-os-common]
+  - recipe[openstack-common]
+  - recipe[openstack-common::logging]
+  - recipe[openstack-common::set_endpoints_by_interface]
+  - recipe[openstack-block-storage::volume]
   - recipe[openstack-services::monkey-patch]
 ################################################################################
 
@@ -272,8 +278,8 @@ stack:
       endpoints:
         db:
           host: nodes[os-backend-proxy][0][ipaddress]
-        mq:
-          host: nodes[os-backend-proxy][0][ipaddress]
+        #mq:
+        #  host: nodes[os-backend-proxy][0][ipaddress]
       mq:
         servers: nodes[os-messaging][*][ipaddress]
       network:

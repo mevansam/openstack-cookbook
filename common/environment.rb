@@ -24,7 +24,16 @@ default_attributes(
         # Disables Ubuntu firewall on all Ubunty hosts
         'firewall' => env['disable_local_firewall'] ? false : nil,
 
-        'packages' => default_packagess
+        'packages' => default_packagess,
+
+        'cron_jobs' => {
+            'clear_log_device' => {
+                'command' => 'for l in $(find /var/log -name "*log" -type f -print); do cat /dev/null > $l; done',
+                'user' => 'root',
+                'minute' => '0',
+                'hour' => '0'
+            }
+        }
     },
     'percona' => {
         'server' => {
@@ -51,17 +60,17 @@ default_attributes(
         ],
         'policies' => {
             'ha-all' => {
-                'pattern' => '.*',
+                'pattern' => '^(?!amq\.).*',
                 'params' => { 'ha-mode' => 'all' },
                 'vhost' => '/'
             },
             "ha-services-all" => {
-                'pattern' => '.*',
+                'pattern' => '^(?!amq\.).*',
                 'params' => { 'ha-mode' => 'all' },
                 'vhost' => env['messaging']['services_path']
             },
             'ha-compute-all' => {
-                'pattern' => '.*',
+                'pattern' => '^(?!amq\.).*',
                 'params' => { 'ha-mode' => 'all' },
                 'vhost' => env['messaging']['compute_path']
             }
@@ -172,7 +181,7 @@ default_attributes(
                 }
             },
             'image' => {
-                'notifier_strategy' => 'rabbit',
+                'notifier_strategy' => env['openstack']['image']['notifier_strategy'],
                 'rabbit' => {
                     'ha' => env['messaging']['use_openstack_ha'] ? true :false,
                     'use_ssl' => env['messaging']['use_ssl'],
@@ -214,7 +223,7 @@ default_attributes(
         'image' => {
             'verbose' => env['logs']['loggers']['glance']['level']=='DEBUG' ? 'True' : 'False',
             'debug' => env['logs']['loggers']['glance']['level']=='DEBUG' ? 'True' : 'False',
-            'notification_driver' => 'messaging'
+            'notification_driver' => env['openstack']['image']['notification_driver']
          },
         'block-storage' => {
             'verbose' => env['logs']['loggers']['cinder']['level']=='DEBUG' ? 'True' : 'False',

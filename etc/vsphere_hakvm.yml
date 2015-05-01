@@ -58,14 +58,14 @@ proxy:
     db:
       pool_cluster_name: database
       profile: mysql
-    mq:
-      pool_cluster_name: messaging
-      port: *ampq_port
-      profile: rabbitmq
-    mq_admin:
-      pool_cluster_name: messaging
-      port: *ampq_mgmt_port
-      profile: ssl
+    #mq:
+    #  pool_cluster_name: messaging
+    #  port: *ampq_port
+    #  profile: rabbitmq
+    #mq_admin:
+    #  pool_cluster_name: messaging
+    #  port: *ampq_mgmt_port
+    #  profile: ssl
 
   frontend_fqdn: &frontend_fqdn os.pcf-services.com
   frontend_vip_address: &frontend_vip_address 10.103.43.24
@@ -152,6 +152,12 @@ openstack:
       port: 6080
     network-api:
       port: 9696
+
+  image:
+    #notifier_strategy: 'rabbit'
+    notifier_strategy: noop
+    #notification_driver: 'messaging'
+    notification_driver: noop
 
   compute:
     rate_limits:
