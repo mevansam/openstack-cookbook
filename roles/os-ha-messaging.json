@@ -6,7 +6,6 @@
         "rabbitmq": {
             "version": "3.3.5",
             "tcp_listen_keepalive": "true",
-            "disabled_policies": [ "ha-two" ],
             "enabled_users": [ ]
         }
     },
