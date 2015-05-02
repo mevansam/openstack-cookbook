@@ -248,6 +248,7 @@ stack:
 - node: os-compute-cluster
   depends_on:
   - os-proxy-loadbalancer-cluster
+  - os-services-cluster
   - os-database-cluster
   - os-messaging-cluster
   targets:

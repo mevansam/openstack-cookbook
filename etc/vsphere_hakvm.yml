@@ -95,7 +95,7 @@ proxy:
       bind_ssl: app_proxy
     compute-novnc:
       pool_cluster_name: services
-      profile: http
+      profile: tcp
     network-api:
       pool_cluster_name: services
       profile: http
