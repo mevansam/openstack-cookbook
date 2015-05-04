@@ -116,13 +116,6 @@ filter {
         ]
     }
   }
-  cfapp {
-    cfapi => "https://api.10.244.0.34.xip.io"
-    cfuser => "admin"
-    cfpassword => "admin"
-    default_org => "test_org_1"
-    default_space => "dev"
-  }
   syslog_pri {
   }
   date {
