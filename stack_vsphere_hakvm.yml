@@ -31,7 +31,7 @@ stack:
     pacemaker_mcast_port: 5405
   knife:
     options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][tiny]
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
 
 - node: os-proxy-loadbalancer-cluster
@@ -121,7 +121,7 @@ stack:
   - os-proxy-loadbalancer-cluster
   - os-database-cluster
   - os-messaging-cluster
-  - os-storage
+  - os-nfs-storage
   targets:
   - os-services
   attributes:
@@ -173,14 +173,12 @@ stack:
 
 ################################################################################
 # OpenStack Storage Node (glance images and cinder volumes)
-- node: os-storage
+- node: os-nfs-storage
   scale: 1
-  depends_on:
-  - os-proxy-loadbalancer-cluster
-  - os-database-cluster
-  - os-messaging-cluster
   attributes:
     env:
+      data_disk: /dev/sdb
+      data_path: /exports
       network_interfaces:
       - device: eth2
         target: 192.168.0.1
@@ -191,6 +189,37 @@ stack:
         sync: true
         options:
         - no_root_squash
+      - path: /exports/nova/instances
+        network: 192.168.0.0/24
+        writeable: true
+        sync: true
+        options:
+        - no_root_squash
+  knife:
+    options: *vsphere_options
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][tiny]
+    post_create:
+    - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk1TBthin]
+    - <<+[./common/vsphere.yml][vsphere][instance][shutdown]
+    - <<+[./common/vsphere.yml][vsphere][instance][start]
+    delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
+  run_list:
+  - recipe[ntp]
+  - recipe[network]
+  - recipe[sysutils]
+################################################################################
+
+################################################################################
+# OpenStack Storage Node (glance images and cinder volumes)
+- node: os-volume-storage
+  scale: 1
+  depends_on:
+  - os-services-cluster
+  attributes:
+    env:
+      network_interfaces:
+      - device: eth2
+        target: 192.168.0.2
     openstack:
       logging:
         syslog_endpoint:
@@ -205,7 +234,7 @@ stack:
         servers: nodes[os-messaging][*][ipaddress]
       block-storage:
         volume:
-          iscsi_ip_address: 192.168.0.1
+          iscsi_ip_address: 192.168.0.2
           create_volume_group: true
           create_volume_group_type: block_devices
           block_devices: /dev/sdb
@@ -249,10 +278,7 @@ stack:
 
 - node: os-compute-cluster
   depends_on:
-  - os-proxy-loadbalancer-cluster
   - os-services-cluster
-  - os-database-cluster
-  - os-messaging-cluster
   targets:
   - os-compute
   attributes:
@@ -261,6 +287,12 @@ stack:
       - device: eth1
       - device: eth2
         target: <<!'192.168.0.'+(#{index}+20).to_s
+      imports:
+      - mount_path: /var/data/nova/instances
+        owner: glance
+        host: 192.168.0.1
+        path: /exports/nova/instances
+        options: rw
     openstack:
       logging:
         syslog_endpoint:

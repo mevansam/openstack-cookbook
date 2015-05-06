@@ -72,6 +72,30 @@ vsphere:
 
     ubuntu1404:
 
+      tiny:
+        class: Chef::Knife::VsphereVmClone
+        static_ip_key: customization_ips
+        options:
+          dest_folder: *folder
+          source_vm: *ubuntu1404
+          datastore: *datastore_1
+          customization_domain: "#{env['domain']}"
+          customization_vlan: *vlans
+          customization_gw: *gateway
+          customization_dns_ips: *dns
+          customization_dns_suffixes: *dns_suffixes
+          # Additional IPs to ensure vsphere does not 
+          # throw an error that IPs do not match number
+          # of configured adapters
+          customization_ips: ",0.0.0.0/0,0.0.0.0/0,0.0.0.0/0"
+          customization_cpucount: 1
+          customization_memory: 1
+          power: true
+          distro: chef-full
+          bootstrap: true
+          first_boot_attributes: *first_boot_attributes
+          run_list: *bootstrap_run_list
+
       small:
         class: Chef::Knife::VsphereVmClone
         static_ip_key: customization_ips
