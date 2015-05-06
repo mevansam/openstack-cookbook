@@ -108,6 +108,10 @@ proxy:
       pool_cluster_name: services
       port: 443
       profile: ssl
+    kibana:
+      pool_cluster_name: logging
+      port: 8443
+      profile: ssl
 
 openstack:
   region: durham

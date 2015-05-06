@@ -38,6 +38,7 @@ stack:
   depends_on:
   - os-database
   - os-services
+  - os-logging
   targets:
   - os-proxy-loadbalancer
   attributes:
@@ -211,7 +212,7 @@ stack:
     options: *vsphere_options
     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][small]
     post_create:
-    - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk1TB]
+    - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk1TBthick]
     - <<+[./common/vsphere.yml][vsphere][instance][shutdown]
     - <<+[./common/vsphere.yml][vsphere][instance][start]
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
@@ -242,7 +243,7 @@ stack:
     pacemaker_mcast_port: 5405
   knife:
     options: *vsphere_options
-    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][kvm1224]
+    create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][kvm2448]
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
 
 - node: os-compute-cluster
@@ -286,21 +287,35 @@ stack:
 ################################################################################
 # Logging Cluster
 - node: os-logging
-  scale: 1
+  scale: 2
   attributes:
     cluster_name: logging
   knife:
     options: *vsphere_options
     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
+    post_create:
+    - <<+[./common/vsphere.yml][vsphere][instance][storage][vmdk1TBthin]
+    - <<+[./common/vsphere.yml][vsphere][instance][shutdown]
+    - <<+[./common/vsphere.yml][vsphere][instance][start]
     delete: <<+[./common/vsphere.yml][vsphere][instance][delete]
 
 - node: os-logging-cluster
   targets:
   - os-logging
   attributes:
+    env:
+      data_disk: /dev/sdb
+      data_path: /var/data
+      cron_jobs:
+        # Run elastic search curator to delete events older than 7 days
+        delete_aged_events:
+          command: curator --host localhost delete indices --older-than 7 --time-unit days --timestring '%Y.%m.%d'
+          user: root
+          minute: 0
+          hour: 0
     elasticsearch:
-      discovery:
-        search_query: "cluster_name:logging AND chef_environment:#{env['environment']}"
+      path:
+        data: /var/data
   run_list:
   - recipe[ntp]
   - recipe[network]

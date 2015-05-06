@@ -4,20 +4,20 @@ DEPENDENCIES
   chef-client (~> 4.0.0)
   cluster
     git: https://github.com/mevansam/chef-cookbook-cluster.git
-    revision: e189f2cdef8fcba6f15db694f724ff4a27d3d486
+    revision: 09c8984af509502b12da104992bdd923651f6cc3
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
   cron (>= 1.2.0)
-  elasticsearch (~> 0.3.13)
   firewall (~> 0.11.8)
   haproxy (~> 1.6.6)
   hostsfile (~> 2.4.5)
   java (~> 1.29.0)
   keepalived (~> 1.2.0)
-  kibana_lwrp (~> 2.0.0)
+  kibana_lwrp
+    git: https://github.com/mevansam/chef-kibana.git
+    revision: 77a828bd3d04a8e79064e913397dc7685132d9a3
   line (~> 0.6.1)
-  logstash (~> 0.11.2)
   memcached (>= 1.7.2)
   monit (~> 0.7.5)
   network
@@ -72,7 +72,7 @@ DEPENDENCIES
     branch: stable/icehouse
   openstack-services
     git: https://github.com/mevansam/chef-cookbook-openstack-services.git
-    revision: c607a60ee9f80fd8147a75fe432078e7955316d2
+    revision: 7347ec42cb394fbf8e63ab9466871136742a9b3c
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e
@@ -93,7 +93,7 @@ DEPENDENCIES
   sudo (~> 2.6.0)
   sysutils
     git: https://github.com/mevansam/chef-cookbook-sysutils.git
-    revision: db4de64141c95e4c4a023d8b8209ab09c400c0f3
+    revision: 213885212b2acb85d23e88428f787a554c69b689
   xfs (~> 1.1.0)
   yum (~> 3.2.2)
   yum-epel (~> 0.4.0)
@@ -123,7 +123,9 @@ GRAPH
   chef-sugar (3.1.0)
   chef_handler (1.1.6)
   cluster (1.0.0)
+    elasticsearch (~> 0.3.13)
     firewall (~> 0.11.8)
+    monit (~> 0.7.5)
     network (= 0.1.0)
     percona (~> 0.15.5)
     rabbitmq (>= 3.2.3)
@@ -274,8 +276,8 @@ GRAPH
     haproxy (~> 1.6.6)
     hostsfile (~> 2.4.5)
     java (~> 1.29.0)
-    kibana_lwrp (~> 2.0.0)
-    logstash (~> 0.11.2)
+    kibana_lwrp (~> 2.0.4)
+    logstash (~> 0.11.4)
     network (= 0.1.0)
     openstack-common (>= 0.0.0)
     openstack-compute (>= 0.0.0)

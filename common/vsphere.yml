@@ -56,7 +56,13 @@ vsphere:
 
     storage:
 
-      vmdk1TB:
+      vmdk1TBthin:
+        class: Chef::Knife::VsphereVmVmdkAdd
+        args: 1000
+        options:
+          vmdk_type: thin
+
+      vmdk1TBthick:
         class: Chef::Knife::VsphereVmVmdkAdd
         args: 1000
         options:

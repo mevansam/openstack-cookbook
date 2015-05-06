@@ -15,9 +15,6 @@ cookbook 'hostsfile',        '~> 2.4.5'
 cookbook 'keepalived',       '~> 1.2.0'
 cookbook 'haproxy',          '~> 1.6.6'
 cookbook 'chef-client',      '~> 4.0.0'
-cookbook 'kibana_lwrp',      '~> 2.0.0'
-cookbook 'elasticsearch',    '~> 0.3.13'
-cookbook 'logstash',         '~> 0.11.2'
 cookbook 'monit',            '~> 0.7.5'
 cookbook 'line',             '~> 0.6.1'
 cookbook 'cron',             '>= 1.2.0'
@@ -27,6 +24,9 @@ cookbook 'nfs',              '>= 2.1.0'
 cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
 cookbook 'rabbitmq', git: 'https://github.com/jjasghar/rabbitmq.git'
 cookbook 'statsd',   git: 'https://github.com/att-cloud/cookbook-statsd'
+
+cookbook 'kibana_lwrp',
+    git: 'https://github.com/mevansam/chef-kibana.git'
 
 #cookbook 'chef-docker',
 #    git: 'https://github.com/bflad/chef-docker.git',

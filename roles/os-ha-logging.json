@@ -4,6 +4,10 @@
     "json_class": "Chef::Role",
     "default_attributes": { 
         "env": {
+            "packages": {
+                "debian": [ "python-pip" ],
+                "pip": [ "elasticsearch-curator" ]
+            },
             "users": [ [ "logstash", "/opt/logstash", null, false ] ]
         },
         "java": {
@@ -12,6 +16,17 @@
             "jdk_version": "8",
             "oracle": {
                 "accept_oracle_download_terms": true
+            }
+        },
+        "elasticsearch": {
+            "version": "1.5.2"
+        },
+        "kibana": {
+            "version": "4.0.2-linux-x64",
+            "install_type": "file",
+            "file": {
+                "url": "https://download.elastic.co/kibana/kibana/kibana-4.0.2-linux-x64.tar.gz",
+                "checksum": "4cc36e5c6ca7c495667319df75feda1facb7c43a3d9686841f07a2522adec294"
             }
         },
         "logstash": {
@@ -27,6 +42,7 @@
     "chef_type": "role",
     "run_list": [
         "recipe[sysutils::default]",
+        "recipe[nginx::default]",
         "recipe[openstack-services::ha-os-logging]"
     ]
 }
