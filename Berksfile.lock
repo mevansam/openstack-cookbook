@@ -72,7 +72,7 @@ DEPENDENCIES
     branch: stable/icehouse
   openstack-services
     git: https://github.com/mevansam/chef-cookbook-openstack-services.git
-    revision: 7347ec42cb394fbf8e63ab9466871136742a9b3c
+    revision: b40a83cd944eb3c86d277e187e1b1a0dd9ddd67f
   openstack-telemetry
     git: https://github.com/stackforge/cookbook-openstack-telemetry
     revision: 6c2ad6b00fda0abd3b1a1889ff49313d93f9dd8e
