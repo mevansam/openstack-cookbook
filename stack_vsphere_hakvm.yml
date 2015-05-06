@@ -121,6 +121,7 @@ stack:
   - os-proxy-loadbalancer-cluster
   - os-database-cluster
   - os-messaging-cluster
+  - os-storage
   targets:
   - os-services
   attributes:
@@ -176,7 +177,6 @@ stack:
   scale: 1
   depends_on:
   - os-proxy-loadbalancer-cluster
-  - os-services-cluster
   - os-database-cluster
   - os-messaging-cluster
   attributes:

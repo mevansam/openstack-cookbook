@@ -110,12 +110,12 @@ proxy:
       profile: ssl
     kibana:
       pool_cluster_name: logging
-      bind_port: 8443
+      bind_port: 8888
       port: 5601
       profile: http_source_affinity
     logio:
       pool_cluster_name: logging
-      bind_port: 9443
+      bind_port: 9999
       port: 28778
       profile: tcp
 
