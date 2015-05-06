@@ -305,6 +305,8 @@ stack:
         #  host: *proxylb
       mq:
         servers: nodes[os-messaging][*][ipaddress]
+      compute:
+        instances_path: /var/data/nova/instances
       network:
         l3:
           is_clustered: true
