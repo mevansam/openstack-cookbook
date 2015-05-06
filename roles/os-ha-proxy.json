@@ -136,7 +136,19 @@
                     "member_options": {
                         "*": "check inter 5s"
                     }
-                }
+                },
+                "http_source_affinity": {
+                    "mode": "http",
+                    "balance": "source",
+                    "params": [
+                        "hash-type consistent",
+                        "option forwardfor",
+                        "option httpchk"
+                    ],
+                    "member_options": {
+                        "*": "check inter 5s"
+                    }
+                }                
             }
         }
     },

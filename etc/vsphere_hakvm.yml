@@ -110,8 +110,16 @@ proxy:
       profile: ssl
     kibana:
       pool_cluster_name: logging
-      port: 8443
-      profile: ssl
+      bind_port: 8443
+      port: 5601
+      profile: http
+      bind_ssl: app_proxy
+    logio:
+      pool_cluster_name: logging
+      bind_port: 9443
+      port: 28778
+      profile: http_source_affinity
+      bind_ssl: app_proxy
 
 openstack:
   region: durham
@@ -189,27 +197,23 @@ openstack:
 # log configuration
 logs:
   type: syslog
-  logio:
-    ports:
-      http: 9081
-      stream: 28777
   syslog:
     haproxy:
       protocol: tcp
       port: 51400
   loggers:
     horizon:
-      level: DEBUG
+      level: INFO
     keystone:
-      level: DEBUG
+      level: INFO
     glance:
-      level: DEBUG
+      level: INFO
     cinder:
-      level: DEBUG
+      level: INFO
     neutron:
-      level: DEBUG
+      level: INFO
     nova:
-      level: DEBUG
+      level: INFO
 
 vsphere:
 
