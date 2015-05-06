@@ -112,14 +112,12 @@ proxy:
       pool_cluster_name: logging
       bind_port: 8443
       port: 5601
-      profile: http
-      bind_ssl: app_proxy
+      profile: http_source_affinity
     logio:
       pool_cluster_name: logging
       bind_port: 9443
       port: 28778
-      profile: http_source_affinity
-      bind_ssl: app_proxy
+      profile: tcp
 
 openstack:
   region: durham

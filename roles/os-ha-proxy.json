@@ -142,11 +142,12 @@
                     "balance": "source",
                     "params": [
                         "hash-type consistent",
+                        "option httpclose",
                         "option forwardfor",
-                        "option httpchk"
+                        "cookie JSESSIONID prefix indirect nocache"
                     ],
                     "member_options": {
-                        "*": "check inter 5s"
+                        "*": "check cookie"
                     }
                 }                
             }
