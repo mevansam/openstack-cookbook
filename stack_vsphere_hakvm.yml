@@ -211,7 +211,7 @@ stack:
 
 ################################################################################
 # OpenStack Storage Node (glance images and cinder volumes)
-- node: os-volume-storage
+- node: os-volume
   scale: 1
   depends_on:
   - os-services-cluster
