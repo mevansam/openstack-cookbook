@@ -5,7 +5,9 @@
     "default_attributes": { 
         "rabbitmq": {
             "version": "3.3.5",
+            "tcp_listen_backlog": 512,
             "tcp_listen_keepalive": "true",
+            "max_file_descriptors": 4096,
             "enabled_users": [ ]
         }
     },
