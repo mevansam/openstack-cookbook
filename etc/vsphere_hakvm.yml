@@ -191,6 +191,8 @@ openstack:
       # OVS specific configuration
       external_bridge: br-eth1
       external_interface: eth1
+    dhcp:
+      dhcp-option: "26,1400"
 
 # log configuration
 logs:

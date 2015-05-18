@@ -284,6 +284,10 @@ default_attributes(
                 'bridge_mapping_interface' => [
                     "#{openstack_network['ovs']['external_bridge']}:#{openstack_network['ovs']['external_interface']}"
                 ]
+            },
+            'dhcp' => {
+                'log-facility' => env['logs']['type']=='syslog' ? 'local2' : '/var/log/neutron/dnsmasq.log',
+                'dhcp-option' => env['openstack']['network']['dhcp'] ? env['openstack']['network']['dhcp']['dhcp-option'] || '26,1454' : '26,1454'
             }
         },
         'dashboard' => {
