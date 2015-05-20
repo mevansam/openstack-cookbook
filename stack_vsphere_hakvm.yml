@@ -89,6 +89,15 @@ stack:
   scale: 2
   attributes:
     cluster_name: messaging
+    env:
+      sysctl_add:
+      - [ "kernel.core_pattern", "/apps/log/cores/core.%p" ]
+      - [ "kernel.sem", "250 32000 128 2048" ]
+      - [ "kernel.threads-max", "262144" ]
+      ulimit_add:
+      - [ "*", "-", "nofile", "8192" ]
+      - [ "*", "-", "core", "unlimited" ]
+      - [ "*", "-", "nproc", "197632" ]
   knife:
     options: *vsphere_options
     create: <<+[./common/vsphere.yml][vsphere][instance][ubuntu1404][medium]
@@ -145,15 +154,15 @@ stack:
       endpoints:
         db:
           host: *proxylb
-        #mq:
-        #  host: *proxylb
-      mq:
-        servers: nodes[os-messaging][*][ipaddress]
+        mq:
+          host: *proxylb
+      #mq:
+      #  servers: nodes[os-messaging][*][ipaddress]
       image:
         filesystem_store_datadir: /var/data/glance/images
       block-storage:
         volume:
-          iscsi_ip_address: 192.168.0.1
+          iscsi_ip_address: 192.168.0.2
   run_list:
   - recipe[ntp]
   - recipe[network]
@@ -228,10 +237,10 @@ stack:
       endpoints:
         db:
           host: *proxylb
-        #mq:
-        #  host: *proxylb
-      mq:
-        servers: nodes[os-messaging][*][ipaddress]
+        mq:
+          host: *proxylb
+      #mq:
+      #  servers: nodes[os-messaging][*][ipaddress]
       block-storage:
         volume:
           iscsi_ip_address: 192.168.0.2
@@ -301,10 +310,10 @@ stack:
       endpoints:
         db:
           host: *proxylb
-        #mq:
-        #  host: *proxylb
-      mq:
-        servers: nodes[os-messaging][*][ipaddress]
+        mq:
+          host: *proxylb
+      #mq:
+      #  servers: nodes[os-messaging][*][ipaddress]
       compute:
         instances_path: /var/data/nova/instances
       network:

@@ -88,8 +88,7 @@
                         "accept-proxy"
                     ],
                     "member_options": {
-                        "0": "check check-ssl inter 5s rise 2 fall 3",
-                        "*": "backup check check-ssl inter 5s rise 2 fall 3"
+                        "*": "check inter 5s rise 2 fall 3"
                     }
                 },
                 "tcp": {

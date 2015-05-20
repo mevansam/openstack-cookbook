@@ -4,7 +4,7 @@ DEPENDENCIES
   chef-client (~> 4.0.0)
   cluster
     git: https://github.com/mevansam/chef-cookbook-cluster.git
-    revision: 09c8984af509502b12da104992bdd923651f6cc3
+    revision: c5f9e811507647364bb6b6e8c9779a668df221bd
   compute
     git: https://github.com/mevansam/chef-cookbook-compute.git
     revision: 4d794e43b528cb125359cabcbe67beaadf59514e
@@ -16,7 +16,7 @@ DEPENDENCIES
   keepalived (~> 1.2.0)
   kibana_lwrp
     git: https://github.com/mevansam/chef-kibana.git
-    revision: 77a828bd3d04a8e79064e913397dc7685132d9a3
+    revision: da86b4f49cc3bdc53b1a904bc59a6301c4690b87
   line (~> 0.6.1)
   memcached (>= 1.7.2)
   monit (~> 0.7.5)
@@ -121,7 +121,7 @@ GRAPH
     logrotate (>= 1.2.0)
     windows (~> 1.11)
   chef-sugar (3.1.0)
-  chef_handler (1.1.6)
+  chef_handler (1.1.8)
   cluster (1.0.0)
     elasticsearch (~> 0.3.13)
     firewall (~> 0.11.8)
@@ -323,7 +323,7 @@ GRAPH
     nfs (>= 2.1.0)
     sudo (= 2.6.0)
     yum (= 3.2.2)
-  windows (1.36.6)
+  windows (1.37.0)
     chef_handler (>= 0.0.0)
   xfs (1.1.0)
   xml (1.2.13)

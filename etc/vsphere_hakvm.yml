@@ -23,7 +23,7 @@ services:
     ssh_key_file: pivotal-tech
 
 ntp:
-  sync_clock: true
+  #sync_clock: true
   servers:
   - 0.pool.ntp.org
   - 1.pool.ntp.org
@@ -39,12 +39,16 @@ messaging:
   user: openstack
   password: 0p3n5tack
   cookie: c69bba0d4a8fa5ca6db11bd44acb8fda
-  use_ssl: true
-  ampq_port: &ampq_port 5671
-  ampq_mgmt_port: &ampq_mgmt_port 15671
+  #use_ssl: true
+  #ampq_port: &ampq_port 5671
+  #ampq_mgmt_port: &ampq_mgmt_port 15671
+  use_ssl: false
+  ampq_port: &ampq_port 5672
+  ampq_mgmt_port: &ampq_mgmt_port 15672
   services_path: os_services
   compute_path: os_compute_kvm
-  use_openstack_ha: true
+  #use_openstack_ha: true
+  use_openstack_ha: false
 
 # Load balancing proxy
 proxy:
@@ -61,14 +65,15 @@ proxy:
     db:
       pool_cluster_name: database
       profile: mysql
-    #mq:
-    #  pool_cluster_name: messaging
-    #  port: *ampq_port
-    #  profile: rabbitmq
+    mq:
+      pool_cluster_name: messaging
+      port: *ampq_port
+      profile: rabbitmq
     mq_admin:
       pool_cluster_name: messaging
       port: *ampq_mgmt_port
-      profile: ssl
+      #profile: ssl
+      profile: http
     identity-api:
       pool_cluster_name: services
       profile: http
