@@ -21,12 +21,12 @@ cookbook 'cron',             '>= 1.2.0'
 cookbook 'memcached',        '>= 1.7.2'
 cookbook 'nfs',              '>= 2.1.0'
 
-cookbook 'percona',  git: 'https://github.com/mevansam/chef-percona'
+cookbook 'percona',  git: 'https://github.com/mevansam/chef-cookbook-percona.git'
 cookbook 'rabbitmq', git: 'https://github.com/jjasghar/rabbitmq.git'
 cookbook 'statsd',   git: 'https://github.com/att-cloud/cookbook-statsd'
 
 cookbook 'kibana_lwrp',
-    git: 'https://github.com/mevansam/chef-kibana.git'
+    git: 'https://github.com/mevansam/chef-cookbook-kibana'
 
 #cookbook 'chef-docker',
 #    git: 'https://github.com/bflad/chef-docker.git',
